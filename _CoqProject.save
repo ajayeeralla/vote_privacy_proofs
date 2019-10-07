@@ -1,0 +1,2 @@
+-I . 
+definitions.v morphisms.v axioms.v andbprops.v tactics.v foo_axioms.v prop1.v auth.v cpacca.v voting.v opening.v

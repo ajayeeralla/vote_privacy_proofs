@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>phase31</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library phase31</h1>
+
+<div class="code">
+<span class="id" title="keyword">Load</span> "phase23".<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+some tactics 
+<div class="paragraph"> </div>
+
+<a name="lab102"></a><h2 class="section">Phase-II : Voting Phase</h2>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> (V) -&gt; C : sign( sk (A) , commit(v, r)) 
+
+<div class="paragraph"> </div>
+
+ 
+</li>
+</ul>
+ frame 6<a name="lab103"></a><h1 class="section">Frame <span class="inlinecode"><span class="id" title="var">phi6</span></span></h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">shuftrm</span> (<span class="id" title="var">x1</span>:<span class="id" title="var">message</span>) :=  (<span class="id" title="var">shuf</span> (<span class="id" title="var">dec</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">x1</span>)) (<span class="id" title="var">sk</span> 5)) (<span class="id" title="var">dec</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x1</span>)) (<span class="id" title="var">sk</span> 5))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi77t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">phi66t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span>  (<span class="id" title="var">shuf</span> (<span class="id" title="var">unblind</span> (<span class="id" title="var">commit</span> (<span class="id" title="var">v</span> (<span class="id" title="var">N</span> 0)) (<span class="id" title="var">rr</span> (<span class="id" title="var">N</span> 7))) (<span class="id" title="var">pi1</span> (<span class="id" title="var">k</span> (<span class="id" title="var">N</span> 3))) (<span class="id" title="var">rr</span> (<span class="id" title="var">N</span> 8)) (<span class="id" title="var">pi1</span> (<span class="id" title="var">x2t</span> 0)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">unblind</span> (<span class="id" title="var">b</span> 1 19) (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">r</span> 20) (<span class="id" title="var">pi2</span> (<span class="id" title="var">x4ttt</span> 0 1)))) ].<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x87t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi77t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))).<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi74tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">phi64tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">shuftrm</span> (<span class="id" title="var">x74tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) ].<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x84tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi74tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi7tf6t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">phi6tf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">shuftrm</span> (<span class="id" title="var">x7tf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ) ].<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x8tf6t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi7tf6t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi7tf3tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">phi6tf3tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">shuftrm</span> (<span class="id" title="var">x7tf3tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) ].<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x8tf3tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi7tf3tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi7tftf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">phi6tftf4t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">shuftrm</span> (<span class="id" title="var">x7tftf4t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ) ].<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x8tftf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi7tftf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi7tftfttf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">phi6tftfttftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">shuftrm</span> (<span class="id" title="var">x7tftfttftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ) ].<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x8tftfttf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi7tftfttf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi7f7t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">phi6f6t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">shuftrm</span> (<span class="id" title="var">x7f6t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ) ].<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x8f7t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi7f7t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi7f4tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">phi6f4tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">shuftrm</span> (<span class="id" title="var">x7f4tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ) ].<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x8f4tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi7f4tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi7ftf6t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>:= (<span class="id" title="var">phi6ftf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">shuftrm</span> (<span class="id" title="var">x7ftf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ) ].<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x8ftf6t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi7ftf6t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi7ftf3tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>:= (<span class="id" title="var">phi6ftf3tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">shuftrm</span> (<span class="id" title="var">x7ftf3tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ) ] .<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x8ftf3tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi7ftf3tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi7ftftf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>:= (<span class="id" title="var">phi6ftftf4t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">shuftrm</span> (<span class="id" title="var">x7ftftf4t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ) ] .<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x8ftftf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi7ftftf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi7ftftf2tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>:= (<span class="id" title="var">phi6ftftf2tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">shuftrm</span> (<span class="id" title="var">x7ftftf2tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ) ].<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x8ftftf2tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi7ftftf2tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+mixnetops 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">revtrm1</span>   <span class="id" title="var">n</span> <span class="id" title="var">r2</span> := ((<span class="id" title="var">enc</span> (<span class="id" title="var">r</span> <span class="id" title="var">n</span>) (<span class="id" title="var">pk</span> 5) (<span class="id" title="var">r</span> <span class="id" title="var">r2</span>)), (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> 1)  (<span class="id" title="var">THREE</span>, (<span class="id" title="var">enc</span> (<span class="id" title="var">r</span> <span class="id" title="var">n</span>) (<span class="id" title="var">pk</span> 5) (<span class="id" title="var">r</span> <span class="id" title="var">r2</span>))))).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">revtrm2</span>   <span class="id" title="var">n</span> <span class="id" title="var">r2</span> := ((<span class="id" title="var">enc</span> (<span class="id" title="var">r</span> <span class="id" title="var">n</span>) (<span class="id" title="var">pk</span> 5) (<span class="id" title="var">r</span> <span class="id" title="var">r2</span>)), (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> 2)  (<span class="id" title="var">THREE</span>, (<span class="id" title="var">enc</span> (<span class="id" title="var">r</span> <span class="id" title="var">n</span>) (<span class="id" title="var">pk</span> 5) (<span class="id" title="var">r</span> <span class="id" title="var">r2</span>))))).<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">rev</span> <span class="id" title="var">x1</span> <span class="id" title="var">n1</span> <span class="id" title="var">r1</span> <span class="id" title="var">n2</span> <span class="id" title="var">r2</span> := (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">V</span> 1)) (<span class="id" title="var">revtrm1</span> <span class="id" title="var">n1</span> <span class="id" title="var">r1</span>) (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">V</span> 2)) (<span class="id" title="var">revtrm2</span> <span class="id" title="var">n2</span> <span class="id" title="var">r2</span>)  <span class="id" title="var">O</span>)).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mixnet'</span> <span class="id" title="var">x1</span> <span class="id" title="var">x2</span> <span class="id" title="var">n1</span> <span class="id" title="var">r1</span> <span class="id" title="var">n2</span> <span class="id" title="var">r2</span> :=  (<span class="id" title="var">ifm</span> (<span class="id" title="var">mchecks</span> (<span class="id" title="var">x1</span>)) (<span class="id" title="var">rev</span> <span class="id" title="var">x2</span> <span class="id" title="var">n1</span> <span class="id" title="var">r1</span> <span class="id" title="var">n2</span> <span class="id" title="var">r2</span>)  <span class="id" title="var">O</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mnetop'</span> <span class="id" title="var">n</span> <span class="id" title="var">x1</span> <span class="id" title="var">x2</span> <span class="id" title="var">x3</span> <span class="id" title="var">n1</span> <span class="id" title="var">r1</span> <span class="id" title="var">n2</span> <span class="id" title="var">r2</span> := (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">V</span> <span class="id" title="var">n</span>)) (<span class="id" title="var">mixnet'</span> <span class="id" title="var">x2</span> <span class="id" title="var">x3</span> <span class="id" title="var">n1</span> <span class="id" title="var">r1</span> <span class="id" title="var">n2</span> <span class="id" title="var">r2</span>) <span class="id" title="var">O</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q111r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x54t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1)) (<span class="id" title="var">mnetop'</span> 2 (<span class="id" title="var">x65t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x76t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x87t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) 7 51 19 52) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x54t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 2)) (<span class="id" title="var">mnetop'</span> 1 (<span class="id" title="var">x64tft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x74tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x84tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) 7 53 19 54) <span class="id" title="var">O</span>)).<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q121r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x5tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1)) (<span class="id" title="var">mnetop'</span> 2 (<span class="id" title="var">x6tf4t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x7tf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x8tf6t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) 7 55 11 56)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x5tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 2)) (<span class="id" title="var">mnetop'</span> 1 (<span class="id" title="var">x6tf3tft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x7tf3tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x8tf3tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) 7 57 11 58)  <span class="id" title="var">O</span>)).<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q122r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x5tftft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1)) (<span class="id" title="var">mnetop'</span> 2 (<span class="id" title="var">x6tftf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x7tftf4t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)  (<span class="id" title="var">x8tftf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) 7 59 11 60)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x5tftft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 2)) (<span class="id" title="var">mnetop'</span> 1 (<span class="id" title="var">x6tftfttft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x7tftfttftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x8tftfttf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) 7 61 11 62)  <span class="id" title="var">O</span>)).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q211r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x5f4t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1))   (<span class="id" title="var">mnetop'</span> 2 (<span class="id" title="var">x6f5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x7f6t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x8f7t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) 23 63 9 64)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x5f4t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 2)) (<span class="id" title="var">mnetop'</span> 1 (<span class="id" title="var">x6f4tft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x7f4tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x8f4tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) 23 65 9 66) <span class="id" title="var">O</span>)).<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q221r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>:=  (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x5ftf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1)) (<span class="id" title="var">mnetop'</span> 2 (<span class="id" title="var">x6ftf4t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x7ftf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x8ftf6t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) 13 66 9 68)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x5ftf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 2)) (<span class="id" title="var">mnetop'</span> 1 (<span class="id" title="var">x6ftf3tft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x7ftf3tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x8ftf3tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) 13 69 9 70) <span class="id" title="var">O</span>)).<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q222r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> :=  (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x5ftftf2t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1)) (<span class="id" title="var">mnetop'</span> 2 (<span class="id" title="var">x6ftftf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x7ftftf4t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x8ftftf5t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) 13 71 9 72) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x5ftftf2t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 2)) (<span class="id" title="var">mnetop'</span> 1 (<span class="id" title="var">x6ftftf2tft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x7ftftf2tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) (<span class="id" title="var">x8ftftf2tf3t</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) 13 73 9 74) <span class="id" title="var">O</span>)).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q111s</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">ifm</span>  (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x4ttt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 2))&amp; (<span class="id" title="var">bacc</span> (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">b</span> <span class="id" title="var">n2</span> 19) (<span class="id" title="var">r</span> 20) (<span class="id" title="var">pi2</span> (<span class="id" title="var">x4ttt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))) (<span class="id" title="var">q111r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span>).<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q121s</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x4tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 2 ))&amp; (<span class="id" title="var">bacc</span> (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">b</span> <span class="id" title="var">n2</span> 11) (<span class="id" title="var">r</span> 12) (<span class="id" title="var">pi2</span> (<span class="id" title="var">x4tftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))) (<span class="id" title="var">q121r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q122s</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x4tftft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1 ))&amp; (<span class="id" title="var">bacc</span> (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> 7) (<span class="id" title="var">r</span> 8) (<span class="id" title="var">pi1</span> (<span class="id" title="var">x4tftft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))) (<span class="id" title="var">q122r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span>).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q211s</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> :=  (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x4fttt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1 ))&amp; (<span class="id" title="var">bacc</span> (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> 23) (<span class="id" title="var">r</span> 24) (<span class="id" title="var">pi1</span> (<span class="id" title="var">x4fttt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))) (<span class="id" title="var">q211r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span>).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q221s</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>:=   (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x4ftftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 2 ))&amp; (<span class="id" title="var">bacc</span> (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">b</span> <span class="id" title="var">n2</span> 9) (<span class="id" title="var">r</span> 10) (<span class="id" title="var">pi2</span> (<span class="id" title="var">x4ftftt</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))) (<span class="id" title="var">q221r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q222s</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> :=  (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x4ftftft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1 ))&amp; (<span class="id" title="var">bacc</span> (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> 13) (<span class="id" title="var">r</span> 14) (<span class="id" title="var">pi1</span> (<span class="id" title="var">x4ftftft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))) (<span class="id" title="var">q222r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) <span class="id" title="var">O</span>).<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q11_r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> :=  (<span class="id" title="var">ifm</span>  (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x3tt</span> <span class="id" title="var">n1</span> )) (<span class="id" title="var">V</span> 2)) (<span class="id" title="var">q111s</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q12_r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x3tft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1))&amp; (<span class="id" title="var">bacc</span> (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> 7) (<span class="id" title="var">r</span> 8) (<span class="id" title="var">pi2</span> (<span class="id" title="var">x3tft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))) (<span class="id" title="var">q121s</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x3tft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 2))&amp; (<span class="id" title="var">bacc</span> (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">b</span> <span class="id" title="var">n2</span> 11) (<span class="id" title="var">r</span> 12) (<span class="id" title="var">pi2</span> (<span class="id" title="var">x3tft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))) (<span class="id" title="var">q122s</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q21_r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">ifm</span>  (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x3ftt</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1))  (<span class="id" title="var">q211s</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q22_r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>  := (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x3ftft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1))&amp; (<span class="id" title="var">bacc</span> (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> 13) (<span class="id" title="var">r</span> 14) (<span class="id" title="var">pi1</span> (<span class="id" title="var">x3ftft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))) (<span class="id" title="var">q221s</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x3ftft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 2))&amp; (<span class="id" title="var">bacc</span> (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">b</span> <span class="id" title="var">n2</span> 9) (<span class="id" title="var">r</span> 10) (<span class="id" title="var">pi2</span> (<span class="id" title="var">x3ftft</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>))) (<span class="id" title="var">q222s</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span>)).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q1_r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x2t</span> <span class="id" title="var">n1</span> )) (<span class="id" title="var">V</span> 1))&amp; (<span class="id" title="var">bacc</span> (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> 7) (<span class="id" title="var">r</span> 8) (<span class="id" title="var">pi1</span> (<span class="id" title="var">x2t</span> <span class="id" title="var">n1</span> )))  (<span class="id" title="var">q11_r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x2t</span> <span class="id" title="var">n1</span> )) (<span class="id" title="var">V</span> 2))  (<span class="id" title="var">q12_r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q2_r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> :=  (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x2ft</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 2))&amp; (<span class="id" title="var">bacc</span> (<span class="id" title="var">pk</span> 3) (<span class="id" title="var">b</span> <span class="id" title="var">n2</span> 9) (<span class="id" title="var">r</span> 10) (<span class="id" title="var">pi2</span> (<span class="id" title="var">x2ft</span> <span class="id" title="var">n2</span>)))  (<span class="id" title="var">q21_r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x2ft</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1))  (<span class="id" title="var">q22_r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">t7</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> :=  (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">V</span> 1)) (<span class="id" title="var">q1_r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">V</span> 2))  (<span class="id" title="var">q2_r1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span> )).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi8</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">phi7</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">t7</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)] .<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

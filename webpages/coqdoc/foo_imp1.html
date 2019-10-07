@@ -1,0 +1,486 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>foo_imp1</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library foo_imp1</h1>
+
+<div class="code">
+<span class="id" title="keyword">Load</span> "foo_axioms".<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab26"></a><h1 class="section">FOO Voting Prtocol</h1>
+<a name="lab27"></a><h2 class="section">Phase-I</h2>
+
+<div class="paragraph"> </div>
+
+<pre>
+- [V1 -&gt; A : (V1, blind(commit(v0, r), r'), sign(sk(V1), blind(commit(v, r), r')))]
+
+- [V2 -&gt; A : (V2, blind(commit(v1, r''), r'''), sign(sk(V2), blind(commit(v1, r''), r''')))]
+</pre>
+ 
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> We assume that Administrator and collector are dishonest
+<ul class="doclist">
+<li> Hence, random numbers used to generate keys (pair) of them included in attacker's knowledge 
+</li>
+</ul>
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+<a name="lab28"></a><h1 class="section">ProtocolPhase-I: There are two voters <span class="inlinecode"><span class="id" title="var">V1</span></span> and <span class="inlinecode"><span class="id" title="var">V2</span></span>, and their corresponding votes <span class="inlinecode"><span class="id" title="var">va</span></span> and <span class="inlinecode"><span class="id" title="var">vb</span></span> respectively.</h1>
+
+<div class="paragraph"> </div>
+
+<a name="lab29"></a><h1 class="section">Frame <span class="inlinecode"><span class="id" title="var">phi0</span></span>: initial knowledge</h1>
+ 1-Voter1, 2-Voter2, 3-Administrator, 4-Collector, 5-Mixnet 
+<span class="inlinecode">(<span class="id" title="var">pk</span></span> <span class="inlinecode">0)</span> represents a public key used in commitment shceme. 
+<div class="paragraph"> </div>
+
+ Even though different symbols used to distinuish the key generations, for convenience, we use same symbols here in Coq 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">vt</span> (<span class="id" title="var">n</span>:<span class="id" title="var">nat</span>) := (<span class="id" title="var">v</span> (<span class="id" title="var">N</span> <span class="id" title="var">n</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+attacker symbols 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+' indicates attacker symbol 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">pkat</span> := (<span class="id" title="var">pi1</span> (<span class="id" title="var">k</span> <span class="id" title="var">ats</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi0</span>:= [<span class="id" title="var">msg</span> (<span class="id" title="var">pk</span> 1); <span class="id" title="var">msg</span> (<span class="id" title="var">pk</span> 2); <span class="id" title="var">msg</span> (<span class="id" title="var">pk</span> 5); <span class="id" title="var">msg</span> <span class="id" title="var">pkat</span>; <span class="id" title="var">msg</span> (<span class="id" title="var">vt</span> 0); <span class="id" title="var">msg</span> (<span class="id" title="var">vt</span> 1)].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab30"></a><h1 class="section">Frame <span class="inlinecode"><span class="id" title="var">phi11</span></span></h1>
+
+<div class="paragraph"> </div>
+
+ commitments 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">b</span> (<span class="id" title="var">n'</span> <span class="id" title="var">n''</span>:<span class="id" title="var">nat</span>) := (<span class="id" title="var">commit</span> (<span class="id" title="var">v</span> (<span class="id" title="var">N</span> <span class="id" title="var">n'</span>)) (<span class="id" title="var">r</span> <span class="id" title="var">n''</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">e</span> (<span class="id" title="var">t</span>:<span class="id" title="var">message</span>) (<span class="id" title="var">n'</span>:<span class="id" title="var">nat</span>) := (<span class="id" title="var">blind</span> <span class="id" title="var">t</span> <span class="id" title="var">pkat</span> (<span class="id" title="var">r</span> <span class="id" title="var">n'</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Converting <span class="inlinecode"><span class="id" title="var">mylist</span></span> to <span class="inlinecode"><span class="id" title="var">list</span></span> <span class="inlinecode"><span class="id" title="var">message</span></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mphi0</span> := (<span class="id" title="var">conv_mylist_listm</span> <span class="id" title="var">phi0</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+attacker's computation 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x1</span> := (<span class="id" title="var">f</span> <span class="id" title="var">mphi0</span>).<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Session identifiers of honest voters A, B, mixer M are i1, i2, and i3 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> :=  (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">V</span> 1)) ((<span class="id" title="var">pk</span> 1), (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> 7) 8) , (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> 1) (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> 7) 8) (<span class="id" title="var">r</span> 30)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span>  (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">V</span> 2))   ((<span class="id" title="var">pk</span> 2), (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n2</span> 9) 10), (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> 2) (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n2</span> 9) 10) (<span class="id" title="var">r</span> 31)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">O</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+attacker's knowledge 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := <span class="id" title="var">phi0</span> ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">q0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab31"></a><h1 class="section">Frame <span class="inlinecode"><span class="id" title="var">phi2</span></span></h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi1t</span> <span class="id" title="var">n1</span> := <span class="id" title="var">phi0</span> ++ [<span class="id" title="var">msg</span> ((<span class="id" title="var">pk</span> 1), (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> 7) 8) , (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> 1) (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> 7) 8) (<span class="id" title="var">r</span> 30)))].<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x2t</span> <span class="id" title="var">n1</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi1t</span> <span class="id" title="var">n1</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi1ft</span>  <span class="id" title="var">n2</span> := <span class="id" title="var">phi0</span> ++ [<span class="id" title="var">msg</span> ((<span class="id" title="var">pk</span> 2), (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n2</span> 9) 10),  (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> 2) (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n2</span> 9) 10) (<span class="id" title="var">r</span> 31)))].<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x2ft</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi1ft</span> <span class="id" title="var">n2</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mphi1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">conv_mylist_listm</span> (<span class="id" title="var">phi1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">x2</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">f</span> (<span class="id" title="var">mphi1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x2t</span> <span class="id" title="var">n1</span>)) (<span class="id" title="var">V</span> 2))  ((<span class="id" title="var">pk</span> 2), (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n2</span> 11) 12),  (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> 2) (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n2</span> 11) 12) (<span class="id" title="var">r</span> 32))) <span class="id" title="var">O</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">q2</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> :=  <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> (<span class="id" title="var">x2ft</span> <span class="id" title="var">n2</span>)) (<span class="id" title="var">V</span> 1))  ((<span class="id" title="var">pk</span> 1), (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> 13) 14),  (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> 1) (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> 13) 14) (<span class="id" title="var">r</span> 33))) <span class="id" title="var">O</span>).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">t1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> :=  (<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">V</span> 1)) (<span class="id" title="var">q1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ifm</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">V</span> 2))  (<span class="id" title="var">q2</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) <span class="id" title="var">O</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">phi2</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> := (<span class="id" title="var">phi1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">t1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)].<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Tactics 
+</div>
+<div class="code">
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">unf_phi</span> := <span class="id" title="tactic">try</span> <span class="id" title="tactic">unfold</span> <span class="id" title="var">phi0</span>, <span class="id" title="var">phi1</span>, <span class="id" title="var">phi2</span>. 
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">unf_q</span> :=  <span class="id" title="tactic">try</span> <span class="id" title="tactic">unfold</span> <span class="id" title="var">q0</span>, <span class="id" title="var">q1</span>, <span class="id" title="var">q2</span>.<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">unf_trm</span>:=  <span class="id" title="tactic">try</span> <span class="id" title="tactic">unfold</span> <span class="id" title="var">t1</span>. 
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">unf</span> := <span class="id" title="tactic">try</span> <span class="id" title="var">unf_phi</span>; <span class="id" title="tactic">try</span> <span class="id" title="var">unf_trm</span>; <span class="id" title="tactic">try</span> <span class="id" title="var">unf_q</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+blindness 
+</div>
+<div class="code">
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">aply_blindness</span> <span class="id" title="var">n</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">m0</span> <span class="id" title="var">m1</span> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">l</span>  := <span class="id" title="tactic">pose</span> <span class="id" title="var">proof</span>( <span class="id" title="var">blindness</span> <span class="id" title="var">n</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">m0</span> <span class="id" title="var">m1</span> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">l</span> ) <span class="id" title="keyword">as</span> <span class="id" title="var">H</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Using <span class="inlinecode"><span class="id" title="var">funapptrmhyp</span></span> 
+</div>
+<div class="code">
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">appconst</span> <span class="id" title="var">H</span>:=<br/>
+&nbsp;&nbsp;<span class="id" title="var">funappmconst</span> <span class="id" title="var">ok</span> <span class="id" title="var">H</span>; <span class="id" title="var">funappmconst</span> (<span class="id" title="var">V</span> 1) <span class="id" title="var">H</span>; <span class="id" title="var">funappmconst</span> (<span class="id" title="var">V</span> 2) <span class="id" title="var">H</span>; <span class="id" title="var">funappmconst</span> (<span class="id" title="var">V</span> 3) <span class="id" title="var">H</span>; <span class="id" title="var">funappmconst</span> <span class="id" title="var">O</span> <span class="id" title="var">H</span>; <span class="id" title="var">funappmconst</span> <span class="id" title="var">ONE</span> <span class="id" title="var">H</span>; <span class="id" title="var">funappmconst</span> <span class="id" title="var">TWO</span> <span class="id" title="var">H</span>; <span class="id" title="var">funappmconst</span> <span class="id" title="var">THREE</span> <span class="id" title="var">H</span>;  <span class="id" title="var">funappbconst</span> <span class="id" title="var">FAlse</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">x1checks</span> <span class="id" title="var">x1</span> <span class="id" title="var">x2</span> <span class="id" title="var">H</span> := <span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">msg</span> <span class="id" title="var">x2</span>) <span class="id" title="var">H</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>)) (<span class="id" title="var">msg</span> (<span class="id" title="var">to</span> <span class="id" title="var">x2</span>)) <span class="id" title="var">H</span>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">V</span> 1))) (<span class="id" title="var">bol</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x2</span>) (<span class="id" title="var">V</span> 1))) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">V</span> 2))) (<span class="id" title="var">bol</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x2</span>) (<span class="id" title="var">V</span> 2))) <span class="id" title="var">H</span>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x1</span>) (<span class="id" title="var">V</span> 3))) (<span class="id" title="var">bol</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">to</span> <span class="id" title="var">x2</span>) (<span class="id" title="var">V</span> 3))) <span class="id" title="var">H</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Axiom</span> <span class="id" title="var">fresh_blind</span> : <span class="id" title="keyword">forall</span> (<span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">n5</span> <span class="id" title="var">n6</span> <span class="id" title="var">n7</span> : <span class="id" title="var">nat</span>) {<span class="id" title="var">n</span>} (<span class="id" title="var">l1</span> <span class="id" title="var">l2</span> :<span class="id" title="var">mylist</span> <span class="id" title="var">n</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">l1</span> ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) <span class="id" title="var">n3</span>)]) ~ (<span class="id" title="var">l2</span> ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n4</span> <span class="id" title="var">n5</span>) <span class="id" title="var">n6</span>)]) -&gt;  <span class="id" title="var">Fresh</span> [<span class="id" title="var">n7</span>] (<span class="id" title="var">l1</span> ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) <span class="id" title="var">n3</span>)] ++  <span class="id" title="var">l2</span> ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n4</span> <span class="id" title="var">n5</span>) <span class="id" title="var">n6</span>)]) = <span class="id" title="var">true</span>  -&gt; (<span class="id" title="var">l1</span> ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) <span class="id" title="var">n7</span>)])  ~ (<span class="id" title="var">l2</span> ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n4</span> <span class="id" title="var">n5</span>) <span class="id" title="var">n7</span>)]).<br/>
+<span class="id" title="keyword">Axiom</span> <span class="id" title="var">fresh_commit</span> : <span class="id" title="keyword">forall</span> (<span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">n5</span> <span class="id" title="var">n6</span> <span class="id" title="var">n7</span> : <span class="id" title="var">nat</span>) {<span class="id" title="var">n</span>} (<span class="id" title="var">l1</span> <span class="id" title="var">l2</span> :<span class="id" title="var">mylist</span> <span class="id" title="var">n</span>), <span class="id" title="var">Fresh</span> [<span class="id" title="var">n7</span>] (<span class="id" title="var">l1</span>++ [<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) <span class="id" title="var">n3</span>)] ++  <span class="id" title="var">l2</span> ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n4</span> <span class="id" title="var">n5</span>) <span class="id" title="var">n6</span>)]) = <span class="id" title="var">true</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">l1</span> ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) <span class="id" title="var">n3</span>)]) ~ (<span class="id" title="var">l2</span> ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n4</span> <span class="id" title="var">n5</span>) <span class="id" title="var">n6</span>)]) -&gt; (<span class="id" title="var">l1</span> ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n1</span> <span class="id" title="var">n7</span>) <span class="id" title="var">n3</span>)]) ~ (<span class="id" title="var">l2</span> ++ [<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">n4</span> <span class="id" title="var">n7</span>) <span class="id" title="var">n6</span>)]).<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">adminchecks</span> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">H</span>:=<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t1</span>)) (<span class="id" title="var">msg</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t2</span>)) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t1</span>))) (<span class="id" title="var">msg</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t2</span>))) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t1</span>))) (<span class="id" title="var">msg</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t2</span>))) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t1</span>)))) (<span class="id" title="var">msg</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t2</span>)))) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t1</span>)))) (<span class="id" title="var">msg</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t2</span>)))) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t1</span>)) (<span class="id" title="var">msg</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t2</span>)) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t1</span>))) (<span class="id" title="var">msg</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t2</span>))) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t1</span>))) (<span class="id" title="var">msg</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t2</span>))) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t1</span>)))) (<span class="id" title="var">msg</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t2</span>)))) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t1</span>)))) (<span class="id" title="var">msg</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t2</span>)))) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">bsign</span> (<span class="id" title="var">sk</span> 3) (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t1</span>))) )) (<span class="id" title="var">msg</span> (<span class="id" title="var">bsign</span> (<span class="id" title="var">sk</span> 3) (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t2</span>))) )) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">bsign</span> (<span class="id" title="var">sk</span> 3) (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t1</span>))) )) (<span class="id" title="var">msg</span> (<span class="id" title="var">bsign</span> (<span class="id" title="var">sk</span> 3) (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t2</span>))) )) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> ((<span class="id" title="var">bsign</span> (<span class="id" title="var">sk</span> 3) (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t1</span>))) ) , (<span class="id" title="var">bsign</span> (<span class="id" title="var">sk</span> 3) (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t1</span>))) ))) (<span class="id" title="var">msg</span> ((<span class="id" title="var">bsign</span> (<span class="id" title="var">sk</span> 3) (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t2</span>))) ), (<span class="id" title="var">bsign</span> (<span class="id" title="var">sk</span> 3) (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t2</span>))) ))) <span class="id" title="var">H</span>; <br/>
+&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span> (<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> 1)  (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t1</span>))) (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t1</span>))))) (<span class="id" title="var">bol</span> (<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> 1)  (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t2</span>))) (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t2</span>))))) <span class="id" title="var">H</span>;<br/>
+&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span> (<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> 2)  (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t1</span>))) (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t1</span>)))))  (<span class="id" title="var">bol</span> (<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> 2)  (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t2</span>))) (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t2</span>))))) <span class="id" title="var">H</span>.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">funapp_vtrm</span> <span class="id" title="var">a</span> <span class="id" title="var">v1</span> <span class="id" title="var">v2</span> <span class="id" title="var">ck</span> <span class="id" title="var">bk</span> <span class="id" title="var">m</span> <span class="id" title="var">H</span>  := <br/>
+<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">m</span>, (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v1</span> <span class="id" title="var">ck</span>) <span class="id" title="var">bk</span>))) (<span class="id" title="var">msg</span> (<span class="id" title="var">m</span>, (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v2</span> <span class="id" title="var">ck</span>) <span class="id" title="var">bk</span>))) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> <span class="id" title="var">a</span>) (<span class="id" title="var">m</span>, (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v1</span> <span class="id" title="var">ck</span>) <span class="id" title="var">bk</span>))))  (<span class="id" title="var">msg</span> (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> <span class="id" title="var">a</span>) (<span class="id" title="var">m</span>, (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v2</span> <span class="id" title="var">ck</span>) <span class="id" title="var">bk</span>)))) <span class="id" title="var">H</span>; <br/>
+&nbsp;<span class="id" title="var">funapptrmhyp</span>  (<span class="id" title="var">msg</span> ((<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v1</span> <span class="id" title="var">ck</span>) <span class="id" title="var">bk</span>), (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> <span class="id" title="var">a</span>) (<span class="id" title="var">m</span>, (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v1</span> <span class="id" title="var">ck</span>) <span class="id" title="var">bk</span>)))))  (<span class="id" title="var">msg</span> ((<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v2</span> <span class="id" title="var">ck</span>) <span class="id" title="var">bk</span>), (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> <span class="id" title="var">a</span>) (<span class="id" title="var">m</span>, (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v2</span> <span class="id" title="var">ck</span>) <span class="id" title="var">bk</span>))))) <span class="id" title="var">H</span>;<br/>
+&nbsp;<span class="id" title="var">funapptrmhyp</span>  (<span class="id" title="var">msg</span> (<span class="id" title="var">pk</span> <span class="id" title="var">a</span>, ((<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v1</span> <span class="id" title="var">ck</span>) <span class="id" title="var">bk</span>), (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> <span class="id" title="var">a</span>) (<span class="id" title="var">m</span>, (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v1</span> <span class="id" title="var">ck</span>) <span class="id" title="var">bk</span>))))))  (<span class="id" title="var">msg</span> (<span class="id" title="var">pk</span> <span class="id" title="var">a</span>, ((<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v2</span> <span class="id" title="var">ck</span>) <span class="id" title="var">bk</span>), (<span class="id" title="var">sign</span> (<span class="id" title="var">sk</span> <span class="id" title="var">a</span>) (<span class="id" title="var">m</span>, (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v2</span> <span class="id" title="var">ck</span>) <span class="id" title="var">bk</span>)))))) <span class="id" title="var">H</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">bacctac</span> <span class="id" title="var">v1</span> <span class="id" title="var">v2</span> <span class="id" title="var">ck</span> <span class="id" title="var">bk</span> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">H</span>:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t1</span>)) (<span class="id" title="var">msg</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">t2</span>)) <span class="id" title="var">H</span>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span> (<span class="id" title="var">bacc</span> <span class="id" title="var">pkat</span> (<span class="id" title="var">b</span> <span class="id" title="var">v1</span> <span class="id" title="var">ck</span>) (<span class="id" title="var">r</span> <span class="id" title="var">bk</span>) (<span class="id" title="var">pi1</span> <span class="id" title="var">t1</span>))) (<span class="id" title="var">bol</span> (<span class="id" title="var">bacc</span> <span class="id" title="var">pkat</span> (<span class="id" title="var">b</span> <span class="id" title="var">v2</span> <span class="id" title="var">ck</span>) (<span class="id" title="var">r</span> <span class="id" title="var">bk</span>) (<span class="id" title="var">pi1</span> <span class="id" title="var">t2</span>))) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t1</span>)) (<span class="id" title="var">msg</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">t2</span>)) <span class="id" title="var">H</span>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span> (<span class="id" title="var">bacc</span> <span class="id" title="var">pkat</span> (<span class="id" title="var">b</span> <span class="id" title="var">v1</span> <span class="id" title="var">ck</span>) (<span class="id" title="var">r</span> <span class="id" title="var">bk</span>) (<span class="id" title="var">pi2</span> <span class="id" title="var">t1</span>))) (<span class="id" title="var">bol</span> (<span class="id" title="var">bacc</span> <span class="id" title="var">pkat</span> (<span class="id" title="var">b</span> <span class="id" title="var">v2</span> <span class="id" title="var">ck</span>) (<span class="id" title="var">r</span> <span class="id" title="var">bk</span>) (<span class="id" title="var">pi2</span> <span class="id" title="var">t2</span>))) <span class="id" title="var">H</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<div class="doc">
+tactics related to application of unforgeability 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">ufcma_pi1</span>  <span class="id" title="var">x</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|[|- <span class="id" title="keyword">context</span>[(<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> ?<span class="id" title="var">n</span>) (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">x</span>))) ?<span class="id" title="var">Y</span>)] ] =&gt; <span class="id" title="tactic">pose</span> <span class="id" title="var">proof</span>( <span class="id" title="var">UFCMA</span> <span class="id" title="var">n</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">x</span>))) <span class="id" title="var">Y</span>); <span class="id" title="var">rew_hyps</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">ufcma_pi2</span> <span class="id" title="var">x</span>:=  <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|[|- <span class="id" title="keyword">context</span>[(<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> ?<span class="id" title="var">n1</span>) (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x</span>))) ?<span class="id" title="var">Y</span>)] ] =&gt; <span class="id" title="tactic">pose</span> <span class="id" title="var">proof</span>( <span class="id" title="var">UFCMA</span> <span class="id" title="var">n1</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x</span>))) <span class="id" title="var">Y</span>); <span class="id" title="var">rew_hyps</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+</div>
+
+<div class="doc">
+andB elimination 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Axiom</span> <span class="id" title="var">andB_elm'</span>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">b1</span> <span class="id" title="var">b2</span>: <span class="id" title="var">Bool</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">message</span>), (<span class="id" title="var">ifm</span> <span class="id" title="var">b1</span>&amp; <span class="id" title="var">b2</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) #  (<span class="id" title="var">ifm</span> <span class="id" title="var">b1</span> (<span class="id" title="var">ifm</span> <span class="id" title="var">b2</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> ) <span class="id" title="var">y</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">aply_andB_elm</span> := <br/>
+<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span> <br/>
+|[|- <span class="id" title="keyword">context</span>[<span class="id" title="var">ifm</span> (<span class="id" title="var">ifb</span> ?<span class="id" title="var">B1</span> ?<span class="id" title="var">B2</span> <span class="id" title="var">FAlse</span>) ?<span class="id" title="var">T1</span> ?<span class="id" title="var">T2</span> ] ] =&gt; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">andB_elm'</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">b1</span>:= <span class="id" title="var">B1</span>) (<span class="id" title="var">b2</span>:= <span class="id" title="var">B2</span>) (<span class="id" title="var">x</span>:= <span class="id" title="var">T1</span>) (<span class="id" title="var">y</span>:= <span class="id" title="var">T2</span>)<br/>
+<span class="id" title="keyword">end</span>.<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">ufcma_pi1'</span>  <span class="id" title="var">x</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|[|- <span class="id" title="keyword">context</span>[(<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> ?<span class="id" title="var">n'</span>) (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">x</span>))) ?<span class="id" title="var">Y</span>)] ] =&gt; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">UFCMA</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">n</span>:= <span class="id" title="var">n'</span>) (<span class="id" title="var">t</span>:= (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi1</span> <span class="id" title="var">x</span>)))) (<span class="id" title="var">u</span>:= <span class="id" title="var">Y</span>)   ;  <span class="id" title="tactic">simpl</span> ; <span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">try</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">IFSAME_B</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">IFFALSE_B</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">IFFALSE_M</span>); <span class="id" title="tactic">try</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">ufcma_pi2'</span> <span class="id" title="var">x</span>:=  <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|[|- <span class="id" title="keyword">context</span>[(<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> ?<span class="id" title="var">n1</span>) (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x</span>))) ?<span class="id" title="var">Y</span>)] ] =&gt; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">UFCMA</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">n</span>:=<span class="id" title="var">n1</span>) (<span class="id" title="var">t</span>:= (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x</span>)))) (<span class="id" title="var">u</span>:= <span class="id" title="var">Y</span>)  ; <span class="id" title="tactic">simpl</span> ; <span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">try</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">IFSAME_B</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">IFFALSE_B</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">IFFALSE_M</span>); <span class="id" title="tactic">try</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>. <span class="id" title="keyword">Ltac</span> <span class="id" title="var">unforge'</span> <span class="id" title="var">x1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>:= <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">ufcma_pi1'</span> (<span class="id" title="var">x1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>); <span class="id" title="var">ufcma_pi2'</span> (<span class="id" title="var">x1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>);   <span class="id" title="var">ufcma_pi1'</span> (<span class="id" title="var">x1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n1</span>);   <span class="id" title="var">ufcma_pi2'</span> (<span class="id" title="var">x1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n1</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">aply_andB_elm'</span> <span class="id" title="var">B2</span> := <br/>
+<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span> <br/>
+|[|- <span class="id" title="keyword">context</span>[<span class="id" title="var">ifm</span> (<span class="id" title="var">ifb</span> ?<span class="id" title="var">B1</span> <span class="id" title="var">B2</span> <span class="id" title="var">FAlse</span>) ?<span class="id" title="var">T1</span> ?<span class="id" title="var">T2</span> ] ] =&gt; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">andB_elm'</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">b1</span>:= <span class="id" title="var">B1</span>) (<span class="id" title="var">b2</span>:= <span class="id" title="var">B2</span>) (<span class="id" title="var">x</span>:= <span class="id" title="var">T1</span>) (<span class="id" title="var">y</span>:= <span class="id" title="var">T2</span>)<br/>
+<span class="id" title="keyword">end</span>.<br/>
+&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">btrm</span> <span class="id" title="var">n</span> <span class="id" title="var">x1</span> <span class="id" title="var">b1</span> <span class="id" title="var">x2</span> <span class="id" title="var">b2</span>  <span class="id" title="var">H</span> :=  <br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span> (<span class="id" title="var">ifb</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x1</span>)) <span class="id" title="var">b1</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> <span class="id" title="var">n</span>) <span class="id" title="var">b1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x1</span>))) <span class="id" title="var">FAlse</span>)) (<span class="id" title="var">bol</span> (<span class="id" title="var">ifb</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x2</span>)) <span class="id" title="var">b2</span>) (<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> <span class="id" title="var">n</span>) <span class="id" title="var">b2</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x2</span>))) <span class="id" title="var">FAlse</span>)) <span class="id" title="var">H</span>.<br/>
+</div>
+
+<div class="doc">
+replace bacc with bver 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">rew_mupbver</span>  :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| [|- <span class="id" title="keyword">context</span>[ (<span class="id" title="var">ifm</span> (<span class="id" title="var">bacc</span> <span class="id" title="var">pkat</span> ?<span class="id" title="var">M</span> <span class="id" title="var">_</span> ?<span class="id" title="var">T</span>) ?<span class="id" title="var">T1</span> ?<span class="id" title="var">T2</span>) ] ] =&gt; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">mupbver</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">n</span> := 3) (<span class="id" title="var">m</span>:= <span class="id" title="var">M</span>)  (<span class="id" title="var">t1</span>:= <span class="id" title="var">T1</span>) (<span class="id" title="var">t2</span>:= <span class="id" title="var">T2</span>)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+</div>
+
+<div class="doc">
+replacing the random commit keys with fresh values 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">droplast</span> {<span class="id" title="var">n</span>} (<span class="id" title="var">l</span>: <span class="id" title="var">mylist</span> <span class="id" title="var">n</span>): <span class="id" title="var">mylist</span> (<span class="id" title="var">pred</span> <span class="id" title="var">n</span>) :=  (<span class="id" title="var">reverse</span> (<span class="id" title="var">dropone</span> (<span class="id" title="var">reverse</span> <span class="id" title="var">l</span>))).<br/>
+<span class="id" title="keyword">Axiom</span> <span class="id" title="var">restr_droplast</span> : <span class="id" title="keyword">forall</span> {<span class="id" title="var">n</span>} (<span class="id" title="var">l1</span> <span class="id" title="var">l2</span>:<span class="id" title="var">mylist</span> <span class="id" title="var">n</span>), (<span class="id" title="var">l1</span> ~ <span class="id" title="var">l2</span>) -&gt; (<span class="id" title="var">droplast</span> <span class="id" title="var">l1</span>) ~ (<span class="id" title="var">droplast</span> <span class="id" title="var">l2</span>).<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">droplast_in</span> <span class="id" title="var">H</span>:= <span class="id" title="tactic">apply</span> <span class="id" title="var">restr_droplast</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">droplast</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">fresh_n</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">H</span> := <span class="id" title="tactic">apply</span> <span class="id" title="var">FRESHIND_rs</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">n1</span>:= <span class="id" title="var">n3</span>) (<span class="id" title="var">n2</span>:= <span class="id" title="var">n4</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">app_rn</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">H</span> := <br/>
+<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">r</span> <span class="id" title="var">n3</span>)) (<span class="id" title="var">msg</span> (<span class="id" title="var">r</span> <span class="id" title="var">n4</span>)) <span class="id" title="var">H</span>;  <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">fresh_rn</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">H</span> := <span class="id" title="var">fresh_n</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>; <span class="id" title="var">app_rn</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">fresh_assert</span> <span class="id" title="var">name</span>  :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| [<span class="id" title="var">H</span>: (?<span class="id" title="var">X</span> ~ ?<span class="id" title="var">Y</span>) |- <span class="id" title="var">_</span> ] =&gt;  <span class="id" title="tactic">assert</span>(([<span class="id" title="var">msg</span> (<span class="id" title="var">vt</span> 0); <span class="id" title="var">msg</span> (<span class="id" title="var">vt</span> 1)] ++ <span class="id" title="var">Y</span>) ~ ([<span class="id" title="var">msg</span> (<span class="id" title="var">vt</span> 0); <span class="id" title="var">msg</span> (<span class="id" title="var">vt</span> 1)] ++ <span class="id" title="var">Y</span>)) <span class="id" title="keyword">as</span> <span class="id" title="var">name</span> ;<span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>; <span class="id" title="tactic">do</span> 4 (<span class="id" title="var">droplast_in</span> <span class="id" title="var">name</span>)<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">appcommit</span> <span class="id" title="var">v</span>  <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>  <span class="id" title="var">H</span>:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">b</span> <span class="id" title="var">v</span> <span class="id" title="var">n1</span>)) (<span class="id" title="var">msg</span> (<span class="id" title="var">b</span> <span class="id" title="var">v</span> <span class="id" title="var">n2</span>)) <span class="id" title="var">H</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">appblind</span> <span class="id" title="var">v</span>  <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>  <span class="id" title="var">r</span>  <span class="id" title="var">H</span>:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v</span> <span class="id" title="var">n1</span>) <span class="id" title="var">r</span>)) (<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v</span> <span class="id" title="var">n2</span>) <span class="id" title="var">r</span> )) <span class="id" title="var">H</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">freshind</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">H</span>:= <span class="id" title="var">fresh_rn</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">H</span>; <span class="id" title="var">fresh_rn</span> (<span class="id" title="var">S</span> <span class="id" title="var">n1</span>) (<span class="id" title="var">S</span> <span class="id" title="var">n1</span>) <span class="id" title="var">H</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">assertg</span> <span class="id" title="var">fr1</span> <span class="id" title="var">fr2</span> <span class="id" title="var">t</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| [<span class="id" title="var">H</span> : (?<span class="id" title="var">X1</span> ~ ?<span class="id" title="var">X2</span>) |- <span class="id" title="var">_</span> ] =&gt; <span class="id" title="keyword">match</span> <span class="id" title="var">H</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<span class="id" title="var">fr1</span> =&gt;  <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| [<span class="id" title="var">H1</span>: (?<span class="id" title="var">X3</span> ~ ?<span class="id" title="var">X4</span>) |- <span class="id" title="var">_</span> ] =&gt; <span class="id" title="keyword">match</span> <span class="id" title="var">H1</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">fr2</span> =&gt; <span class="id" title="tactic">assert</span>( <span class="id" title="var">X1</span> ~ <span class="id" title="var">X3</span>) <span class="id" title="keyword">as</span> <span class="id" title="var">t</span> ;<span class="id" title="tactic">simpl</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">aplytrans</span> <span class="id" title="var">H1</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| [<span class="id" title="var">H</span>: (?<span class="id" title="var">X1</span>~ ?<span class="id" title="var">X2</span>) |- <span class="id" title="var">_</span> ] =&gt; <span class="id" title="keyword">match</span> <span class="id" title="var">H</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">H1</span> =&gt; <span class="id" title="tactic">apply</span> <span class="id" title="var">EQI_trans</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">ml2</span>:= <span class="id" title="var">X2</span>); <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>; <span class="id" title="tactic">symmetry</span>; <span class="id" title="tactic">assumption</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">freshns1</span> <span class="id" title="var">v1</span> <span class="id" title="var">v2</span>  <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">H</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">fresh_assert</span> <span class="id" title="var">H</span>; <span class="id" title="var">freshind</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">H</span>; <span class="id" title="var">freshind</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">H</span>; <span class="id" title="var">appcommit</span> <span class="id" title="var">v1</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">H</span>; <span class="id" title="var">appcommit</span> <span class="id" title="var">v2</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">H</span>; <span class="id" title="var">appblind</span> <span class="id" title="var">v2</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> (<span class="id" title="var">S</span> <span class="id" title="var">n3</span>) <span class="id" title="var">H</span>; <span class="id" title="var">appblind</span> <span class="id" title="var">v1</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> (<span class="id" title="var">S</span> <span class="id" title="var">n1</span>) <span class="id" title="var">H</span>;  <span class="id" title="tactic">do</span> 6 (<span class="id" title="var">dropone_in</span> <span class="id" title="var">H</span>); <span class="id" title="tactic">do</span> 5  (<span class="id" title="var">restrproj_in</span> 11 <span class="id" title="var">H</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">freshns2</span> <span class="id" title="var">v1</span> <span class="id" title="var">v2</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">H</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">fresh_assert</span> <span class="id" title="var">H</span>; <span class="id" title="var">freshind</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">H</span>; <span class="id" title="var">freshind</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">H</span>; <span class="id" title="var">appcommit</span> <span class="id" title="var">v1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">H</span>; <span class="id" title="var">appcommit</span> <span class="id" title="var">v2</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">H</span>; <span class="id" title="var">appblind</span> <span class="id" title="var">v2</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> (<span class="id" title="var">S</span> <span class="id" title="var">n3</span>) <span class="id" title="var">H</span>; <span class="id" title="var">appblind</span> <span class="id" title="var">v1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> (<span class="id" title="var">S</span> <span class="id" title="var">n1</span>) <span class="id" title="var">H</span>;  <span class="id" title="tactic">do</span> 6 (<span class="id" title="var">dropone_in</span> <span class="id" title="var">H</span>); <span class="id" title="tactic">do</span> 4  (<span class="id" title="var">restrproj_in</span> 11 <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">freshns</span> <span class="id" title="var">v1</span> <span class="id" title="var">v2</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> :=  <span class="id" title="var">freshns1</span> <span class="id" title="var">v1</span> <span class="id" title="var">v2</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">H1</span>; <span class="id" title="var">freshns2</span> <span class="id" title="var">v1</span> <span class="id" title="var">v2</span> <span class="id" title="var">n1</span> <span class="id" title="var">n4</span> <span class="id" title="var">n3</span> <span class="id" title="var">n2</span> <span class="id" title="var">H2</span> .<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">asert_aplytrans</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> <span class="id" title="var">t</span> := <span class="id" title="var">assertg</span>  <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> <span class="id" title="var">t</span> ; <span class="id" title="tactic">try</span> <span class="id" title="var">aplytrans</span> <span class="id" title="var">H1</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>; <span class="id" title="tactic">symmetry</span> <span class="id" title="tactic">in</span> <span class="id" title="var">t</span>.<br/>
+</div>
+
+<div class="doc">
+tactics to replace fresh names in commitments 
+<div class="paragraph"> </div>
+
+ (b v2 n1) -&gt; (b v2 n3),  (b v1 n3) -&gt; (b v1 n1) 
+</div>
+<div class="code">
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">rep_commits</span>  <span class="id" title="var">v1</span> <span class="id" title="var">v2</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> <span class="id" title="var">H3</span> <span class="id" title="var">H</span> <span class="id" title="var">H0</span> :=  <span class="id" title="var">freshns</span> <span class="id" title="var">v1</span> <span class="id" title="var">v2</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n3</span> <span class="id" title="var">n4</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span>; (<span class="id" title="var">restrproj_in</span> 11 <span class="id" title="var">H</span>) ;<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">asert_aplytrans</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> <span class="id" title="var">H3</span> ;<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">asert_aplytrans</span> <span class="id" title="var">H</span> <span class="id" title="var">H3</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">symmetry</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H0</span>;<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">clear</span> -<span class="id" title="var">H0</span>.<br/>
+</div>
+
+<div class="doc">
+building the term when verification successful 
+</div>
+<div class="code">
+
+<br/>
+&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">ver_suc</span> <span class="id" title="var">n</span> <span class="id" title="var">x1</span> <span class="id" title="var">e1</span> <span class="id" title="var">x2</span> <span class="id" title="var">e2</span> <span class="id" title="var">H</span>:=<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x1</span>)) <span class="id" title="var">e1</span>)) (<span class="id" title="var">bol</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x2</span>)) <span class="id" title="var">e2</span>)) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span>  (<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> <span class="id" title="var">n</span>) <span class="id" title="var">e1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x1</span>))))  (<span class="id" title="var">bol</span> (<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> <span class="id" title="var">n</span>) <span class="id" title="var">e2</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x2</span>)))) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x1</span>)) <span class="id" title="var">e1</span>) &amp; (<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> <span class="id" title="var">n</span>) <span class="id" title="var">e1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x1</span>))))  (<span class="id" title="var">bol</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x2</span>)) <span class="id" title="var">e2</span>) &amp; (<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> <span class="id" title="var">n</span>) <span class="id" title="var">e2</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x2</span>)))) <span class="id" title="var">H</span>.<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">ver_suc1</span> <span class="id" title="var">n</span> <span class="id" title="var">x1</span> <span class="id" title="var">e1</span> <span class="id" title="var">x2</span> <span class="id" title="var">e2</span> <span class="id" title="var">H</span>:=<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x1</span>)) <span class="id" title="var">e1</span>)) (<span class="id" title="var">bol</span> (<span class="id" title="var">eqm</span> (<span class="id" title="var">pi1</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x2</span>)) <span class="id" title="var">e2</span>)) <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">bol</span>  (<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> <span class="id" title="var">n</span>) <span class="id" title="var">e1</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x1</span>))))  (<span class="id" title="var">bol</span> (<span class="id" title="var">ver</span> (<span class="id" title="var">pk</span> <span class="id" title="var">n</span>) <span class="id" title="var">e2</span> (<span class="id" title="var">pi2</span> (<span class="id" title="var">pi2</span> <span class="id" title="var">x2</span>)))) <span class="id" title="var">H</span>.<br/>
+</div>
+
+<div class="doc">
+apply unforgeability 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">unforge</span> <span class="id" title="var">x1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>:=<br/>
+&nbsp;&nbsp;<span class="id" title="var">ufcma_pi1</span> (<span class="id" title="var">x1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>); <span class="id" title="var">ufcma_pi2</span> (<span class="id" title="var">x1</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>);   <span class="id" title="var">ufcma_pi1</span> (<span class="id" title="var">x1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n1</span>);   <span class="id" title="var">ufcma_pi2</span> (<span class="id" title="var">x1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n1</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Axiom</span> <span class="id" title="var">EQL_eqm</span> : <span class="id" title="keyword">forall</span> <span class="id" title="var">u</span> <span class="id" title="var">u'</span>, (<span class="id" title="var">EQL</span> <span class="id" title="var">u</span> <span class="id" title="var">u'</span>) ##  (<span class="id" title="var">eqm</span> (<span class="id" title="var">L</span> <span class="id" title="var">u</span>) (<span class="id" title="var">L</span> <span class="id" title="var">u'</span>)).<br/>
+<span class="id" title="keyword">Check</span> <span class="id" title="var">L</span>.<br/>
+</div>
+
+<div class="doc">
+lengths of the encryptions are equal 
+</div>
+<div class="code">
+<span class="id" title="keyword">Axiom</span> <span class="id" title="var">len_nonce</span>: <span class="id" title="keyword">forall</span> <span class="id" title="var">n</span> <span class="id" title="var">n'</span>, (<span class="id" title="var">L</span> <span class="id" title="var">n</span>) # (<span class="id" title="var">L</span> <span class="id" title="var">n'</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Axiom</span> <span class="id" title="var">len_f1</span> : <span class="id" title="keyword">forall</span> <span class="id" title="var">t</span> <span class="id" title="var">t'</span> <span class="id" title="var">f</span>, (<span class="id" title="var">L</span> <span class="id" title="var">t</span>) # (<span class="id" title="var">L</span> <span class="id" title="var">t'</span>) -&gt; (<span class="id" title="var">L</span> (<span class="id" title="var">f</span> <span class="id" title="var">t</span>)) # (<span class="id" title="var">L</span> (<span class="id" title="var">f</span> <span class="id" title="var">t'</span>)).<br/>
+<span class="id" title="keyword">Axiom</span> <span class="id" title="var">len_f2</span> : <span class="id" title="keyword">forall</span> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">t1'</span> <span class="id" title="var">t2'</span> <span class="id" title="var">f</span>, (<span class="id" title="var">L</span> <span class="id" title="var">t1</span>) # (<span class="id" title="var">L</span> <span class="id" title="var">t1'</span>) -&gt; (<span class="id" title="var">L</span> <span class="id" title="var">t2</span>) # (<span class="id" title="var">L</span> <span class="id" title="var">t2'</span>)  -&gt; (<span class="id" title="var">L</span> (<span class="id" title="var">f</span> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span>)) # (<span class="id" title="var">L</span> (<span class="id" title="var">f</span> <span class="id" title="var">t1'</span> <span class="id" title="var">t2'</span>)).<br/>
+<span class="id" title="keyword">Axiom</span> <span class="id" title="var">len_f3</span> : <span class="id" title="keyword">forall</span> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">t3</span>  <span class="id" title="var">t1'</span> <span class="id" title="var">t2'</span> <span class="id" title="var">t3'</span> <span class="id" title="var">f</span>, (<span class="id" title="var">L</span> <span class="id" title="var">t1</span>) # (<span class="id" title="var">L</span> <span class="id" title="var">t1'</span>) -&gt; (<span class="id" title="var">L</span> <span class="id" title="var">t2</span>) # (<span class="id" title="var">L</span> <span class="id" title="var">t2'</span>) -&gt; (<span class="id" title="var">L</span> <span class="id" title="var">t3</span>) # (<span class="id" title="var">L</span> <span class="id" title="var">t3'</span>) -&gt; (<span class="id" title="var">L</span> (<span class="id" title="var">f</span> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">t3</span>)) # (<span class="id" title="var">L</span> (<span class="id" title="var">f</span> <span class="id" title="var">t1'</span> <span class="id" title="var">t2'</span> <span class="id" title="var">t3'</span>)).<br/>
+<span class="id" title="keyword">Axiom</span> <span class="id" title="var">len_f4</span> : <span class="id" title="keyword">forall</span> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">t3</span> <span class="id" title="var">t4</span> <span class="id" title="var">t1'</span> <span class="id" title="var">t2'</span> <span class="id" title="var">t3'</span> <span class="id" title="var">t4'</span> <span class="id" title="var">f</span>, (<span class="id" title="var">L</span> <span class="id" title="var">t1</span>) # (<span class="id" title="var">L</span> <span class="id" title="var">t1'</span>) -&gt; (<span class="id" title="var">L</span> <span class="id" title="var">t2</span>) # (<span class="id" title="var">L</span> <span class="id" title="var">t2'</span>) -&gt; (<span class="id" title="var">L</span> <span class="id" title="var">t3</span>) # (<span class="id" title="var">L</span> <span class="id" title="var">t3'</span>) -&gt; (<span class="id" title="var">L</span> <span class="id" title="var">t4</span>) # (<span class="id" title="var">L</span> <span class="id" title="var">t4'</span>) -&gt; (<span class="id" title="var">L</span> (<span class="id" title="var">f</span> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">t3</span> <span class="id" title="var">t4</span>)) # (<span class="id" title="var">L</span> (<span class="id" title="var">f</span> <span class="id" title="var">t1'</span> <span class="id" title="var">t2'</span> <span class="id" title="var">t3'</span> <span class="id" title="var">t4'</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Axiom</span> <span class="id" title="var">ENCCPA'</span>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">u</span> <span class="id" title="var">u'</span> <span class="id" title="var">u''</span>: <span class="id" title="var">message</span>) (<span class="id" title="var">n</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">n3</span> :<span class="id" title="var">nat</span>) {<span class="id" title="var">m</span>} (<span class="id" title="var">l</span>:<span class="id" title="var">mylist</span> <span class="id" title="var">m</span>),  (<span class="id" title="var">eqm</span> (<span class="id" title="var">L</span> <span class="id" title="var">u</span>) (<span class="id" title="var">L</span> <span class="id" title="var">u'</span>)) ## <span class="id" title="var">TRue</span> -&gt;   (<span class="id" title="var">leb</span> (<span class="id" title="var">length</span> (<span class="id" title="var">distmvars</span> <span class="id" title="var">l</span>)) 1) = <span class="id" title="var">true</span> -&gt; (<span class="id" title="var">clos_listm</span> [<span class="id" title="var">u</span>; <span class="id" title="var">u'</span>; <span class="id" title="var">u''</span>] = <span class="id" title="var">true</span>) -&gt; ((<span class="id" title="var">Fresh</span> [<span class="id" title="var">n2</span>] <span class="id" title="var">l</span>) = <span class="id" title="var">true</span>) -&gt; ((<span class="id" title="var">Fresh</span> [<span class="id" title="var">n3</span>] <span class="id" title="var">l</span>) = <span class="id" title="var">true</span>) -&gt; ((<span class="id" title="var">checkmtmylis</span> (<span class="id" title="var">sk</span> <span class="id" title="var">n1</span>) <span class="id" title="var">l</span>) = <span class="id" title="var">false</span>)  -&gt; (<span class="id" title="var">l</span>++ [<span class="id" title="var">msg</span> (<span class="id" title="var">enc</span> <span class="id" title="var">u</span> (<span class="id" title="var">pk</span> <span class="id" title="var">n1</span>) (<span class="id" title="var">rr</span> (<span class="id" title="var">N</span> <span class="id" title="var">n2</span>)))]) ~ (<span class="id" title="var">l</span>++ [<span class="id" title="var">msg</span> (<span class="id" title="var">enc</span> <span class="id" title="var">u'</span> (<span class="id" title="var">pk</span> <span class="id" title="var">n1</span>) (<span class="id" title="var">rr</span> (<span class="id" title="var">N</span> <span class="id" title="var">n3</span>)))]).<br/>
+</div>
+
+<div class="doc">
+include cor_ex7_2.v 
+</div>
+<div class="code">
+<span class="id" title="keyword">Axiom</span> <span class="id" title="var">EQmsg'</span>: <span class="id" title="keyword">forall</span>(<span class="id" title="var">x</span> <span class="id" title="var">y</span>: <span class="id" title="var">message</span>),   <span class="id" title="var">x</span> # <span class="id" title="var">y</span> &lt;-&gt;   (<span class="id" title="var">eqm</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) ## (<span class="id" title="var">TRue</span>) .<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">bterm</span> <span class="id" title="var">v1</span> <span class="id" title="var">v2</span> <span class="id" title="var">ck</span> <span class="id" title="var">H</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">funapptrmhyp</span> (<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v1</span> <span class="id" title="var">ck</span>) (<span class="id" title="var">S</span> <span class="id" title="var">ck</span>))) (<span class="id" title="var">msg</span> (<span class="id" title="var">e</span> (<span class="id" title="var">b</span> <span class="id" title="var">v2</span> <span class="id" title="var">ck</span>) (<span class="id" title="var">S</span> <span class="id" title="var">ck</span>))) <span class="id" title="var">H</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
