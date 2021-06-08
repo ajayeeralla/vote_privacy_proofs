@@ -3,7 +3,6 @@
 (************************************************************************)
  
 Require Export axioms.
-Open Scope msg_scope.
  Section andb_props. 
 Axiom IFTF: forall (n: nat), (IF (Bvar n) then TRue else FAlse) ## (Bvar n).
 Theorem IFMORPH_B1: forall ( b b1 b2 : Bool) (n1 n2:nat) ,
@@ -217,7 +216,7 @@ Proof.
  intros.
 unfold notb, andB.
 rewrite <- IFSAME_B with (b:= (Bvar (n1+1))) (b1:= (IF (Bvar n1) then (IF (Bvar (n1 + 1)) then FAlse else TRue) else FAlse)).
-rewrite IFEVAL_B with (n := (n1+1)).
+rewrite IFEVAL_B with (n := (n1+1)%nat).
  simpl.
 rewrite <- beq_nat_refl.
 rewrite IFFALSE_B.
@@ -233,9 +232,8 @@ assumption.
 rewrite H.
 rewrite IFTF.
 reflexivity.
-
-
 Qed.
+Close Scope msg_scope.
 End andb_props.
 
 

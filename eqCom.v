@@ -11,7 +11,7 @@ Require Import Omega.
 (** This library defines a theorem that states, 
 
 [forall x y, (eqm x y) = (eqm y x)]. *)
-
+Open Scope nat_scope.
 Theorem Example14_M: forall (n1 m1 : nat),  (eqm (Mvar n1) (Mvar m1) ) ##  (eqm (Mvar m1) (Mvar n1)).
 Proof.
 intros . 
@@ -31,7 +31,6 @@ simpl in H2.
 assert(H4: n1<> n1+m1+1).
 omega.
 assert (H3: beq_nat (n1+m1+1) n1  = false).
-SearchAbout beq_nat.  
 apply beq_nat_false_iff  with (x:=n1)(y:=n1+m1+1) in H4; auto.
 rewrite Nat.eqb_sym; auto.
 rewrite H3 in H2.
@@ -88,3 +87,4 @@ Axiom Example14_M': forall (m1 m2: message),  (m1 #? m2) ##  (m2 #? m1).
 (*Proof. intros. pose proof(Example14_M 0 1).
        apply Forall_ELM_EVAL_B1 with (n:= 0) (b:=m1) in H.    simpl in H.
        apply Forall_ELM_EVAL_B1 with (n:= 1) (b:=m2) in H. simpl in H.*)
+Close Scope nat_scope.

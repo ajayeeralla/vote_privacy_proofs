@@ -23,13 +23,13 @@ Notation "'[' x '<-' s ']' l" :=  (submsg_mylist x s l).
 
    (** * [Computational Hiding] *) 
    (** * [COMPHID] *)
-   Axiom compHid: forall (n1 n2:nat) (t t1 t2 : message) {n} (z: mylist n), closMylist [msg t, msg t1, msg t2] = true /\ closMylist z = true /\ Fresh [n1; n2] ([msg t, msg t1, msg t2]++z) = true ->
+Axiom compHid: forall (n1 n2:nat) (t t1 t2 : message) {n} (z: mylist n), closMylist [msg t, msg t1, msg t2] = true /\ closMylist z = true /\ Fresh (cons n1 (cons n2 nil)) ([msg t, msg t1, msg t2]++z) = true ->
                                                                             (z ++ [msg (If |t1|#?|t2| then ((comm t1 (k n1)), (comm t2 (k n2))) else t)]) ~ (z ++ [msg (If |t1|#?|t2| then ((comm t2 (k n1)), (comm t1 (k n2))) else t)]).
 Eval compute in ([0<- O] [msg O]).
    
-   Axiom compHid_ext: forall (n2 n3 n4 n5:nat) (t2 t3 : message) {n} {m} (z: mylist n) (l:mylist m), closMylist [msg t2, msg t3] = true /\ closMylist z = true /\ Fresh [n2; n3] (z++[msg t2, msg t3]) = true /\ (|t2|#?|t3|) ## TRue ->
+   Axiom compHid_ext: forall (n2 n3 n4 n5:nat) (t2 t3 : message) {n} {m} (z: mylist n) (l:mylist m), closMylist [msg t2, msg t3] = true /\ closMylist z = true /\ Fresh (cons n2 (cons n3 nil)) (z++[msg t2, msg t3]) = true /\ (|t2|#?|t3|) ## TRue ->
                                                                                 ((length (distMvars l))=? 2)%nat = true -> 
-                                                                                let mvl:= [n4; n5] in ((distMvars l) = mvl \/ (distMvars l) = [n5; n4])  ->
+                                                                                let mvl:= (cons n4 (cons n5 nil)) in ((distMvars l) = mvl \/ (distMvars l) = cons n5 (cons n4 nil))  ->
                                                                                                         
                                                                                                          let m0 := (comm t2 (k n2)) in
                                                                                                          let m1 := (comm t3 (k n3)) in
@@ -43,8 +43,8 @@ Eval compute in ([0<- O] [msg O]).
 (** [BLINDNESS] *)
 
 Axiom blindness: forall (n0 n1 n2 n3:nat) {n} (m0 m1 t t0 t1 : message) (z: mylist n),
-    (Fresh [n0; n1] (z ++[msg t, msg m0, msg m1, msg t0 , msg t1]) = true) ->  closMylist (z++ [msg t, msg m0, msg m1]) = true ->   ((length (distMvars [msg t0, msg t1]))=? 2)%nat = true -> 
-    let mvl:= [n2; n3] in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
+    (Fresh (cons n0 (cons n1 nil)) (z ++[msg t, msg m0, msg m1, msg t0 , msg t1]) = true) ->  closMylist (z++ [msg t, msg m0, msg m1]) = true ->   ((length (distMvars [msg t0, msg t1]))=? 2)%nat = true -> 
+    let mvl:= cons n2 (cons n3 nil) in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
                  let r0 := (r n0) in
                  let r1 := (r n1) in
                  let t2 := ({{ n2 := (bl m0 t r0) }} ({{ n3:=(bl m1 t r1) }} t0)) in
@@ -59,8 +59,8 @@ Axiom blindness: forall (n0 n1 n2 n3:nat) {n} (m0 m1 t t0 t1 : message) (z: myli
                   (z ++ [msg (bl m1 t r0), msg (bl m0 t r1), msg (If (acc m1 t r0 t4)& (acc m0 t r1 t5) then pair2 else (|_, |_))]). 
 
 Axiom ubNotUndefined: forall (n0 n1 n2 n3:nat) (t t0 t1 t2 : message), closMylist [msg t, msg t0] = true -> 
-                                                                 (Fresh [n0; n1] [msg t, msg t0, msg t1, msg t2] = true) ->
-                                                                 let mvl := [n2; n3] in (mVarMsg t2) = mvl ->
+                                                                 (Fresh (cons n0 (cons n1 nil)) [msg t, msg t0, msg t1, msg t2] = true) ->
+                                                                 let mvl := cons n2 (cons n3 nil) in (mVarMsg t2) = mvl ->
                                                                                         let r1 := (r n0) in
                                                                                         let r2 := (r n1) in
                                                                  let t4:= ({{ n2 := (bl t1 t r2)  }} ({{n3:=(bl t0 t r1)  }} t2)) in
@@ -68,8 +68,8 @@ Axiom ubNotUndefined: forall (n0 n1 n2 n3:nat) (t t0 t1 t2 : message), closMylis
                                                                  (IF (acc t0 t r1 t4) then (ub t0 t r1 t4)#?|_ else FAlse) ## FAlse. 
 
 Axiom ubNotUndefined2: forall (n0 n1 n2 n3:nat) (t t0 t1 t2 : message), closMylist [msg t, msg t0] = true -> 
-                                                                 (Fresh [n0; n1] [msg t, msg t0, msg t1, msg t2] = true) ->
-                                                                 let mvl := [n2; n3] in (mVarMsg t2) = mvl ->
+                                                                 (Fresh (cons n0 (cons n1 nil)) [msg t, msg t0, msg t1, msg t2] = true) ->
+                                                                 let mvl := cons n2 (cons n3 nil)  in (mVarMsg t2) = mvl ->
                                                                                         let r1 := (r n0) in
                                                                                         let r2 := (r n1) in
                                                                  let t4:= ({{ n2 := (bl t0 t r1)}} ({{n3:=(bl t1 t r2)}} t2)) in
@@ -85,7 +85,7 @@ Axiom ubNotUndefined2: forall (n0 n1 n2 n3:nat) (t t0 t1 t2 : message), closMyli
 Axiom ubEql: forall (n0 n1 n3 n4:nat) (t t0 t1 t2 t3: message), closMylist [msg t, msg t0, msg t1] = true -> (occur_name_msg n0 t2) = false -> (occur_name_msg n1 t3) = false ->
                                                                  (Fresh (cons n0 nil) [msg t, msg t0, msg t3] = true)%nat -> (Fresh (cons n1 nil) [msg t, msg t1, msg t2] = true) -> (|t0|#?|t1|) ## TRue -> 
 
-                                                                let mvl := [n3;n4] in (mVarMsg t2) = mvl /\ (mVarMsg t3) = mvl ->                                                                                            
+                                                                let mvl := cons n3 (cons n4 nil) in (mVarMsg t2)= mvl /\ (mVarMsg t3) = mvl ->                                                                                            
                                                                                             let r0:= (r n0) in 
                                                                                             let r1:= (r n1) in 
                                                                                             let t4:= ({{ n3 := (bl t0 t r0) }} ({{ n4 := (bl t1 t r1) }} t2)) in

@@ -6,8 +6,6 @@ Require Export induction.
 (** This library defines equational theory and axioms. The axioms are written for [message] and [Bool] types. *)
 
 (** * Equational theory for DH Protocol *)
-Open Scope msg_scope.
-Open Scope ind_scope.
 Section eqtheory.
 Axiom proj1: forall (m1 m2 : message),  (pi1 (m1, m2)) # m1.
 Axiom proj2: forall (m1 m2 : message), (pi2 (m1, m2)) # m2.
@@ -109,7 +107,6 @@ End funapp.
 (** [RESTR] *)
 Section restr.
 (** Indistinguishability is closed under projections *)
-Local Open Scope ind_scope.
 Axiom RESTR_proj : forall ( p :nat) {m} (ml1 ml2 :mylist m), ml1 ~ ml2 -> (proj_at_pos p ml1) ~ (proj_at_pos p ml2).
 
 Axiom RESTR_dropls: forall {n} (ml1 ml2: mylist n), ml1 ~ ml2 -> (droplastsec ml1) ~ (droplastsec ml2).
@@ -253,7 +250,7 @@ Axiom sub_bol_f : forall ( n :nat) (b: Bool) {m} (l: ilist message m), ( n := b 
 
 Fixpoint occurNlist (n:nat) (nl: Nlist):bool :=
   match nl with
-  | [ ] => false
+  | nil => false
   | h :: t => beq_nat n h || occurNlist n t
   end.
 
@@ -329,7 +326,7 @@ Axiom correctness :  forall (n:nat) (t t' :message), (ver (vk n)  t (sign (ssk n
   Fixpoint unforgb  (j:nat) (n:nat)  (ml: list message) (t u :message) : Bool :=
     match j, ml with
       |  0 , _ => FAlse
-      |  S _, [ ] => FAlse             
+      |  S _, nil => FAlse             
       | S j',  h :: tl => match h with
                              | (sign (pi2 (ks (N n))) t1 t2) =>   IF (eqm t t1) then (ver (vk n) t1 u) else (unforgb j' n tl t u)
                              | _ => FAlse

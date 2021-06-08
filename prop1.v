@@ -8,7 +8,10 @@ Require Export Coq.Logic.JMeq.
 Require Export Coq.Logic.EqdepFacts.
 Require Import Omega.
 Eval compute in message_beq O O.
-Eval compute in message_beq (N 1) (N 2).
+Open Scope msg_scope.
+
+
+(** Eval compute in message_beq (N 1) (N 2) **)
 (** * Proposition 1 *)
  Section prop. 
 
@@ -59,7 +62,7 @@ repeat aply_exists.     *)
 
    Axiom swapElseBranches: forall b1 b2 t0 t1 t2 t3, (If b1&b2 then t0 else (If b2 then t2 else (If b1 then t1 else t3))) #  (If b1&b2 then t0 else (If b1 then t1 else (If b2 then t2 else t3))).
 
-     Axiom  IFBRANCH_M1': forall {n n1} (ml1 ml2: mylist n) (ml3 ml4: mylist n1) (b b' : Bool)(x x' y y':message), (ml1 ++ ml3 ++ [ bol b , msg x] ) ~  ( ml2 ++ ml4 ++ [ bol b', msg x'])  ->  (ml1 ++ ml3++ [bol b , msg y ] ) ~( ml2 ++ ml4++ [bol b' , msg y']) -> (ml1 ++ ml3++ [msg (If b then x else y)])~ (ml2 ++ ml4++ [msg (If b' then x' else y')]).
+     Axiom  IFBRANCH_M1': forall {n n1} (ml1 ml2: mylist n) (ml3 ml4: mylist n1) (b b' : Bool)(x x' y y':message), (ml1 ++ ml3 ++ [ bol b , msg x]) ~  ( ml2 ++ ml4 ++ [ bol b', msg x'])  ->  (ml1 ++ ml3++ [bol b , msg y ] ) ~( ml2 ++ ml4++ [bol b' , msg y']) -> (ml1 ++ ml3++ [msg (If b then x else y)])~ (ml2 ++ ml4++ [msg (If b' then x' else y')]).
 
    (** * We brought the following changes to the original proposition 
 
@@ -91,8 +94,8 @@ Ltac appconst H:=
 
 (** ubNotUndefined_ext is provable from [ubNotUndefined] **)
 
-Axiom ubNotUndefined_ext: forall (t t0 t1 c00 c11 : message) (n1 n2 n5 n6:nat), (Fresh [n1; n2] ([msg t, msg t0, msg t1, msg c00, msg c11])  = true) ->  (closMylist [msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
-                                                                        let mvl:= [n5; n6] in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
+Axiom ubNotUndefined_ext: forall (t t0 t1 c00 c11 : message) (n1 n2 n5 n6:nat), (Fresh (cons n1 (cons n2 nil)) ([msg t, msg t0, msg t1, msg c00, msg c11])  = true) ->  (closMylist [msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
+                                                                        let mvl:= (cons n5 (cons n6 nil)) in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
                                                                                               let r0 := (r n1) in
                  let r1 := (r n2) in
                 let t2 := ({{ n5 := (bl c00 t r0) }} ({{ n6:=(bl c11 t r1) }} t0)) in
@@ -118,17 +121,17 @@ Axiom msg_beq_refl: (forall m, message_beq m m = true).
 
 Eval compute in message_beq O O.
 Check message_beq.
-SearchAbout message_beq.
+
 Print message_beq.
 Hint Resolve message_beq.
-SearchAbout message.
+
 
 
 
 (*Axiom voteEql : forall x, (|(V0 x)| #? |(V1 x)|) ## TRue. *)
 
 Notation "'[' x '<-' s ']' l" :=  (submsg_mylist x s l).
-Axiom extFreshInd: forall {n} n1 n2 n3 (l:mylist n), (Fresh [n1; n2] l) = true -> ((length (distMvars l))<=? 1)%nat = true ->
+Axiom extFreshInd: forall {n} n1 n2 n3 (l:mylist n), (Fresh (cons n1 (cons n2 nil)) l) = true -> ((length (distMvars l))<=? 1)%nat = true ->
                                                   (distMvars l) = (cons n3 nil) ->
                                                   ([ n3 <- (N n1)] l) ~ ([n3 <- (N n2)] l).
 Fixpoint check_n_occur (n:nat)(nl: Nlist): bool :=
@@ -256,7 +259,7 @@ Qed.
  Proof.  intros.  induction t using message_Bool_ind' with (P:= (fun t => closMsg t = true ->  check_n_occur n (mVarMsg t) = false)) (P0:= (fun b => closBol b = true -> (check_n_occur n (mVarBol b) = false))); crush.
  apply n_occ_false.
 split. apply IHt1. simpl in H.
-SearchAbout andb. apply Bool.andb_true_iff in H; inversion H.  apply Bool.andb_true_iff in H0. inversion H0; auto.
+apply Bool.andb_true_iff in H; inversion H.  apply Bool.andb_true_iff in H0. inversion H0; auto.
 apply n_occ_false. split.
 rewrite IHt2;try reflexivity.  apply Bool.andb_true_iff in H; inversion H; apply Bool.andb_true_iff in H0; inversion H0; auto.
  apply Bool.andb_true_iff in H; inversion H; apply Bool.andb_true_iff in H0; inversion H0; auto.
@@ -386,7 +389,7 @@ Proof. intros. apply clos_n_occ_false with (n:=n) in H. apply sub_ident with (s:
   Axiom dupBoolSec: forall b1 b2 t1, (IF b1& b2 then t1 else TRue) = (IF b1&b2 then (IF b2 then t1 else FAlse) else TRue).
 Axiom dupBoolFirst: forall b1 b2 t1, (IF b1& b2 then t1 else TRue) = (IF b1&b2 then (IF b1 then t1 else FAlse) else TRue).
 
-Axiom aply_f_sub: forall n1 s1 n2 s2 t (f:message-> Nlist), let mvl:= (mVarMsg t) in mvl = [n1; n2] -> (f ({{n1:=s1}} ({{n2:=s2}} t))) = ((f s1) ++ (f s2))%list. 
+Axiom aply_f_sub: forall n1 s1 n2 s2 t (f:message-> Nlist), let mvl:= (mVarMsg t) in mvl = (cons n1 (cons n2 nil)) -> (f ({{n1:=s1}} ({{n2:=s2}} t))) = ((f s1) ++ (f s2))%list. 
 
 
 Axiom sub_in_sub: forall n1 s1  n2 s2 t, {{ n1:= s1}} ({{n2:= s2}} t) # ({{n2:= ({{n1:=s1}} s2)}} ({{n1:=s1}} t)).
@@ -400,7 +403,7 @@ Ltac funappelt n H:= apply FUNCApp_appelt with (p:= n) in H; unfold getelt_at_po
 Theorem prop_esorics:  forall (t t0 t1 : message), let v0 := (V0 (N 0)) in
                                                                                                       let v1 := (V1 (N 0)) in
                                                                                                       (|v0|#?|v1|) ## TRue ->  (Fresh [1; 2; 3; 4] ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  -> 
-    let mvl:= [5; 6] in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
+    let mvl:= (cons 5 (cons 6 nil)) in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
                  let r0 := (r 1) in
                  let r1 := (r 2) in
                  let k0 := (kc (N 3)) in
@@ -546,7 +549,6 @@ inversion H0; auto.
 reflexivity. 
 assert(occur_name_msg 2 t = false).
 destruct (occur_name_msg 2 t). simpl in H0.
-SearchAbout orb.
 rewrite Bool.orb_true_r in H0. 
 inversion H0;  auto. reflexivity.
 rewrite H5, H6 in H0 |- *.
@@ -981,7 +983,6 @@ pose proof(compHid_ext 3 4 0 1 v0 v1 [] [msg (bl (Mvar 0) t (r 1)), msg (bl (Mva
    msg (ub (Mvar 0) t (r 1) {{5 := bl (Mvar 0) t (r 1)}} ({{6 := bl (Mvar 1) t (r 2)}} (t0)), ((Mvar 0), |_))]).
 simpl in H6.  simpl in H1.
 
-SearchAbout andb.
 rewrite Bool.andb_true_r in H1.
 do 4 rewrite sub_clos with (t:= t) in H6; auto.
 simpl in H6. 
@@ -1118,7 +1119,7 @@ Qed.
 Axiom prop_esorics_gen:  forall {n} (t t0 t1 : message) (z:mylist n), let v0 := (V0 (N 0)) in
                                                                                                       let v1 := (V1 (N 0)) in
                                                                                                       (|v0|#?|v1|) ## TRue ->  (Fresh [1; 2; 3; 4] ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
-    let mvl:= [5; 6] in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
+    let mvl:= (cons 5 (cons 6 nil)) in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
                  let r0 := (r 1) in
                  let r1 := (r 2) in
                  let k0 := (kc (N 3)) in
@@ -1147,7 +1148,7 @@ Axiom prop_esorics_gen:  forall {n} (t t0 t1 : message) (z:mylist n), let v0 := 
 Theorem ext_blind:  forall (t t0 t1 : message), let v0 := (V0 (N 0)) in
                                                                                                       let v1 := (V1 (N 0)) in
                                                                                                       (|v0|#?|v1|) ## TRue ->  (Fresh [1; 2; 3; 4] ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
-    let mvl:= [5; 6] in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
+    let mvl:= (cons 5 (cons 6 nil)) in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
                  let r0 := (r 1) in
                  let r1 := (r 2) in
                  let k0 := (kc (N 3)) in
@@ -1292,7 +1293,6 @@ inversion H0; auto.
 reflexivity. 
 assert(occur_name_msg 2 t = false).
 destruct (occur_name_msg 2 t). simpl in H0.
-SearchAbout orb.
 rewrite Bool.orb_true_r in H0. 
 inversion H0;  auto. reflexivity.
 rewrite H5, H6 in H0 |- *.
@@ -1769,7 +1769,7 @@ Qed.
 Axiom ext_blind_gen:  forall {n} (t t0 t1 : message) (z:mylist n), let v0 := (V0 (N 0)) in
                                                                                                       let v1 := (V1 (N 0)) in
                                                                                                       (|v0|#?|v1|) ## TRue ->  (Fresh [1; 2; 3; 4] ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
-    let mvl:= [5; 6] in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
+    let mvl:= (cons 5 (cons 6 nil)) in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
                  let r0 := (r 1) in
                  let r1 := (r 2) in
                  let k0 := (kc (N 3)) in

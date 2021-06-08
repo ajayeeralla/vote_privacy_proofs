@@ -8,7 +8,7 @@
 
 Require Export eqCom.
 Require Import Coq.Bool.Bool.
-
+Require Export Coq.Init.Peano.
 (** This library defines a theorem that states,
 << 
 n1<> n2 => EQ ( (N n1) , <(N n1),(N n2)>)= false.

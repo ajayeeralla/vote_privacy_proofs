@@ -33,6 +33,14 @@ Note that type [Bool] is different from the built-in type [bool]
 Set Boolean Equality Schemes. 
 Set Decidable Equality Schemes.
 
+(** [ilist]: Polymorphic length-indexed list *)
+
+Inductive ilist A : nat -> Type :=
+| Nil : ilist A 0
+| Cons: forall n, A-> ilist A n  -> ilist A (S n).
+
+Type ilist_ind.
+
 Inductive message: Type :=
 (** Core symbols *)  
 | Mvar: nat -> message  (** Variable of type message *)           
@@ -44,7 +52,7 @@ Inductive message: Type :=
 | pi2: message-> message
 | to: message -> message
 | L: message-> message
-| f: list message-> message(** Attacker's computation *)
+| f: list message -> message(** Attacker's computation *)
 (** FOO symbols *)                   
 (** Phase numbers *) 
 | ONE: message
@@ -102,9 +110,9 @@ with Bool : Type :=
 (** Signatures *)
 | ver : message-> message-> message-> Bool.
 
-Print message_beq.
+(*Print message_beq.*)
 Check list_ind.
- Eval compute in message_beq O O.
+(*Eval compute in message_beq O O.*)
 
  (** induction using using Schemes *)
 
@@ -289,7 +297,7 @@ Notation "|_" := bot:msg_scope.
 
 Eval compute in message_beq O O.
 
-Eval compute in message_beq (f [(N 1); O]) (f [(N 1); (N 2)]).
+(** Eval compute in message_beq (f [(N 1); O]) (f [(N 1); (N 2)]) *)
 
 (** [oursum] *)
 
@@ -308,13 +316,7 @@ Lemma oursum_eq_dec: forall x y : oursum, {x = y} + {x<> y}.
 Proof. decide equality. Qed.
 
 (** End tactics *)
-(** [ilist]: Polymorphic length-indexed list *)
 
-Inductive ilist A : nat -> Type :=
-| Nil : ilist A 0
-| Cons: forall n, A-> ilist A n  -> ilist A (S n).
-
-Type ilist_ind.
 
 (** Notations *)
 
@@ -369,7 +371,7 @@ Fixpoint mylist_beq {m1 m2} (l1: mylist m1) ( l2:mylist m2) :bool:=
 
 
 Infix "=?" := mylist_beq (at level 70): msg_scope. 
-Eval compute in ( [msg O , msg O] =? [msg O, msg (f (cons O [ ])) ]).
+(** Eval compute in ( [msg O , msg O] =? [msg O, msg (f (cons O nil)) ]) **)
 Open Scope msg_scope.
 (** Abbrevations *)
 
@@ -476,7 +478,7 @@ end.
 
 Fixpoint conv_listm_mylist ( l :  Mlist) : mylist (length l) :=
 match l with
-| [ ] => []
+| nil => []
 | cons a h => msg a : (conv_listm_mylist h)
 end.
 
@@ -484,7 +486,7 @@ end.
 
 Fixpoint toListm {n:nat} (osl: mylist n) : Mlist :=
 match osl with
-| [] => [ ]
+| [] => nil
 | a : h => cons  (if (chkmsg_os a) then (ostomsg a) else O) (toListm h)
  
 end.
@@ -493,7 +495,7 @@ end.
 
 Fixpoint conv_mylist_listos {n:nat} (osl:mylist n) :oslist :=
 match osl with 
-| [] => [ ]
+| [] => nil
 | a : h => (cons a (conv_mylist_listos h ) )
 end.
 
@@ -509,7 +511,7 @@ end.
 
 Fixpoint conv_listos_mylist (l : oslist) : (mylist (length l)) :=
 match l with
-| [ ] => []
+| nil => []
 | cons h t => h: (conv_listos_mylist t)
 end.
 
@@ -672,7 +674,7 @@ Definition  subbol_os (n:nat)(s:Bool) (t:oursum):oursum :=
 
 Fixpoint test_list {X:Type} (test: X -> bool) (l:list X): bool := 
   match l with
-    | [ ] => true
+    | nil => true
     | cons h t => if (test h) then (test_list test t) else false
   end.
    
@@ -751,7 +753,7 @@ Definition closOs (t:oursum): bool :=
 
 Fixpoint closMlist (l: Mlist):bool:=
   match l with 
-    | [ ]=> true
+    | nil => true
     | cons  h t => (^? h) && (closMlist t)
   end.
 
@@ -760,7 +762,7 @@ Fixpoint closMlist (l: Mlist):bool:=
 
 Fixpoint closBlist (l: Blist ):bool:=
   match l with 
-    | [ ]=> true
+    | nil => true
     | cons h t => (?^ h) && (closBlist t)
   end.
 
@@ -860,7 +862,7 @@ Infix " ++ " := appMylist : msg_scope.
 
 
 
-Theorem app_assoc: forall (n n' n'' : nat) (l1 :mylist n) (l2: mylist n') (l3: mylist n'') (fr: (n + n')+ n'' = n + (n' + n'')),
+(**Theorem app_assoc: forall (n n' n'' : nat) (l1 :mylist n) (l2: mylist n') (l3: mylist n'') (fr: (n + n')+ n'' = n + (n' + n'')),
                      l1 ++ (l2 ++ l3) = match fr in (_ = n''') return  mylist n''' with
                                           | eq_refl =>  (l1 ++ l2) ++ l3
                                                                                    
@@ -876,9 +878,9 @@ intros.
 rewrite (UIP_refl _ _ fr0).
 rewrite (UIP_refl _ _ fr'0).
  reflexivity.
-Qed.
+Qed. 
 
-Hint Resolve app_assoc.
+Hint Resolve app_assoc. 
 Check plus_n_O 1. 
 Check eq_sym (plus_n_O 1).
 Definition eq_n_O (n:nat): (n + 0 = n) := eq_sym (plus_n_O n).
@@ -895,10 +897,10 @@ Definition iapp { n m} (a: mylist n) (b:mylist m) : (mylist (n+m)) :=
       match eq_sym (plus_n_O n) in (_ = n) return ilist _ n with
        | eq_refl => appMylist a []
       end in
-           appMylist c b.
+           appMylist c b. *)
       
  (*
-      Lemma myapp_l_[ ] : forall n (fr: n + 0 = n ) (l : mylist n), 
+      Lemma myapp_l_nil : forall n (fr: n + 0 = n ) (l : mylist n), 
            (match fr in (_ = n) return ilist _ n with 
             | eq_refl =>  l ++ []
             end) = l .
@@ -1005,7 +1007,7 @@ Definition  occurOs (n:nat)(t:oursum): bool :=
 
 Fixpoint occurMlist (n:nat) (ml : Mlist):bool :=
   match ml with
-    | [ ] => false
+    | nil => false
     | h:: ml1 => (occur_name_msg n h) || (occurMlist n ml1)
   end.
 
@@ -1013,7 +1015,7 @@ Fixpoint occurMlist (n:nat) (ml : Mlist):bool :=
 
 Fixpoint occurBlist (x:nat) (ml : Blist):bool :=
   match ml with
-    | [ ] => false
+    | nil => false
     | h :: ml1 =>  (occur_name_bol x h) || (occurBlist x ml1)
   end.
 
@@ -1030,20 +1032,19 @@ Fixpoint occur_name_mylist {m:nat}(x:nat) (ml :  mylist m):bool :=
 
 Fixpoint count_occur  (x : nat)(l : Nlist) : nat :=
   match l with
-    | [ ] => 0
+    | nil => 0
     | y::t =>  if (beq_nat y x) then S (count_occur x t) else (count_occur x t)
   end.
 
-Eval compute in (count_occur 1 [1;1;1]).
+
 
 (** Check if no redundancies in [ilist] *)
 Check beq_nat.
 
-SearchAbout beq_nat.
 
 Fixpoint dupNlist (l:Nlist): bool :=
   match l with
-    | [ ] => false
+    | nil => false
     | h :: t => let x := (count_occur h l) in
               match (1<?x) with
                 | true => true  
@@ -1051,8 +1052,8 @@ Fixpoint dupNlist (l:Nlist): bool :=
               end
   end.
 
-Eval compute in (dupNlist [1;1]).
-Eval compute in (dupNlist [1;2;3]).
+(** Eval compute in (dupNlist [1;1]).*)
+(** Eval compute in (dupNlist [1;2;3]) *)
 
 Definition noDupNlist l := negb (dupNlist l).
 
@@ -1071,10 +1072,10 @@ Eval compute in True \/ False.
 
 Fixpoint occurNlistMylist {m:nat}(nl:Nlist)(ml: mylist m): bool :=
 match nl with
-|[ ] => false
+|nil => false
 | h::t=> (occur_name_mylist h ml) || (occurNlistMylist t ml)
 end.
-Eval compute in (occurNlistMylist (cons 1 [ ]) [msg (N 2), msg (N 4)]).
+Eval compute in (occurNlistMylist (cons 1 nil) [msg (N 2), msg (N 4)]).
 
 
 (** Check if an element occurs in [ilist] *)
@@ -1090,8 +1091,8 @@ Eval compute in (S (pred 1)).*)
 (** Function [Fresh] to check if the list of numbers are freshly generated numbers *)
 
 Definition Fresh {m:nat} (nl : Nlist)(ml : mylist m): bool := (noDupNlist nl) && (negb (occurNlistMylist nl ml)).
-Eval compute in noDupNlist (cons 1 [ ]).
-  Eval compute in Fresh (cons 1 [ ]) [msg (comm (V0 (N 1)) (kc (N 7)))].
+Eval compute in noDupNlist (cons 1 nil).
+  Eval compute in Fresh (cons 1 nil) [msg (comm (V0 (N 1)) (kc (N 7)))].
 (** Check if an [exp term (exp (G n) (g n) (r n1))] occurs in a term *)
 (** Check if a term t of type msg occurs in a term of either [msg] or [Bool] type *)
 
@@ -1164,7 +1165,7 @@ Definition checkmtos (t:message) (t':oursum): bool :=
 
 Fixpoint checkmtlism (t:message) (l: Mlist):bool :=
   match l with
-    | [ ] => false
+    | nil => false
     |  cons h t' => (orb (checkmtmsg t h) (checkmtlism t t'))
   end.
 
@@ -1627,8 +1628,8 @@ Variable  f: message -> message -> bool.
 (**check if two lists equal*)
 Fixpoint check_eq_listm  (l l' :Mlist)  :bool :=
   match l  with
-    | [ ] => match l' with
-               | [ ] => true
+    | nil => match l' with
+               | nil => true
                | _ => false
              end  
     | cons h t =>  match l' with
@@ -2050,7 +2051,7 @@ Section subtrm.
 Variable f: message -> Mlist.
 Fixpoint subtrmls (l: Mlist) : Mlist :=
   match l with
-    | [ ] => [ ]
+    | nil => nil
     | cons h t => (app (f h) (subtrmls t))
   end.
 End subtrm.
@@ -2065,52 +2066,52 @@ Fixpoint subtrmls_bol  (t: Bool) : Mlist :=
     | ver t1 t2 t3 => (app (subtrmls_msg t1) (app (subtrmls_msg t2) (subtrmls_msg t3)))
     | bver t1 t2 t3 => (app (subtrmls_msg t1) (app (subtrmls_msg t2) (subtrmls_msg t3)))
     | acc t1 t2 t3 t4 => (app (subtrmls_msg t1) (app (subtrmls_msg t2) (subtrmls_msg t3)))
-    | _ => [ ]
+    | _ => nil
  end
 with subtrmls_msg (t:message) : Mlist :=
        match t with 
-         | ifm_then_else_ b3 t1 t2 => (app (cons (If b3 then t1 else t2) [ ])  (app (subtrmls_bol b3) (app (subtrmls_msg t1) (subtrmls_msg t2))))
-         | (Mvar n') => (cons (Mvar n') [ ])
-         | O => (cons O [ ])
-         | ONE => (cons ONE [ ])
-         | TWO => (cons TWO [ ])
-         | THREE => (cons THREE [ ])          
-         | A => (cons A [ ])
-         | B => (cons B [ ])
-         | M => (cons M [ ])          
-         | C1 => (cons C1 [ ])
-         | C2 => (cons C2 [ ])
-         | C3 => (cons C3 [ ])          
-         | V0 t' => (app (cons (V0 t') [ ]) (subtrmls_msg t'))
-         | V1 t' => (app (cons (V1 t') [ ]) (subtrmls_msg t'))
-         | pubkey t' => (app (cons (pubkey t') [ ]) (subtrmls_msg t'))
-         | kc t' => (app (cons (kc t') [ ] ) (subtrmls_msg t'))
-         | comm t1 t2 => (app (app (cons (comm t1 t2) [ ]) (subtrmls_msg t1)) (subtrmls_msg t2))
-         | open t1 t2 t3 => (app (app (app (cons (open t1 t2 t3) [ ]) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
-         | shufl t1 t2 t3 => (app (app (app (cons (shufl t1 t2 t3) [ ]) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
-         | ke t' => (app (cons (ke t') [ ] ) (subtrmls_msg t'))
-         | re t' => (app (cons (re t') [ ] ) (subtrmls_msg t'))
-         | enc t1 t2 t3 => (app (app (app (cons (enc t1 t2 t3) [ ]) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
-         | dec t1 t2 => (app (app (cons (dec t1 t2) [ ]) (subtrmls_msg t1)) (subtrmls_msg t2))
-         | bot => (cons bot [ ])
-         | kb t' => (app (cons (kb t') [ ] ) (subtrmls_msg t'))
-         | rb t' => (app (cons (rb t') [ ] ) (subtrmls_msg t'))
-         | bsign t1 t2 t3 => (app (app (app (cons (bsign t1 t2 t3) [ ]) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
-         | bl t1 t2 t3 => (app (app (app (cons (bl t1 t2 t3) [ ]) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
-         | ub t1 t2 t3 t4  =>   (app (cons ( ub t1 t2 t3 t4) [ ]) (app (app (subtrmls_msg t1) (app (subtrmls_msg t2) (subtrmls_msg t3))) (subtrmls_msg t4)))
-         | ks t' => (app (cons (ks t') [ ] ) (subtrmls_msg t'))
-         | rs t' => (app (cons (rs t') [ ] ) (subtrmls_msg t'))
-         | sign t1 t2 t3 => (app (app (app (cons (sign t1 t2 t3) [ ]) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
-         | N n'=> (cons (N n') [ ])
+         | ifm_then_else_ b3 t1 t2 => (app (cons (If b3 then t1 else t2) nil)  (app (subtrmls_bol b3) (app (subtrmls_msg t1) (subtrmls_msg t2))))
+         | (Mvar n') => (cons (Mvar n') nil)
+         | O => (cons O nil)
+         | ONE => (cons ONE nil)
+         | TWO => (cons TWO nil)
+         | THREE => (cons THREE nil)          
+         | A => (cons A nil)
+         | B => (cons B nil)
+         | M => (cons M nil)          
+         | C1 => (cons C1 nil)
+         | C2 => (cons C2 nil)
+         | C3 => (cons C3 nil)          
+         | V0 t' => (app (cons (V0 t') nil) (subtrmls_msg t'))
+         | V1 t' => (app (cons (V1 t') nil) (subtrmls_msg t'))
+         | pubkey t' => (app (cons (pubkey t') nil) (subtrmls_msg t'))
+         | kc t' => (app (cons (kc t') nil ) (subtrmls_msg t'))
+         | comm t1 t2 => (app (app (cons (comm t1 t2) nil) (subtrmls_msg t1)) (subtrmls_msg t2))
+         | open t1 t2 t3 => (app (app (app (cons (open t1 t2 t3) nil) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
+         | shufl t1 t2 t3 => (app (app (app (cons (shufl t1 t2 t3) nil) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
+         | ke t' => (app (cons (ke t') nil ) (subtrmls_msg t'))
+         | re t' => (app (cons (re t') nil ) (subtrmls_msg t'))
+         | enc t1 t2 t3 => (app (app (app (cons (enc t1 t2 t3) nil) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
+         | dec t1 t2 => (app (app (cons (dec t1 t2) nil) (subtrmls_msg t1)) (subtrmls_msg t2))
+         | bot => (cons bot nil)
+         | kb t' => (app (cons (kb t') nil ) (subtrmls_msg t'))
+         | rb t' => (app (cons (rb t') nil ) (subtrmls_msg t'))
+         | bsign t1 t2 t3 => (app (app (app (cons (bsign t1 t2 t3) nil) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
+         | bl t1 t2 t3 => (app (app (app (cons (bl t1 t2 t3) nil) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
+         | ub t1 t2 t3 t4  =>   (app (cons ( ub t1 t2 t3 t4) nil) (app (app (subtrmls_msg t1) (app (subtrmls_msg t2) (subtrmls_msg t3))) (subtrmls_msg t4)))
+         | ks t' => (app (cons (ks t') nil ) (subtrmls_msg t'))
+         | rs t' => (app (cons (rs t') nil ) (subtrmls_msg t'))
+         | sign t1 t2 t3 => (app (app (app (cons (sign t1 t2 t3) nil) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
+         | N n'=> (cons (N n') nil)
   
-         | pair t1 t2 => (app (cons (pair t1 t2) [ ]) (app (subtrmls_msg  t1) (subtrmls_msg t2) ))
-         | pi1 t1 => (app (cons (pi1 t1) [ ]) (subtrmls_msg t1) )
-         | pi2 t1 => (app (cons (pi2 t1) [ ]) (subtrmls_msg t1) )
+         | pair t1 t2 => (app (cons (pair t1 t2) nil) (app (subtrmls_msg  t1) (subtrmls_msg t2) ))
+         | pi1 t1 => (app (cons (pi1 t1) nil) (subtrmls_msg t1) )
+         | pi2 t1 => (app (cons (pi2 t1) nil) (subtrmls_msg t1) )
     
-         | L t1 => (app (cons (L t1) [ ])  (subtrmls_msg t1) )
-         | to t1 => (app (cons (to t1) [ ])  (subtrmls_msg t1) )
+         | L t1 => (app (cons (L t1) nil)  (subtrmls_msg t1) )
+         | to t1 => (app (cons (to t1) nil)  (subtrmls_msg t1) )
          | f l => ((cons (f l) (@subtrmls subtrmls_msg l)))
-         | z t1 =>  (cons (z t1) [ ])
+         | z t1 =>  (cons (z t1) nil)
         
        end.
 
@@ -2127,7 +2128,7 @@ Definition subtrmls_os (t:oursum) : Mlist :=
 
 Fixpoint subtrmls_mylist {n} (l:mylist n) : Mlist :=
   match l with 
-    | [] => [ ]
+    | [] => nil
     | h: t => (app (subtrmls_os h) (subtrmls_mylist t))
   end.
 
@@ -2281,7 +2282,7 @@ Eval compute in insec_n_msg 1 (sign (ssk 2) (ssk 1) O).
 
   Fixpoint nodupmsg  (l : Mlist) : Mlist :=
     match l with
-      | [ ] => [ ]
+      | nil => nil
       | cons x xs => if checkmtlism x xs then nodupmsg xs else cons x (nodupmsg xs)
     end. 
  
@@ -2290,10 +2291,10 @@ Eval compute in insec_n_msg 1 (sign (ssk 2) (ssk 1) O).
 
 Fixpoint list_skn_in_sign (n:nat) (l:Mlist) : Mlist :=
   match l with 
-    | [ ] => [ ]
+    | nil => nil
     | cons h t => (app (match h with 
-                          | sign (pi2 (ks (N n'))) _ _ => if (beq_nat n' n) then (cons h [ ]) else [ ]
-                          | _ => [ ]
+                          | sign (pi2 (ks (N n'))) _ _ => if (beq_nat n' n) then (cons h nil) else nil
+                          | _ => nil
                         end) 
                        (list_skn_in_sign n t))
   end.  
@@ -2421,7 +2422,7 @@ Fixpoint checkostmylis (x:oursum) {n} (l:mylist n) : bool :=
 (** checksublis: mylist m -> mylist n -> bool *)
 Fixpoint checksublis'  (l: oslist) {n} (l':mylist n) : bool :=
 match (leb n n) , l with
-  | true , [ ] => true
+  | true , nil => true
   | true , cons h t => if (checkostmylis h  l') then (checksublis' t l')
                      else false
   | _ , _ => false
@@ -2438,7 +2439,7 @@ Fixpoint eltPos  (x:oursum) {n} (l:mylist n) :nat :=
                     
  Fixpoint  sublisIndcs'  {n} (l :oslist) (l': mylist n) : list nat :=
   match  l with
-    | [ ] => [ ]
+    | nil => nil
     | cons h t => cons (eltPos h l')  (sublisIndcs' t l')
   end.
  
@@ -2448,14 +2449,14 @@ Section subtrm'.
 Variable f: message -> oslist.
 Fixpoint mapsubtrmls (l: Mlist) : oslist :=
   match l with
-    | [ ] => [ ]
+    | nil => nil
     | cons h t => (f h) ++ (mapsubtrmls t)
   end.
 End subtrm'.
 
 Fixpoint listmsg_os (l:Mlist): oslist:=
   match l with
-    | [ ] => [ ]
+    | nil => nil
     | h::t => (msg h) :: (listmsg_os t)
   end.
 (** list of subtemrs of type [oursum] from [msg] and [bool] *)
@@ -2470,53 +2471,53 @@ Fixpoint subtrmls'_bol (t: Bool) : oslist :=
     | ver t1 t2 t3 => (app (subtrmls'_msg t1) (app (subtrmls'_msg t2) (subtrmls'_msg t3)))
     | bver t1 t2 t3 => (app (subtrmls'_msg t1) (app (subtrmls'_msg t2) (subtrmls'_msg t3)))
     | acc t1 t2 t3 t4 => (app (subtrmls'_msg t1) (app (subtrmls'_msg t2) (subtrmls'_msg t3)))
-    | _ => [ ]
+    | _ => nil
  end
 with subtrmls'_msg (t:message) : oslist :=
        match t with 
-         | ifm_then_else_ b3 t1 t2 => (app (cons (msg (If b3 then t1 else t2)) [ ]) (app (subtrmls'_bol b3) (app (subtrmls'_msg t1) (subtrmls'_msg t2))))
-         | (Mvar n') => (cons (msg (Mvar n')) [ ])
-         | O => (cons (msg O) [ ])
-         | ONE => (cons (msg ONE) [ ])
-         | TWO => (cons (msg TWO) [ ])
-         | THREE => (cons (msg THREE) [ ])          
-         | A => (cons (msg A) [ ])
-         | B => (cons (msg B) [ ])
-         | M => (cons (msg M) [ ])          
-         | C1 => (cons (msg C1) [ ])
-         | C2 => (cons (msg C2) [ ])
-         | C3 => (cons (msg C3) [ ])          
-         | V0 t' => (app (cons (msg (V0 t')) [ ]) (subtrmls'_msg t'))
-         | V1 t' => (app (cons (msg (V1 t')) [ ]) (subtrmls'_msg t'))
-         | pubkey t' => (app (cons (msg (pubkey t')) [ ]) (subtrmls'_msg t'))
-         | kc t' => (app (cons (msg (kc t')) [ ] ) (subtrmls'_msg t'))
-         | comm t1 t2 => (app (app (cons (msg (comm t1 t2)) [ ]) (subtrmls'_msg t1)) (subtrmls'_msg t2))
-         | open t1 t2 t3 => (app (app (app (cons (msg (open t1 t2 t3)) [ ]) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
-         | shufl t1 t2 t3 => (app (app (app (cons (msg (shufl t1 t2 t3)) [ ]) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
-         | ke t' => (app (cons (msg (ke t')) [ ] ) (subtrmls'_msg t'))
-         | re t' => (app (cons (msg (re t')) [ ] ) (subtrmls'_msg t'))
-         | enc t1 t2 t3 => (app (app (app (cons (msg (enc t1 t2 t3)) [ ]) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
-         | dec t1 t2 => (app (app (cons (msg (dec t1 t2)) [ ]) (subtrmls'_msg t1)) (subtrmls'_msg t2))
-         | bot => (cons (msg bot) [ ])
-         | kb t' => (app (cons (msg (kb t')) [ ] ) (subtrmls'_msg t'))
-         | rb t' => (app (cons (msg (rb t')) [ ] ) (subtrmls'_msg t'))
-         | bsign t1 t2 t3 => (app (app (app (cons (msg (bsign t1 t2 t3)) [ ]) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
-         | bl t1 t2 t3 => (app (app (app (cons (msg (bl t1 t2 t3)) [ ]) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
-         | ub t1 t2 t3 t4  =>   (app (cons (msg ( ub t1 t2 t3 t4)) [ ]) (app (app (subtrmls'_msg t1) (app (subtrmls'_msg t2) (subtrmls'_msg t3))) (subtrmls'_msg t4)))
-         | ks t' => (app (cons (msg (ks t')) [ ] ) (subtrmls'_msg t'))
-         | rs t' => (app (cons (msg (rs t')) [ ] ) (subtrmls'_msg t'))
-         | sign t1 t2 t3 => (app (app (app (cons (msg (sign t1 t2 t3)) [ ]) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
-         | N n'=> (cons (msg (N n')) [ ])
+         | ifm_then_else_ b3 t1 t2 => (app (cons (msg (If b3 then t1 else t2)) nil) (app (subtrmls'_bol b3) (app (subtrmls'_msg t1) (subtrmls'_msg t2))))
+         | (Mvar n') => (cons (msg (Mvar n')) nil)
+         | O => (cons (msg O) nil)
+         | ONE => (cons (msg ONE) nil)
+         | TWO => (cons (msg TWO) nil)
+         | THREE => (cons (msg THREE) nil)          
+         | A => (cons (msg A) nil)
+         | B => (cons (msg B) nil)
+         | M => (cons (msg M) nil)          
+         | C1 => (cons (msg C1) nil)
+         | C2 => (cons (msg C2) nil)
+         | C3 => (cons (msg C3) nil)          
+         | V0 t' => (app (cons (msg (V0 t')) nil) (subtrmls'_msg t'))
+         | V1 t' => (app (cons (msg (V1 t')) nil) (subtrmls'_msg t'))
+         | pubkey t' => (app (cons (msg (pubkey t')) nil) (subtrmls'_msg t'))
+         | kc t' => (app (cons (msg (kc t')) nil ) (subtrmls'_msg t'))
+         | comm t1 t2 => (app (app (cons (msg (comm t1 t2)) nil) (subtrmls'_msg t1)) (subtrmls'_msg t2))
+         | open t1 t2 t3 => (app (app (app (cons (msg (open t1 t2 t3)) nil) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
+         | shufl t1 t2 t3 => (app (app (app (cons (msg (shufl t1 t2 t3)) nil) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
+         | ke t' => (app (cons (msg (ke t')) nil ) (subtrmls'_msg t'))
+         | re t' => (app (cons (msg (re t')) nil ) (subtrmls'_msg t'))
+         | enc t1 t2 t3 => (app (app (app (cons (msg (enc t1 t2 t3)) nil) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
+         | dec t1 t2 => (app (app (cons (msg (dec t1 t2)) nil) (subtrmls'_msg t1)) (subtrmls'_msg t2))
+         | bot => (cons (msg bot) nil)
+         | kb t' => (app (cons (msg (kb t')) nil ) (subtrmls'_msg t'))
+         | rb t' => (app (cons (msg (rb t')) nil ) (subtrmls'_msg t'))
+         | bsign t1 t2 t3 => (app (app (app (cons (msg (bsign t1 t2 t3)) nil) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
+         | bl t1 t2 t3 => (app (app (app (cons (msg (bl t1 t2 t3)) nil) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
+         | ub t1 t2 t3 t4  =>   (app (cons (msg ( ub t1 t2 t3 t4)) nil) (app (app (subtrmls'_msg t1) (app (subtrmls'_msg t2) (subtrmls'_msg t3))) (subtrmls'_msg t4)))
+         | ks t' => (app (cons (msg (ks t')) nil ) (subtrmls'_msg t'))
+         | rs t' => (app (cons (msg (rs t')) nil ) (subtrmls'_msg t'))
+         | sign t1 t2 t3 => (app (app (app (cons (msg (sign t1 t2 t3)) nil) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
+         | N n'=> (cons (msg (N n')) nil)
   
-         | pair t1 t2 => (app (cons (msg (pair t1 t2)) [ ]) (app (subtrmls'_msg  t1) (subtrmls'_msg t2) ))
-         | pi1 t1 => (app (cons (msg (pi1 t1)) [ ]) (subtrmls'_msg t1) )
-         | pi2 t1 => (app (cons (msg (pi2 t1)) [ ]) (subtrmls'_msg t1) )
+         | pair t1 t2 => (app (cons (msg (pair t1 t2)) nil) (app (subtrmls'_msg  t1) (subtrmls'_msg t2) ))
+         | pi1 t1 => (app (cons (msg (pi1 t1)) nil) (subtrmls'_msg t1) )
+         | pi2 t1 => (app (cons (msg (pi2 t1)) nil) (subtrmls'_msg t1) )
     
-         | L t1 => (app (cons (msg (L t1)) [ ])  (subtrmls'_msg t1) )
-         | to t1 => (app (cons (msg (to t1)) [ ])  (subtrmls'_msg t1) )
+         | L t1 => (app (cons (msg (L t1)) nil)  (subtrmls'_msg t1) )
+         | to t1 => (app (cons (msg (to t1)) nil)  (subtrmls'_msg t1) )
          | f l => ((cons (msg (f l)) (@mapsubtrmls subtrmls'_msg l)))
                     (** zero symbol *)
-         | z t1 => (cons (msg (z t1)) [ ])  
+         | z t1 => (cons (msg (z t1)) nil)  
         
        end.
 
@@ -2533,7 +2534,7 @@ Definition subtrmls'_os (t:oursum) : oslist :=
 
 Fixpoint subtrmls'_mylist {n} (l:mylist n) : oslist :=
   match l with 
-    | [] => [ ]
+    | [] => nil
     | h: t => (app (subtrmls'_os h) (subtrmls'_mylist t))
   end.
 
@@ -2548,7 +2549,7 @@ Variable f: message -> Nlist.
   
 Fixpoint mapmVarMsg (l: Mlist) : Nlist :=
   match l with
-    | [ ] => [ ]
+    | nil => nil
     | h :: t => (f h) ++ (mapmVarMsg t)
   end.
 End mVars.
@@ -2631,7 +2632,7 @@ Variable f: message -> Nlist.
  
 Fixpoint mapbVarMsg (l: Mlist) : Nlist :=
   match l with
-    | [ ] => [ ]
+    | nil => nil
     | h :: t => (f h) ++ (mapbVarMsg t)
   end.
 End bMars.
@@ -2709,7 +2710,7 @@ Fixpoint bVarMylist {n} (l:mylist n) : Nlist :=
 (** Computation of a list without duplication *)
 Fixpoint nodup (l:Nlist) : Nlist :=
   match l with
-    | [ ] => [ ]
+    | nil => nil
     | h :: t => if (leb 1 (@count_occ nat eq_nat_dec t h) ) then (nodup t) else (cons h (nodup t))
   end.
 
