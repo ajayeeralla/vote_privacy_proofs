@@ -203,24 +203,24 @@ simpl.
 repeat aply_andB_elm.
 
 apply IFBRANCH_M3 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (e (b 0 7) 8)))]) (ml2:=  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (e (b 1 7) 8)))]).
 simpl.
 apply IFBRANCH_M2 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 2));
     msg (pk 2, (e (b 1 11) 12, sign (sk 2) (e (b 1 11) 12)))]) (ml2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 2));
    msg (pk 2, (e (b 0 11) 12, sign (sk 2) (e (b 0 11) 12)))]).
 simpl. 
 repeat (rew_mupbver;aply_bver; rew_hyps; try split; try reflexivity).
   aply_blindness 3 8 12 0 1 (b 0 7) (b 1 11)  ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
+                                                                                       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
 aplyprojn 1 16 H; try split; try reflexivity;
 rep_commits 0 1 11 21 7 22 fr1 fr2 temp H H0;
 rename H0 into H;
@@ -306,12 +306,12 @@ restrsublis H.
 (** subgoal *)
 simpl.
 apply IFBRANCH_M2 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 2));
     msg (pk 2, (e (b 1 11) 12, sign (sk 2) (e (b 1 11) 12)));
     bol (eqm (to (x3tft 0 1)) (V 1))]) (ml2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 2));
    msg (pk 2, (e (b 0 11) 12, sign (sk 2) (e (b 0 11) 12)));
@@ -319,7 +319,7 @@ apply IFBRANCH_M2 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3);
 repeat (rew_mupbver;aply_bver; rew_hyps; try split; try reflexivity).
 
  aply_blindness 3 8 12 0 1 (b 0 7) (b 1 11)  ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
+                                                                                       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
 aplyprojn 1 16 H; try split; try reflexivity;
 rep_commits 0 1 11 21 7 22 fr1 fr2 temp H H0;
 rename H0 into H;
@@ -403,19 +403,19 @@ restrsublis H.
 
 simpl.
 apply IFBRANCH_M2 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 2));
     msg (pk 2, (e (b 1 11) 12, sign (sk 2) (e (b 1 11) 12)));
     bol (eqm (to (x3tft 0 1)) (V 1)); bol (eqm (to (x3tft 0 1)) (V 2))]) (ml2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 2));
    msg (pk 2, (e (b 0 11) 12, sign (sk 2) (e (b 0 11) 12)));
    bol (eqm (to (x3tft 1 0)) (V 1)); bol (eqm (to (x3tft 1 0)) (V 2))]). simpl.
 repeat (rew_mupbver;aply_bver; rew_hyps; try split; try reflexivity).
  aply_blindness 3 8 12 0 1 (b 0 7) (b 1 11)  ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
+                                                                                       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
 aplyprojn 1 16 H; try split; try reflexivity;
 rep_commits 0 1 11 21 7 22 fr1 fr2 temp H H0;
 rename H0 into H;
@@ -477,7 +477,7 @@ restrsublis H.
 (** subgoal *)
 
   (aply_blindness 3 8 12 0 1 (b 0 7) (b 1 11)  ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
+                                                                                       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
 aplyprojn 1 16 H; try split; try reflexivity;
 rep_commits 0 1 11 21 7 22 fr1 fr2 temp H H0;
 rename H0 into H;
@@ -489,7 +489,7 @@ x1checks (x2t 0 ) (x2t 1) H;
 x1checks (x3tft 0 1) (x3tft 1 0) H;
 restrsublis H).
  aply_blindness 3 8 12 0 1 (b 0 7) (b 1 11)  ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
+                                                                                       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
 aplyprojn 1 16 H; try split; try reflexivity;
 rep_commits 0 1 11 21 7 22 fr1 fr2 temp H H0;
 rename H0 into H;
@@ -503,20 +503,20 @@ restrsublis H.
  (** subgoal *)
  simpl.
  apply IFBRANCH_M4 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1))]) (ml2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                             msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1))]). simpl.
+    msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1))]) (ml2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
+                                                             msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1))]). simpl.
  apply IFBRANCH_M3 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1)); 
+    msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1)); 
     bol (eqm (to x1) (V 2));
     msg (pk 2, (e (b 1 9) 10, sign (sk 2) (e (b 1 9) 10)))]) (ml2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1)); 
+   msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1)); 
    bol (eqm (to x1) (V 2));
    msg (pk 2, (e (b 0 9) 10, sign (sk 2) (e (b 0 9) 10)))]). simpl.
  repeat aply_andB_elm.
  repeat (rew_mupbver;aply_bver; rew_hyps; try split; try reflexivity).
  
  aply_blindness 3 10 14 0 1 (b 1 9) (b 0 13)  ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
+                                                                                       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
 aplyprojn 1 16 H; try split; try reflexivity.
 rep_commits 1 0 13 30 9 31 fr1 fr2 temp H H0.
 rename H0 into H;
@@ -597,7 +597,7 @@ ver_suc1 2 (pi2 (x3ftft 0 1)) (e (b 1 9) 10) (pi2 (x3ftft 1 0)) (e (b 0 9) 10) H
 (** subgoal *)
   simpl.
 aply_blindness 3 10 11 0 1 (b 1 9) (b 0 9)  ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
+                                                                                       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
 aplyprojn 2 15 H; try split; try reflexivity;
 appconst H;
 x1checks x1 x1 H;

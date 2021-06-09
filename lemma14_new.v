@@ -23,7 +23,7 @@ Definition bcheck (x y:message):Bool := (isin x ((tau 1 (pi2 (tau 1 y))), ((tau 
 Definition ncheck (x y:message):Bool := (isin x ((tau 3 (pi2 (tau 1 y))), ((tau 3 (pi2 (tau 2 y))), (tau 3 (pi2 (tau 3 y)))))).
  
 
-Definition lbl:= |(N 100)|.
+Definition lbl:= |(nonce 100)|.
 Definition label x y := If (x #? (tau 2 (pi2 (tau 1 y)))) then (pi1 (tau 1 y))
                            else  (If (x#? (tau 2 (pi2 (tau 2 y)))) then (pi1 (tau 2 y))
                                                        else (If (x #? (tau 2 (pi2 (tau 3 y)))) then (pi1 (tau 3 y))
@@ -38,14 +38,14 @@ Definition p n x := ( (tau 1 (d n x)), (tau 2 (d n x))).
 Definition sotrm x := (shufl (p 1 x) (p 2 x) (p 3 x)).
 
 
-Theorem lemma14:  forall (t t0 t1 : message),   let v0 := (V0 (N 0)) in
-                                                                                                      let v1 := (V1 (N 0)) in
+Theorem lemma14:  forall (t t0 t1 : message),   let v0 := (V0 (nonce 0)) in
+                                                                                                      let v1 := (V1 (nonce 0)) in
                                                                                                       (|v0|#?|v1|) ## TRue ->  (Fresh [1; 2; 3; 4] ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
     let mvl:= [5; 6] in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
                  let r0 := (r 1) in
                  let r1 := (r 2) in
-                 let k0 := (kc (N 3)) in
-                 let k1 := (kc (N 4)) in
+                 let k0 := (kc (nonce 3)) in
+                 let k1 := (kc (nonce 4)) in
                  let c00 := (comm v0 k0) in
                  let c01 := (comm v0 k1) in
                  let c10 := (comm v1 k0) in
@@ -54,18 +54,18 @@ Theorem lemma14:  forall (t t0 t1 : message),   let v0 := (V0 (N 0)) in
                  let t3 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t1)) in
                  let t4 := ({{ 5 := (bl c10 t r0) }} ({{ 6:=(bl c01 t r1) }} t0)) in
                  let t5 := ({{ 5 := (bl c10 t r0) }} ({{ 6:=(bl c01 t r1) }} t1)) in
-                 let e00 := (enc (c00, ((ub c00 t r0 t2), (N 0))) (pke 11) (er 7)) in
-                 let e11 := (enc (c11, ((ub c11 t r1 t3), (N 1))) (pke 11) (er 8)) in
-                 let e10 := (enc (c10, ((ub c10 t r0 t4), (N 0))) (pke 11) (er 7)) in
-                 let e01 := (enc (c01, ((ub c01 t r1 t5), (N 1))) (pke 11) (er 8)) in
+                 let e00 := (enc (c00, ((ub c00 t r0 t2), (nonce 0))) (pke 11) (er 7)) in
+                 let e11 := (enc (c11, ((ub c11 t r1 t3), (nonce 1))) (pke 11) (er 8)) in
+                 let e10 := (enc (c10, ((ub c10 t r0 t4), (nonce 0))) (pke 11) (er 7)) in
+                 let e01 := (enc (c01, ((ub c01 t r1 t5), (nonce 1))) (pke 11) (er 8)) in
                  let mvtrm0 n n' x := let y := f (toListm ((Phi2 n n') ++ [msg e00, msg e11])) in (If (dist y) & (pvchecks y) then x else |_) in
                  let mvtrm1 n n' x := let y := f (toListm ((Phi2 n n') ++ [msg e10, msg e01])) in (If (dist y) & (pvchecks y) then x else |_) in
                  let f3ph30 n n' x := f (toListm ((Phi2 n n') ++ [msg e00, msg e11, msg (mvtrm0 n n' x)])) in
                  let f3ph31 n n' x := f (toListm ((Phi2 n n') ++ [msg e10, msg e01, msg (mvtrm1 n n' x)])) in
-                 let l00 n n' x := (If (bnlcheck c00 (N 0) (f3ph30 n n' x)) then (enc ((label c00 (f3ph30 n n' x)), (k0, THREE))(pke 11) (er 9)) else O) in
-                 let l11 n n' x := (If (bnlcheck c11 (N 1) (f3ph30 n n' x)) then (enc ((label c11 (f3ph30 n n' x)), (k1, THREE))(pke 11) (er 10)) else O) in
-                 let l10 n n' x := (If (bnlcheck c10 (N 0) (f3ph31 n n' x)) then (enc ((label c10 (f3ph31 n n' x)), (k0, THREE))(pke 11) (er 9)) else O) in
-                 let l01 n n' x := (If (bnlcheck c01 (N 1) (f3ph31 n n' x)) then (enc ((label c01 (f3ph31 n n' x)), (k1, THREE))(pke 11) (er 10)) else O) in
+                 let l00 n n' x := (If (bnlcheck c00 (nonce 0) (f3ph30 n n' x)) then (enc ((label c00 (f3ph30 n n' x)), (k0, THREE))(pke 11) (er 9)) else O) in
+                 let l11 n n' x := (If (bnlcheck c11 (nonce 1) (f3ph30 n n' x)) then (enc ((label c11 (f3ph30 n n' x)), (k1, THREE))(pke 11) (er 10)) else O) in
+                 let l10 n n' x := (If (bnlcheck c10 (nonce 0) (f3ph31 n n' x)) then (enc ((label c10 (f3ph31 n n' x)), (k0, THREE))(pke 11) (er 9)) else O) in
+                 let l01 n n' x := (If (bnlcheck c01 (nonce 1) (f3ph31 n n' x)) then (enc ((label c01 (f3ph31 n n' x)), (k1, THREE))(pke 11) (er 10)) else O) in
                  let f5ph50 n n' x := f (toListm ((Phi2 n n') ++ [msg e00, msg e11, msg (mvtrm0 n n' x), msg (l00 n n' x), msg (l11 n n' x)])) in
                  let f5ph51 n n' x := f (toListm ((Phi2 n n') ++ [msg e10, msg e01, msg (mvtrm1 n n' x), msg (l10 n n' x), msg (l01 n n' x)])) in
                  let motrm0 n n' x := let z := (f5ph50 n n' x) in
@@ -76,8 +76,8 @@ Theorem lemma14:  forall (t t0 t1 : message),   let v0 := (V0 (N 0)) in
                                       let Isin0 := (isin k0 ((tau 2 (d 1 z)), ((tau 2 (d 2 z)), (tau 2 (d 3 z))))) in
                                       let Isin1 := (isin k1 ((tau 2 (d 1 z)), ((tau 2 (d 2 z)), (tau 2 (d 3 z))))) in
                                       (If (dist z) & (pochecks z)& ((Isin0&Isin1) or (! (Isin0 or Isin1))) then (sotrm z) else O) in
-                 let pv00 := (c00, ((ub c00 t r0 t2), (N 0))) in
-                 let pv10 := (c10, ((ub c10 t r0 t4), (N 0))) in
+                 let pv00 := (c00, ((ub c00 t r0 t2), (nonce 0))) in
+                 let pv10 := (c10, ((ub c10 t r0 t4), (nonce 0))) in
                  let s0 n n' := let y := f (toListm ((Phi2 n n') ++ [msg e00, msg e11])) in  (If !(isin pv00 ((pi1 (d 1 y)), ((pi1 (d 2 y)), (pi1 (d 3 y))))) then (shufl (pi1 (d 1 y)) (pi1 (d 2 y)) (pi1 (d 3 y))) else O) in
                  let s1 n n' := let y := f (toListm ((Phi2 n n') ++ [msg e10, msg e01])) in  (If !(isin pv10 ((pi1 (d 1 y)), ((pi1 (d 2 y)), (pi1 (d 3 y))))) then (shufl (pi1 (d 1 y)) (pi1 (d 2 y)) (pi1 (d 3 y))) else O) in
                  let lt1 n n' x := (e00, (e11, (mvtrm0 n n' x))) in
@@ -96,7 +96,7 @@ unfold f3ph30.
 unfold mvtrm0. unfold motrm0. unfold f5ph50.
 unfold l00.
 pose proof(ENCCCA2). unfold e00.
-pose proof(ENCCCA2 O O (c00, (ub c00 t r0 t2, N 0)) (c00, (ub c00 t r0 t2, N 100)) O 0 11 7 7
+pose proof(ENCCCA2 O O (c00, (ub c00 t r0 t2, nonce 0)) (c00, (ub c00 t r0 t2, nonce 100)) O 0 11 7 7
                   
                   (   let s0x n n':= (If ! (isin pv00
                                 (pi1 (d 1 (f (toListm (Phi2 n n' ++ [msg (Mvar 0), msg e11])))),
@@ -113,8 +113,8 @@ let f3ph30x n n' x := (f
                           (Phi2 0 1 ++
                            [msg (Mvar 0), msg e11, msg (mvtrm0x n n' x)]))) in
 
- let l00x n n' x := (If (bnlcheck c00 (N 0) (f3ph30x n n' x)) then (enc ((label c00 (f3ph30x n n' x)), (k0, THREE))(pke 11) (er 9)) else O) in
- let l11x n n' x := (If (bnlcheck c11 (N 1) (f3ph30x n n' x)) then (enc ((label c11 (f3ph30x n n' x)), (k1, THREE))(pke 11) (er 10)) else O) in
+ let l00x n n' x := (If (bnlcheck c00 (nonce 0) (f3ph30x n n' x)) then (enc ((label c00 (f3ph30x n n' x)), (k0, THREE))(pke 11) (er 9)) else O) in
+ let l11x n n' x := (If (bnlcheck c11 (nonce 1) (f3ph30x n n' x)) then (enc ((label c11 (f3ph30x n n' x)), (k1, THREE))(pke 11) (er 10)) else O) in
  let f5ph50x n n' x := f (toListm ((Phi2 n n') ++ [msg (Mvar 0), msg e11, msg (mvtrm0x n n' x), msg (l00x n n' x), msg (l11x n n' x)])) in
      let motrm0x n n' x := let z := (f5ph50x n n' x) in
                                       let Isin0 := (isin k0 ((tau 2 (d 1 z)), ((tau 2 (d 2 z)), (tau 2 (d 3 z))))) in
@@ -126,10 +126,10 @@ let f3ph30x n n' x := (f
      (If (acc c00 t r0 t2) & (acc c11 t r1 t3)
          then (((Mvar 0),
               (e11, (mvtrm0x 0 1 (s0x 0 1)))),
-              (If bnlcheck c00 (N 0) (f3ph30x 0 1 (s0x 0 1))
+              (If bnlcheck c00 (nonce 0) (f3ph30x 0 1 (s0x 0 1))
                   then (enc (label c00 (f3ph30x 0 1 (s0x 0 1)), (k0, THREE)) (pke 11) (er 9)) 
                   else O,
-              (If bnlcheck c11 (N 1) (f3ph30x 0 1 (s0x 0 1))
+              (If bnlcheck c11 (nonce 1) (f3ph30x 0 1 (s0x 0 1))
                   then (enc (label c11 (f3ph30x 0 1 (s0x 0 1)), (k1, THREE)) (pke 11) (er 10)) 
                   else O, motrm0x 0 1 (s0x 0 1)))) 
          else |_)])).
@@ -164,19 +164,19 @@ Definition v (n:nat) := match n with
 
 Eval compute in kc.
 
-Definition ssk (n:nat) := pi2 (ks (N n)).
-Definition k0 := (kc (N 3)) .
-Definition k1 := (kc (N 4)).
-Definition rb0 := (rb (N 5)).
-Definition rb1 := (rb (N 6)).
+Definition ssk (n:nat) := pi2 (ks (nonce n)).
+Definition k0 := (kc (nonce 3)) .
+Definition k1 := (kc (nonce 4)).
+Definition rb0 := (rb (nonce 5)).
+Definition rb1 := (rb (nonce 6)).
 Definition ssk0 := (ssk 0).
 Definition ssk1 := (ssk 1).
-Definition rs0 := (rs (N 9)).
-Definition rs1 := (rs (N 10)).
+Definition rs0 := (rs (nonce 9)).
+Definition rs1 := (rs (nonce 10)).
 
-Definition c (n k: nat) := (comm (v n) (kc (N k))).
-Definition b (n k r : nat) := (bl (c n k) pk (rb (N r))).
-Definition s (n k r n' r' : nat) := (sign (b n k r) (ssk n') (rs (N r'))).
+Definition c (n k: nat) := (comm (v n) (kc (nonce k))).
+Definition b (n k r : nat) := (bl (c n k) pk (rb (nonce r))).
+Definition s (n k r n' r' : nat) := (sign (b n k r) (ssk n') (rs (nonce r'))).
 Definition tr (a n k r r':nat) := ( (vk a), ((b n k r), (s n k r a r'))).
  
 Definition theta (x a: message) :=  ((to x) #? a) & (vcheck (v 0))&(vcheck (v  1)).
@@ -204,14 +204,14 @@ simpl.
 pose proof (let x1:= f (toListm phi0) in
             let v0 := V0(x1) in
             let v1 := V1(x1) in
-            let k0 := (kc (N 3)) in
-            let k1 := (kc (N 4)) in
-            let rb0 := (rb (N 5)) in
-            let rb1 := (rb (N 6)) in
-            let rs0 := (rs (N 7)) in
-            let rs1 := (rs (N 8)) in
-            let ssk0 := pi2 (ks (N 9)) in
-            let ssk1 := pi2 (ks (N 10)) in
+            let k0 := (kc (nonce 3)) in
+            let k1 := (kc (nonce 4)) in
+            let rb0 := (rb (nonce 5)) in
+            let rb1 := (rb (nonce 6)) in
+            let rs0 := (rs (nonce 7)) in
+            let rs1 := (rs (nonce 8)) in
+            let ssk0 := pi2 (ks (nonce 9)) in
+            let ssk1 := pi2 (ks (nonce 10)) in
             compHid 3 4 O (V0(f (toListm phi0)))  (V1(f (toListm phi0))) (phi0++[msg x1, bol ((to x1) #? A) & (vcheck v0)&(vcheck v1),  msg rb0, msg rb1, msg rs0, msg rs1, msg ssk0, msg ssk1])).
 simpl in H.
 assert ( (| V0 x1 | #? |V1 x1|) ## TRue).
@@ -222,22 +222,22 @@ funappf1 pi2 22 H.
 repeat rewrite proj1, proj2 in H.
 funappf1 pubkey 15 H. 
 fold x1. 
-funapptrmhyp (msg (bl (comm (V0 x1) (kc (N 3))) (pubkey x1) (rb (N 5)))) (msg (bl (comm (V1 x1) (kc (N 3))) (pubkey x1) (rb (N 5)))) H;simpl; try reflexivity. 
+funapptrmhyp (msg (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))) (msg (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))) H;simpl; try reflexivity. 
  
-funapptrmhyp (msg (sign (bl (comm (V0 x1) (kc (N 3))) (pubkey x1) (rb (N 5))) 
-       (pi2 (ks (N 9))) (rs (N 7)))) (msg (sign (bl (comm (V1 x1) (kc (N 3))) (pubkey x1) (rb (N 5))) (pi2 (ks (N 9))) (rs (N 7)))) H;simpl; try reflexivity.
-funapptrmhyp (msg (bl (comm (V0 x1) (kc (N 3))) (pubkey x1) (rb (N 5)),
-     sign (bl (comm (V0 x1) (kc (N 3))) (pubkey x1) (rb (N 5))) 
-       (pi2 (ks (N 9))) (rs (N 7)))) (msg (bl (comm (V1 x1) (kc (N 3))) (pubkey x1) (rb (N 5)),
-    sign (bl (comm (V1 x1) (kc (N 3))) (pubkey x1) (rb (N 5))) 
-      (pi2 (ks (N 9))) (rs (N 7)))) H; simpl; try reflexivity.
+funapptrmhyp (msg (sign (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+       (pi2 (ks (nonce 9))) (rs (nonce 7)))) (msg (sign (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) (pi2 (ks (nonce 9))) (rs (nonce 7)))) H;simpl; try reflexivity.
+funapptrmhyp (msg (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)),
+     sign (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+       (pi2 (ks (nonce 9))) (rs (nonce 7)))) (msg (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)),
+    sign (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+      (pi2 (ks (nonce 9))) (rs (nonce 7)))) H; simpl; try reflexivity.
 funapptrmhyp (msg (vk 0,
-     (bl (comm (V0 x1) (kc (N 3))) (pubkey x1) (rb (N 5)),
-     sign (bl (comm (V0 x1) (kc (N 3))) (pubkey x1) (rb (N 5))) 
-       (pi2 (ks (N 9))) (rs (N 7))))) (msg (vk 0,
-    (bl (comm (V1 x1) (kc (N 3))) (pubkey x1) (rb (N 5)),
-    sign (bl (comm (V1 x1) (kc (N 3))) (pubkey x1) (rb (N 5))) 
-      (pi2 (ks (N 9))) (rs (N 7))))) H; simpl; try reflexivity.
+     (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)),
+     sign (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+       (pi2 (ks (nonce 9))) (rs (nonce 7))))) (msg (vk 0,
+    (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)),
+    sign (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+      (pi2 (ks (nonce 9))) (rs (nonce 7))))) H; simpl; try reflexivity.
 
 restrsublis H.  auto. simpl; try reflexivity.  simpl. reflexivity. try split.
 reflexivity. split. reflexivity. reflexivity.
@@ -254,14 +254,14 @@ apply IFBRANCH_M1 with (ml1:= [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg 
 pose proof (let x1:= f (toListm phi0) in
             let v0 := V0(x1) in
             let v1 := V1(x1) in
-            let k0 := (kc (N 3)) in
-            let k1 := (kc (N 4)) in
-            let rb0 := (rb (N 5)) in
-            let rb1 := (rb (N 6)) in
-            let rs0 := (rs (N 7)) in
-            let rs1 := (rs (N 8)) in
-            let ssk0 := pi2 (ks (N 9)) in
-            let ssk1 := pi2 (ks (N 10)) in
+            let k0 := (kc (nonce 3)) in
+            let k1 := (kc (nonce 4)) in
+            let rb0 := (rb (nonce 5)) in
+            let rb1 := (rb (nonce 6)) in
+            let rs0 := (rs (nonce 7)) in
+            let rs1 := (rs (nonce 8)) in
+            let ssk0 := pi2 (ks (nonce 9)) in
+            let ssk1 := pi2 (ks (nonce 10)) in
             compHid 3 4 O (V0(f (toListm phi0)))  (V1(f (toListm phi0))) (phi0++[msg x1,bol ((to x1) #? A) & (vcheck (V1 x1)) & (vcheck (V0 x1)),
    bol ((to x1) #? B) & (vcheck (V1 x1)) & (vcheck (V0 x1)),msg rb0, msg rb1, msg rs0, msg rs1, msg ssk0, msg ssk1])).
 simpl in H.
@@ -271,22 +271,22 @@ apply vote_len_reg. repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H.
  funappf1 pi1 22 H.
 funappf1 pi2 23 H.
 repeat rewrite proj1, proj2 in H. 
- funapptrmhyp (msg (bl (comm (V1 x1) (kc (N 4))) (pubkey x1) (rb (N 6)))) (msg (bl (comm (V0 x1) (kc (N 4))) (pubkey x1) (rb (N 6)))) H;simpl; try reflexivity.
+ funapptrmhyp (msg (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)))) (msg (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)))) H;simpl; try reflexivity.
    
-funapptrmhyp (msg (sign (bl (comm (V1 x1) (kc (N 4))) (pubkey x1) (rb (N 6))) 
-       (pi2 (ks (N 10))) (rs (N 8)))) (msg (sign (bl (comm (V0 x1) (kc (N 4))) (pubkey x1) (rb (N 6))) (pi2 (ks (N 10))) (rs (N 8)))) H;simpl; try reflexivity. 
-funapptrmhyp (msg (bl (comm (V1 x1) (kc (N 4))) (pubkey x1) (rb (N 6)),
-     sign (bl (comm (V1 x1) (kc (N 4))) (pubkey x1) (rb (N 6))) 
-       (pi2 (ks (N 10))) (rs (N 8)))) (msg (bl (comm (V0 x1) (kc (N 4))) (pubkey x1) (rb (N 6)),
-    sign (bl (comm (V0 x1) (kc (N 4))) (pubkey x1) (rb (N 6))) 
-      (pi2 (ks (N 10))) (rs (N 8)))) H; simpl; try reflexivity.
+funapptrmhyp (msg (sign (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+       (pi2 (ks (nonce 10))) (rs (nonce 8)))) (msg (sign (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) (pi2 (ks (nonce 10))) (rs (nonce 8)))) H;simpl; try reflexivity. 
+funapptrmhyp (msg (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)),
+     sign (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+       (pi2 (ks (nonce 10))) (rs (nonce 8)))) (msg (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)),
+    sign (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+      (pi2 (ks (nonce 10))) (rs (nonce 8)))) H; simpl; try reflexivity.
 funapptrmhyp (msg (vk 1,
-     (bl (comm (V1 x1) (kc (N 4))) (pubkey x1) (rb (N 6)),
-     sign (bl (comm (V1 x1) (kc (N 4))) (pubkey x1) (rb (N 6))) 
-       (pi2 (ks (N 10))) (rs (N 8))))) (msg (vk 1,
-    (bl (comm (V0 x1) (kc (N 4))) (pubkey x1) (rb (N 6)),
-    sign (bl (comm (V0 x1) (kc (N 4))) (pubkey x1) (rb (N 6))) 
-      (pi2 (ks (N 10))) (rs (N 8))))) H; simpl; try reflexivity.
+     (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)),
+     sign (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+       (pi2 (ks (nonce 10))) (rs (nonce 8))))) (msg (vk 1,
+    (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)),
+    sign (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+      (pi2 (ks (nonce 10))) (rs (nonce 8))))) H; simpl; try reflexivity.
 
  restrsublis H; try assumption;  simpl; try reflexivity. repeat (simpl; try split; try reflexivity).  reflexivity.
 Qed.
@@ -432,9 +432,9 @@ Proof. intros. unfold phi2, phi1. unfold t1, t2. simpl.
 pose proof(compHid_ext 3 4 0 1 (v 0) (v 1) [] (phi0++
 [msg
      (If IF (to x1) #? A then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
-         then (vk 0, (bl (Mvar 0) pk (rb (N 5)), sign (bl (Mvar 0) pk (rb (N 5))) (ssk 0) (rs (N 9)))) 
+         then (vk 0, (bl (Mvar 0) pk (rb (nonce 5)), sign (bl (Mvar 0) pk (rb (nonce 5))) (ssk 0) (rs (nonce 9)))) 
          else If IF (to x1) #? B then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
-                 then (vk 1, (bl (Mvar 1) pk (rb (N 6)), sign (bl (Mvar 1) pk (rb (N 6))) (ssk 1) (rs (N 10)))) 
+                 then (vk 1, (bl (Mvar 1) pk (rb (nonce 6)), sign (bl (Mvar 1) pk (rb (nonce 6))) (ssk 1) (rs (nonce 10)))) 
                  else O),
    msg
      (If IF (to x1) #? A then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
@@ -442,9 +442,9 @@ pose proof(compHid_ext 3 4 0 1 (v 0) (v 1) [] (phi0++
                        (f
                           (toListm
                              (phi0 ++
-                              [msg (vk 0, (bl (Mvar 0) pk (rb (N 5)), sign (bl (Mvar 0) pk (rb (N 5))) (ssk 0) (rs (N 9))))])))) #?
+                              [msg (vk 0, (bl (Mvar 0) pk (rb (nonce 5)), sign (bl (Mvar 0) pk (rb (nonce 5))) (ssk 0) (rs (nonce 9))))])))) #?
                     B then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
-                 then (vk 1, (bl (Mvar 1) pk (rb (N 6)), sign (bl (Mvar 1) pk (rb (N 6))) (ssk 1) (rs (N 10)))) 
+                 then (vk 1, (bl (Mvar 1) pk (rb (nonce 6)), sign (bl (Mvar 1) pk (rb (nonce 6))) (ssk 1) (rs (nonce 10)))) 
                  else O 
          else If IF (to x1) #? B then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
                  then If IF (to
@@ -452,9 +452,9 @@ pose proof(compHid_ext 3 4 0 1 (v 0) (v 1) [] (phi0++
                                   (toListm
                                      (phi0 ++
                                       [msg
-                                         (vk 1, (bl (Mvar 1) pk (rb (N 6)), sign (bl (Mvar 1) pk (rb (N 6))) (ssk 1) (rs (N 10))))]))))
+                                         (vk 1, (bl (Mvar 1) pk (rb (nonce 6)), sign (bl (Mvar 1) pk (rb (nonce 6))) (ssk 1) (rs (nonce 10))))]))))
                             #? A then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
-                         then (vk 0, (bl (Mvar 0) pk (rb (N 5)), sign (bl (Mvar 0) pk (rb (N 5))) (ssk 0) (rs (N 9)))) 
+                         then (vk 0, (bl (Mvar 0) pk (rb (nonce 5)), sign (bl (Mvar 0) pk (rb (nonce 5))) (ssk 0) (rs (nonce 9)))) 
                          else O 
                  else O)])).
 simpl in H1.
@@ -491,7 +491,7 @@ funapptrmhyp (msg (tr 0 0 3 5 9)) (msg (tr 0 1 3 5 9)) H; simpl; try reflexivity
 funapptrmhyp (msg (x2t 0)) (msg (x2t 1)) H; simpl; try reflexivity.
 funapptrmhyp (msg (to (x2t 0))) (msg (to (x2t 1))) H; simpl; try reflexivity.
 funapptrmhyp  (bol ((to (x2t 0)) #? B) & (vcheck (V0 x1)) & (vcheck (V1 x1))) ( bol ((to (x2t 1)) #? B) & (vcheck (V0 x1)) & (vcheck (V1 x1))) H; simpl; try reflexivity. 
-funapptrmhyp (msg (bl (comm (V1 x1) (kc (N 4))) pk (rb (N 6)))) (msg (bl (comm (V0 x1) (kc (N 4))) pk (rb (N 6)))) H; simpl; try reflexivity.  
+funapptrmhyp (msg (bl (comm (V1 x1) (kc (nonce 4))) pk (rb (nonce 6)))) (msg (bl (comm (V0 x1) (kc (nonce 4))) pk (rb (nonce 6)))) H; simpl; try reflexivity.  
 funapptrmhyp (msg (s 1 4 6 1 10)) (msg (s 0 4 6 1 10)) H; simpl; try reflexivity.
 
 funapptrmhyp (msg (tr 1 1 4 6 10)) (msg (tr 1 0 4 6 10)) H; simpl; try reflexivity.

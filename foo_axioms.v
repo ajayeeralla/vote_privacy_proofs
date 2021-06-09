@@ -7,7 +7,7 @@ Require Export tactics.
 (** * FOO Protocol *)
 Section foo_axioms.
   (** Bindness Axiom *)
-Definition r (n:nat) := rb (N n).
+Definition r (n:nat) := rb (nonce n).
   
 (*Definition distvars {n} (l :mylist n) := nodup (mvars_mylis  l).*)
 
@@ -15,7 +15,7 @@ Notation "'[' x '<-' s ']' l" :=  (submsg_mylist x s l).
 (** ** Trapdoor Commitments *) 
   (** * [COMMEQL] *)
  
- Definition k (n:nat) := kc (N n).
+ Definition k (n:nat) := kc (nonce n).
 
  Axiom commEql: forall (n1 n2:nat) (t1 t2 : message), closMylist [msg t1, msg t2] = true /\ (Fresh (cons n1 nil) [msg t1, msg t2]) = true -> (Fresh (cons n2 nil) [msg t1, msg t2]) = true -> (IF |t1| #? |t2| then |(comm t1 (k n1))|#? |(comm t2 (k n2))| else TRue) ## TRue.
   (** * [COMMKEYEQL] *)           

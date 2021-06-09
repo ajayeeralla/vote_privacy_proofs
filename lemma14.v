@@ -9,8 +9,8 @@ Section lemma14.
 
   Definition V (b:bool) :=
     match b with
-    | false => (V0 (N 0))
-    | true => (V1 (N 0))
+    | false => (V0 (nonce 0))
+    | true => (V1 (nonce 0))
     end.
 
   Definition cn (b:bool) :nat :=
@@ -38,7 +38,7 @@ Definition bcheck (x y:message):Bool := (isin x ((tau 1 (pi2 (tau 1 y))), ((tau 
 Definition ncheck (x y:message):Bool := (isin x ((tau 3 (pi2 (tau 1 y))), ((tau 3 (pi2 (tau 2 y))), (tau 3 (pi2 (tau 3 y)))))).
  
 
-Definition lbl:= |(N 100)|.
+Definition lbl:= |(nonce 100)|.
 Definition label x y := If (x #? (tau 2 (pi2 (tau 1 y)))) then (pi1 (tau 1 y))
                            else  (If (x#? (tau 2 (pi2 (tau 2 y)))) then (pi1 (tau 2 y))
                                                        else (If (x #? (tau 2 (pi2 (tau 3 y)))) then (pi1 (tau 3 y))
@@ -54,14 +54,14 @@ Definition sotrm x := (shufl (p 1 x) (p 2 x) (p 3 x)).
 
 (** **)
 
-Definition  c j i := (comm (V (xorb j i)) (kc (N ((cn i)+3)))).
+Definition  c j i := (comm (V (xorb j i)) (kc (nonce ((cn i)+3)))).
 Definition pkc := (pke 100).
 Definition  b j i := (bl (c j i) pkc (r ((cn i)+1))).
 Definition  s j i t0 t1 := ({{ 5 := (b j false) }} ({{ 6:= (b j true) }} (if (eqb i false)%bool then t0 else t1))).
 Definition ut j i t0 t1  := (ub (c j i) pkc (r ((cn i)+1)) (s j i t0 t1)).
 Definition acct j i t0 t1 := (acc (c j i) pkc (r ((cn i)+1)) (s j i t0 t1)).
-Definition e j i  t0 t1 := (enc ((c j i), ((ut j i t0 t1), (N (cn i)))) (pke 11) (er ((cn i)+7))).
-Definition e' j i  t0 t1 := (enc ((c j i), ((ut j i t0 t1), (N ((cn i)+100)))) (pke 11) (er ((cn i)+7))).
+Definition e j i  t0 t1 := (enc ((c j i), ((ut j i t0 t1), (nonce (cn i)))) (pke 11) (er ((cn i)+7))).
+Definition e' j i  t0 t1 := (enc ((c j i), ((ut j i t0 t1), (nonce ((cn i)+100)))) (pke 11) (er ((cn i)+7))).
 
 (** attacker computation *)
 
@@ -79,7 +79,7 @@ Definition mvtrm y x :=  If (dist y) & (pvchecks y) then x else |_.
                                (phi2 j t0 t1) ++ [msg (mvtrm y x)].
   (** honest voters' terms of the opening phase *)
  
- Definition l j i t0 t1 x := let f3phi3j:= f (toListm (phi3 j t0 t1 x)) in  If (bnlcheck (c j i) (N (cn i)) f3phi3j) then (enc ((label (c j i) f3phi3j), ((kc (N ((cn i)+3))), THREE))(pke 11) (er ((cn i)+9))) else O.
+ Definition l j i t0 t1 x := let f3phi3j:= f (toListm (phi3 j t0 t1 x)) in  If (bnlcheck (c j i) (nonce (cn i)) f3phi3j) then (enc ((label (c j i) f3phi3j), ((kc (nonce ((cn i)+3))), THREE))(pke 11) (er ((cn i)+9))) else O.
   Definition phi4 j t0 t1 x := (phi3 j t0 t1 x) ++ [msg (l j false t0 t1 x)].     
 
   Definition phi5 j t0 t1 x := (phi4 j t0 t1 x) ++ [msg (l j true t0 t1 x)].
@@ -87,7 +87,7 @@ Definition mvtrm y x :=  If (dist y) & (pvchecks y) then x else |_.
   (** mixer term in the opening phase *)
 
   Definition motrm z  := let Isin i := (isin (k i) ((tau 2 (d 1 z)), ((tau 2 (d 2 z)), (tau 2 (d 3 z))))) in If (dist z) & (pochecks z)& (((Isin 3)&(Isin 4)) or (! ((Isin 3) or (Isin 4)))) then (sotrm z) else O.
-  Definition pv j i t0 t1 := ( (c j i), ((ut j i t0 t1), (N (cn i)))).
+  Definition pv j i t0 t1 := ( (c j i), ((ut j i t0 t1), (nonce (cn i)))).
 
   (** to apply ENCCCA2 *)
 
@@ -95,7 +95,7 @@ Definition mvtrm y x :=  If (dist y) & (pvchecks y) then x else |_.
    Definition phi2' j t0 t1 m0 := (phi1' j m0) ++ [msg (e j true t0 t1)] .
    Definition phi3' j t0 t1 x m0 := let y:= f (toListm (phi2' j t0 t1 m0)) in
                                  (phi2' j t0 t1 m0) ++ [msg (mvtrm y x)] .
-   Definition l' j i t0 t1 x m0 := let f3phi3j:= f (toListm (phi3' j t0 t1 x m0)) in  If (bnlcheck (c j i) (N (cn i)) f3phi3j) then (enc ((label (c j i) f3phi3j), ((kc (N ((cn i)+3))), THREE))(pke 11) (er ((cn i)+9))) else O .
+   Definition l' j i t0 t1 x m0 := let f3phi3j:= f (toListm (phi3' j t0 t1 x m0)) in  If (bnlcheck (c j i) (nonce (cn i)) f3phi3j) then (enc ((label (c j i) f3phi3j), ((kc (nonce ((cn i)+3))), THREE))(pke 11) (er ((cn i)+9))) else O .
   Definition phi4' j t0 t1 x m0 := (phi3' j t0 t1 x m0) ++ [msg (l' j false t0 t1 x m0)] .
   Definition phi5' j t0 t1 x m0  := (phi4' j t0 t1 x m0) ++ [msg (l' j true t0 t1 x m0)] .
   Definition sj' j t0 t1 m0 := let y:= f (toListm (phi2' j t0 t1 m0)) in (If !(isin (pv j false t0 t1) ((pi1 (d 1 y)), ((pi1 (d 2 y)), (pi1 (d 3 y))))) then (shufl (pi1 (d 1 y)) (pi1 (d 2 y)) (pi1 (d 3 y))) else O)  .
@@ -136,7 +136,7 @@ unfold bnlcheck.
 
 (** **)
 
-assert ( (ncheck (N (cn false))
+assert ( (ncheck (nonce (cn false))
                         (f
                            (toListm
                               (phi3' true t0 t1
@@ -158,11 +158,11 @@ Set Nested Proofs Allowed.
 Add Parametric Morphism: (@ eqm) with
     signature EQm ==> EQm ==> EQb as eqm_mor.
 Proof.    intros.  rewrite H, H0. reflexivity.  Qed.
-assert(  ((N (cn false)) #?
+assert(  ((nonce (cn false)) #?
    (tau 1
       (tau 3 (pi2 (tau 1 (f (toListm (phi3' true t0 t1 (sj' true t0 t1 (e' true false t0 t1)) (e' true false t0 t1)))))),
       (tau 3 (pi2 (tau 2 (f (toListm (phi3' true t0 t1 (sj' true t0 t1 (e' true false t0 t1)) (e' true false t0 t1)))))),
-      tau 3 (pi2 (tau 3 (f (toListm (phi3' true t0 t1 (sj' true t0 t1 (e' true false t0 t1)) (e' true false t0 t1)))))))))) ## ((N (cn false)) #? (tau 3 (pi2 (tau 1 (f (toListm (phi3' true t0 t1 (sj' true t0 t1 (e' true false t0 t1)) (e' true false t0 t1))))))))).
+      tau 3 (pi2 (tau 3 (f (toListm (phi3' true t0 t1 (sj' true t0 t1 (e' true false t0 t1)) (e' true false t0 t1)))))))))) ## ((nonce (cn false)) #? (tau 3 (pi2 (tau 1 (f (toListm (phi3' true t0 t1 (sj' true t0 t1 (e' true false t0 t1)) (e' true false t0 t1))))))))).
 rewrite H6.
 reflexivity.
 Axiom orB_cong: forall b1 b2 b3 b4, b1 ## b2 -> b3 ## b4 -> (IF b1 then TRue else b3) ## (IF b2 then TRue else b4).
@@ -187,7 +187,7 @@ rewrite H6; clear H6.
 pose proof(FRESHNEQ).
 Axiom freshneq: forall (n : nat) (m : message),
        ^? (m) = true  ->
-       ([bol (N n) #? m]) ~ [bol FAlse].
+       ([bol (nonce n) #? m]) ~ [bol FAlse].
 
 pose proof(freshneq 0 (tau 3
       (pi2
@@ -222,7 +222,7 @@ reflexivity.
 repeat rewrite H8 in H7; clear H8. simpl in H7.
 Axiom consteql: forall x f, const_bol f = true -> [bol x]~[bol f] -> x ## f.
 assert( (const_bol FAlse) = true). reflexivity.
-apply consteql with (x:= (N 0) #?
+apply consteql with (x:= (nonce 0) #?
            (pi2
               (pi2
                  (pi2
@@ -269,7 +269,7 @@ rewrite H8.
 reflexivity.
 repeat rewrite H8 in H7; clear H8. simpl in H7.
 assert( (const_bol FAlse) = true). reflexivity.
-apply consteql with (x:= (N 0) #?
+apply consteql with (x:= (nonce 0) #?
            (pi2
               (pi2
                  (pi2
@@ -320,7 +320,7 @@ rewrite H8.
 reflexivity.
 repeat rewrite H8 in H7; clear H8. simpl in H7.
 assert( (const_bol FAlse) = true). reflexivity.
-apply consteql with (x:= (N 0) #?
+apply consteql with (x:= (nonce 0) #?
            (pi2
               (pi2
                  (pi2
@@ -342,7 +342,7 @@ rewrite H6.
 repeat rewrite andB_FAlse_r.
 repeat rewrite IFFALSE_M. 
 (** replace *)
-assert ( (ncheck (N (cn false))
+assert ( (ncheck (nonce (cn false))
                      (f
                         (toListm
                            (phi3' false t0 t1 (sj' false t0 t1 (e' false false t0 t1))
@@ -410,7 +410,7 @@ repeat rewrite H8 in H7; clear H8. simpl in H7.
 
 
 assert( (const_bol FAlse) = true). reflexivity.
-apply consteql with (x:= (N 0) #?
+apply consteql with (x:= (nonce 0) #?
            (pi2
               (pi2
                  (pi2
@@ -462,7 +462,7 @@ simpl in H7.
 
 
 assert( (const_bol FAlse) = true). reflexivity.
-apply consteql with (x:= (N 0) #?
+apply consteql with (x:= (nonce 0) #?
            (pi2
               (pi2
                  (pi2
@@ -520,7 +520,7 @@ repeat rewrite H8 in H7; clear H8. simpl in H7.
 
 assert( (const_bol FAlse) = true). reflexivity.
 
-apply consteql with (x:= (N 0) #?
+apply consteql with (x:= (nonce 0) #?
            (pi2
               (pi2
                  (pi2
@@ -574,7 +574,7 @@ assert( (isin (k 0)
                                             [b false false; b false true; 
                                             e' false false t0 t1; e false true t0 t1])
                                          (sj' false t0 t1 (e' false false t0 t1))]) |) #? lbl) &
-                              (ncheck (N 1)
+                              (ncheck (nonce 1)
                                  (f
                                     [b false false; b false true; e' false false t0 t1;
                                     e false true t0 t1;
@@ -592,7 +592,7 @@ assert( (isin (k 0)
                                                [b false false; b false true; 
                                                e' false false t0 t1; e false true t0 t1])
                                             (sj' false t0 t1 (e' false false t0 t1))]),
-                                    (kc (N 4), THREE)) (pke 11) (er 10)) 
+                                    (kc (nonce 4), THREE)) (pke 11) (er 10)) 
                               else O]),
                      (d 2
                         (f
@@ -620,7 +620,7 @@ assert( (isin (k 0)
                                             [b false false; b false true; 
                                             e' false false t0 t1; e false true t0 t1])
                                          (sj' false t0 t1 (e' false false t0 t1))]) |) #? lbl) &
-                              (ncheck (N 1)
+                              (ncheck (nonce 1)
                                  (f
                                     [b false false; b false true; e' false false t0 t1;
                                     e false true t0 t1;
@@ -638,7 +638,7 @@ assert( (isin (k 0)
                                                [b false false; b false true; 
                                                e' false false t0 t1; e false true t0 t1])
                                             (sj' false t0 t1 (e' false false t0 t1))]),
-                                    (kc (N 4), THREE)) (pke 11) (er 10)) 
+                                    (kc (nonce 4), THREE)) (pke 11) (er 10)) 
                               else O]),
                      d 3
                        (f
@@ -666,7 +666,7 @@ assert( (isin (k 0)
                                            [b false false; b false true; 
                                            e' false false t0 t1; e false true t0 t1])
                                         (sj' false t0 t1 (e' false false t0 t1))]) |) #? lbl) &
-                             (ncheck (N 1)
+                             (ncheck (nonce 1)
                                 (f
                                    [b false false; b false true; e' false false t0 t1;
                                    e false true t0 t1;
@@ -684,7 +684,7 @@ assert( (isin (k 0)
                                               [b false false; b false true; 
                                               e' false false t0 t1; e false true t0 t1])
                                            (sj' false t0 t1 (e' false false t0 t1))]),
-                                   (kc (N 4), THREE)) (pke 11) (er 10)) 
+                                   (kc (nonce 4), THREE)) (pke 11) (er 10)) 
                              else O])))) ## FAlse).
 unfold isin.
 unfold d.

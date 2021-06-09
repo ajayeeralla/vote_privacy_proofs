@@ -38,7 +38,7 @@ match n with
          end
 end.
           
-Eval compute in (insatpos (boltonum false) (N 1) [O;O]).
+Eval compute in (insatpos (boltonum false) (nonce 1) [O;O]).
 
 Variable l: list message.
 Variable b: bool.

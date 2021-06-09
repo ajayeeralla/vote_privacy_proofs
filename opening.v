@@ -18,7 +18,7 @@ Definition theta21 x a n n' := ((to (x n n')) #? a) & (distbb x n n').
 Definition acc1 n n' k r   := (acpt n k r (x3tt n n')). (**or (acpt n k r (x4ttt n n')).*)
 Definition acc2 n n' k r   := (acpt n' k r (x3tt n n')). (** or (acpt n' k r (x4ttt n n'))*)
 
-Definition e1 n k x (n':nat) n3 := (enc ((label (c n k) (x n n')), ((kc (N k)) , THREE)) (pke 2) (se n3)).
+Definition e1 n k x (n':nat) n3 := (enc ((label (c n k) (x n n')), ((kc (nonce k)) , THREE)) (pke 2) (se n3)).
 Eval compute in bcheck.
 
 (** previous terms *)
@@ -174,10 +174,10 @@ unfold e1.
                 let u':= (c 1 3, (ub (c 1 3) pk (bk 5) (x3tt 1 0), TWO)) in
                 let v:= (c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) in
                 let v':= (c 0 4, (ub (c 0 4) pk (bk 6) (x3tt 1 0), TWO)) in
-                let u1 := (label (c 0 3) (x6t 0 1), (kc (N 3), THREE)) in
-                let v1:= (label (c 0 4) (x7t 0 1), (kc (N 4), THREE)) in
-                let u1' := (label (c 1 3) (x6t 1 0), (kc (N 3), THREE)) in
-                let v1' := (label (c 1 4) (x7t 1 0), (kc (N 4), THREE)) in 
+                let u1 := (label (c 0 3) (x6t 0 1), (kc (nonce 3), THREE)) in
+                let v1:= (label (c 0 4) (x7t 0 1), (kc (nonce 4), THREE)) in
+                let u1' := (label (c 1 3) (x6t 1 0), (kc (nonce 3), THREE)) in
+                let v1' := (label (c 1 4) (x7t 1 0), (kc (nonce 4), THREE)) in 
    [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TWO, msg THREE, msg (vk 0), msg (vk 1), 
    msg (pke 2), bol (theta x1 A), msg (tr 0 0 3 5 9), bol (theta (x2t 0) B), msg (tr 1 1 4 6 10), 
    bol (to (x3tt 0 1)) #? A, bol (acpt 0 3 5 (x3tt 0 1)),
@@ -238,19 +238,19 @@ Theorem frame9ind:
      ((to (x6t 0 1)) #? A) &
      (dist (tau 1 (pi1 (x6t 0 1))) (tau 2 (pi1 (x6t 0 1))) (tau 3 (pi1 (x6t 0 1)))) &
      (dist (tau 1 (pi2 (x6t 0 1))) (tau 2 (pi2 (x6t 0 1))) (tau 3 (pi2 (x6t 0 1)))),
-   bol (acc1 0 1 3 5) & (bcheck (c 0 3) (x6t 0 1)), msg {(label (c 0 3) (x6t 0 1), (kc (N 3), THREE)) }_ 2 ^^ 13,
+   bol (acc1 0 1 3 5) & (bcheck (c 0 3) (x6t 0 1)), msg {(label (c 0 3) (x6t 0 1), (kc (nonce 3), THREE)) }_ 2 ^^ 13,
    bol
      ((to (x7t 0 1)) #? B) &
      (dist (tau 1 (pi1 (x7t 0 1))) (tau 2 (pi1 (x7t 0 1))) (tau 3 (pi1 (x7t 0 1)))) &
      (dist (tau 1 (pi2 (x7t 0 1))) (tau 2 (pi2 (x7t 0 1))) (tau 3 (pi2 (x7t 0 1)))),
-   bol (acc2 0 1 4 6) & (bcheck (c 1 4) (x7t 0 1)), msg {(label (c 0 4) (x7t 0 1), (kc (N 4), THREE)) }_ 2 ^^ 14,
+   bol (acc2 0 1 4 6) & (bcheck (c 1 4) (x7t 0 1)), msg {(label (c 0 4) (x7t 0 1), (kc (nonce 4), THREE)) }_ 2 ^^ 14,
    bol
      ((dist (dec (tau 1 (x8t 0 1)) (ske 2)) (dec (tau 2 (x8t 0 1)) (ske 2)) (dec (tau 3 (x8t 0 1)) (ske 2))) &
       (pchecks (x8t 0 1) THREE)) &
      ((isin (bk 3) (dec (tau 1 (x8t 0 1)) (ske 2), (dec (tau 2 (x8t 0 1)) (ske 2), dec (tau 3 (x8t 0 1)) (ske 2)))) &
       (isin (bk 4) (dec (tau 1 (x8t 0 1)) (ske 2), (dec (tau 2 (x8t 0 1)) (ske 2), dec (tau 3 (x8t 0 1)) (ske 2))))) or
      (! (isin (bk 3) (dec (tau 1 (x8t 0 1)) (ske 2), (dec (tau 2 (x8t 0 1)) (ske 2), dec (tau 3 (x8t 0 1)) (ske 2))))) or
-     ! (isin (bk 4) (dec (tau 1 (x8t 0 1)) (ske 2), (dec (tau 2 (x8t 0 1)) (ske 2), dec (tau 3 (x8t 0 1)) (ske 2)))), bol (tau 1 (x8t 0 1))#?{(label (c 1 3) (x6t 1 0), (kc (N 3), THREE)) }_ pke 2 ^^ (se 13), bol (tau 2 (x8t 1 0))#?
+     ! (isin (bk 4) (dec (tau 1 (x8t 0 1)) (ske 2), (dec (tau 2 (x8t 0 1)) (ske 2), dec (tau 3 (x8t 0 1)) (ske 2)))), bol (tau 1 (x8t 0 1))#?{(label (c 1 3) (x6t 1 0), (kc (nonce 3), THREE)) }_ pke 2 ^^ (se 13), bol (tau 2 (x8t 1 0))#?
    msg
      (shufl (tau 1 (dec (tau 1 (x8t 0 1)) (ske 2)), tau 2 (dec (tau 1 (x8t 0 1)) (ske 2)))
         (tau 1 (dec (tau 2 (x8t 0 1)) (ske 2)), tau 2 (dec (tau 2 (x8t 0 1)) (ske 2)))
@@ -272,12 +272,12 @@ Theorem frame9ind:
     ((to (x6t 1 0)) #? A) &
     (dist (tau 1 (pi1 (x6t 1 0))) (tau 2 (pi1 (x6t 1 0))) (tau 3 (pi1 (x6t 1 0)))) &
     (dist (tau 1 (pi2 (x6t 1 0))) (tau 2 (pi2 (x6t 1 0))) (tau 3 (pi2 (x6t 1 0)))),
-  bol (acc1 1 1 3 5) & (bcheck (c 1 3) (x6t 1 0)), msg {(label (c 1 3) (x6t 1 0), (kc (N 3), THREE)) }_ 2 ^^ 13,
+  bol (acc1 1 1 3 5) & (bcheck (c 1 3) (x6t 1 0)), msg {(label (c 1 3) (x6t 1 0), (kc (nonce 3), THREE)) }_ 2 ^^ 13,
   bol
     ((to (x7t 1 0)) #? B) &
     (dist (tau 1 (pi1 (x7t 1 0))) (tau 2 (pi1 (x7t 1 0))) (tau 3 (pi1 (x7t 1 0)))) &
     (dist (tau 1 (pi2 (x7t 1 0))) (tau 2 (pi2 (x7t 1 0))) (tau 3 (pi2 (x7t 1 0)))),
-  bol (acc2 1 0 4 6) & (bcheck (c 0 4) (x7t 1 0)), msg {(label (c 1 4) (x7t 1 0), (kc (N 4), THREE)) }_ 2 ^^ 14,
+  bol (acc2 1 0 4 6) & (bcheck (c 0 4) (x7t 1 0)), msg {(label (c 1 4) (x7t 1 0), (kc (nonce 4), THREE)) }_ 2 ^^ 14,
   bol
     ((dist (dec (tau 1 (x8t 1 0)) (ske 2)) (dec (tau 2 (x8t 1 0)) (ske 2)) (dec (tau 3 (x8t 1 0)) (ske 2))) &
      (pchecks (x8t 1 0) THREE)) &
@@ -349,20 +349,20 @@ simpl.
  
 
 
-Eval compute in (submsg_msg 1 {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12 (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 x5tex)).
+Eval compute in (submsg_msg 1 {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12 (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 x5tex)).
  
-assert( (x5t 0 1) # (submsg_msg 1 {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12 (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 x5tex))).
+assert( (x5t 0 1) # (submsg_msg 1 {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12 (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 x5tex))).
 simpl. reflexivity. 
 rewrite <- H1 in H.
 
-assert( (x4ttt 0 1) # (submsg_msg 1 {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12 (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 x4tttex))).
+assert( (x4ttt 0 1) # (submsg_msg 1 {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12 (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 x4tttex))).
 simpl. reflexivity. 
 rewrite <- H2 in H.
 clear H1 H2.
 
 simpl.
 
-assert ( (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 (Mvar 0)) # (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 (Mvar 0))).
+assert ( (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 (Mvar 0)) # (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 (Mvar 0))).
 reflexivity.
 rewrite H1 in H.
 clear H1.
@@ -450,562 +450,562 @@ repeat rewrite IFTRUE_M in H1.
 
 
 
-assert(ftran: [msg (dec (pi2 (pi2 (x5t 0 1))) (pi2 (ke (N 2)))),
+assert(ftran: [msg (dec (pi2 (pi2 (x5t 0 1))) (pi2 (ke (nonce 2)))),
        msg
-         (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
-         ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-           (rb (N 5))
+         (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
+         ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+           (rb (nonce 5))
            (f
-              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-              (pi1 (ks (N 0)),
-              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 5)),
+              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+              (pi1 (ks (nonce 0)),
+              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 5)),
               sign
-                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-              (pi1 (ks (N 1)),
-              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 6)),
+                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+              (pi1 (ks (nonce 1)),
+              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 6)),
               sign
-                (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))])),
+                (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))])),
        msg
-         (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)),
-         ub (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-           (rb (N 6))
+         (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)),
+         ub (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+           (rb (nonce 6))
            (f
-              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-              (pi1 (ks (N 0)),
-              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 5)),
+              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+              (pi1 (ks (nonce 0)),
+              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 5)),
               sign
-                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-              (pi1 (ks (N 1)),
-              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 6)),
+                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+              (pi1 (ks (nonce 1)),
+              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 6)),
               sign
-                (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))])), msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TWO, msg THREE, msg (pi1 (ks (N 0))), msg (pi1 (ks (N 1))), msg (pi1 (ke (N 2))),
-       msg {(comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)), (ub (c 0 3) pk (bk 5) (x3tt 0 1), TWO)) }_ 2 ^^ 11,
-       msg {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12, msg (pi2 (ks (N 0))), msg (pi2 (ks (N 1))), msg (rs (N 9)), msg (rs (N 10)),
+                (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))])), msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TWO, msg THREE, msg (pi1 (ks (nonce 0))), msg (pi1 (ks (nonce 1))), msg (pi1 (ke (nonce 2))),
+       msg {(comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)), (ub (c 0 3) pk (bk 5) (x3tt 0 1), TWO)) }_ 2 ^^ 11,
+       msg {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12, msg (pi2 (ks (nonce 0))), msg (pi2 (ks (nonce 1))), msg (rs (nonce 9)), msg (rs (nonce 10)),
        msg
-         (pi1 (ks (N 0)),
-         (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-            (rb (N 5)),
+         (pi1 (ks (nonce 0)),
+         (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+            (rb (nonce 5)),
          sign
-           (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-              (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9)))),
+           (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+              (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9)))),
        msg
-         (pi1 (ks (N 1)),
-         (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-            (rb (N 6)),
+         (pi1 (ks (nonce 1)),
+         (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+            (rb (nonce 6)),
          sign
-           (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-              (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10)))),
+           (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+              (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10)))),
        msg
          (f
-            [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-            (pi1 (ks (N 0)),
-            (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-               (rb (N 5)),
+            [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+            (pi1 (ks (nonce 0)),
+            (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+               (rb (nonce 5)),
             sign
-              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-            (pi1 (ks (N 1)),
-            (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-               (rb (N 6)),
+              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+            (pi1 (ks (nonce 1)),
+            (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+               (rb (nonce 6)),
             sign
-              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), msg (x4ttt 0 1), msg (x5t 0 1),
+              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), msg (x4ttt 0 1), msg (x5t 0 1),
        bol
-         (acc (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-            (rb (N 5))
+         (acc (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+            (rb (nonce 5))
             (f
-               [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-               (pi1 (ks (N 0)),
-               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 5)),
+               [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+               (pi1 (ks (nonce 0)),
+               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 5)),
                sign
-                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-               (pi1 (ks (N 1)),
-               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 6)),
+                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+               (pi1 (ks (nonce 1)),
+               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 6)),
                sign
-                 (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))])),
+                 (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))])),
        bol
-         (acc (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-            (rb (N 6))
+         (acc (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+            (rb (nonce 6))
             (f
-               [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-               (pi1 (ks (N 0)),
-               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 5)),
+               [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+               (pi1 (ks (nonce 0)),
+               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 5)),
                sign
-                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-               (pi1 (ks (N 1)),
-               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 6)),
+                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+               (pi1 (ks (nonce 1)),
+               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 6)),
                sign
-                 (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]))] ~ [msg
+                 (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]))] ~ [msg
           (dec
              (pi2
                 (pi2
                    (f
-                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                      (pi1 (ks (N 0)),
-                      (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-                      sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-                      (pi1 (ks (N 1)),
-                      (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                         (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                      (pi1 (ks (nonce 0)),
+                      (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+                      sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                      (pi1 (ks (nonce 1)),
+                      (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                         (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                       sign
-                        (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                           (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))));
+                        (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                           (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))));
                       {z
-                         (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
-                         (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                            (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))
+                         (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
+                         (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                            (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))
                             (f
-                               [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                               (pi1 (ks (N 0)),
-                               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-                               sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-                               (pi1 (ks (N 1)),
-                               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                                  (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                               [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                               (pi1 (ks (nonce 0)),
+                               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+                               sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                               (pi1 (ks (nonce 1)),
+                               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                                  (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                                sign
-                                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 
+                                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 
                       13;
                       {z
-                         (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)),
-                         (ub (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                            (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))
+                         (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)),
+                         (ub (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                            (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))
                             (f
-                               [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                               (pi1 (ks (N 0)),
-                               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-                               sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-                               (pi1 (ks (N 1)),
-                               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                                  (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                               [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                               (pi1 (ks (nonce 0)),
+                               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+                               sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                               (pi1 (ks (nonce 1)),
+                               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                                  (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                                sign
-                                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 
-                      14]))) (pi2 (ke (N 2)))),
+                                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 
+                      14]))) (pi2 (ke (nonce 2)))),
        msg
-         (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3)),
-         ub (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)
+         (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3)),
+         ub (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)
            (f
-              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-              (pi1 (ks (N 0)),
-              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-              sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-              (pi1 (ks (N 1)),
-              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 6)),
+              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+              (pi1 (ks (nonce 0)),
+              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+              sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+              (pi1 (ks (nonce 1)),
+              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 6)),
               sign
-                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))])),
+                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))])),
        msg
-         (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 4)),
-         ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 4))) (pubkey x1) (r 6)
+         (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 4)),
+         ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 4))) (pubkey x1) (r 6)
            (f
-              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-              (pi1 (ks (N 0)),
-              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-              sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-              (pi1 (ks (N 1)),
-              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 6)),
+              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+              (pi1 (ks (nonce 0)),
+              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+              sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+              (pi1 (ks (nonce 1)),
+              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 6)),
               sign
-                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))])), msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TWO, msg THREE, msg (vk 0), msg (vk 1), msg (pke 2),
+                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))])), msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TWO, msg THREE, msg (vk 0), msg (vk 1), msg (pke 2),
        msg
          {z
-            (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
-            (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-               (rb (N 5))
+            (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
+            (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+               (rb (nonce 5))
                (f
-                  [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                  (pi1 (ks (N 0)),
-                  (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5)),
+                  [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                  (pi1 (ks (nonce 0)),
+                  (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5)),
                   sign
-                    (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-                  (pi1 (ks (N 1)),
-                  (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                    (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                  (pi1 (ks (nonce 1)),
+                  (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                   sign
-                    (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 13,
+                    (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 13,
        msg
          {z
-            (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)),
-            (ub (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-               (rb (N 6))
+            (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)),
+            (ub (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+               (rb (nonce 6))
                (f
-                  [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                  (pi1 (ks (N 0)),
-                  (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5)),
+                  [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                  (pi1 (ks (nonce 0)),
+                  (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5)),
                   sign
-                    (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-                  (pi1 (ks (N 1)),
-                  (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                    (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                  (pi1 (ks (nonce 1)),
+                  (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                   sign
-                    (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 14, 
-       msg (pi2 (ks (N 0))), msg (pi2 (ks (N 1))), msg (rs (N 9)), msg (rs (N 10)),
+                    (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 14, 
+       msg (pi2 (ks (nonce 0))), msg (pi2 (ks (nonce 1))), msg (rs (nonce 9)), msg (rs (nonce 10)),
        msg
-         (pi1 (ks (N 0)),
-         (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-         sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9)))),
+         (pi1 (ks (nonce 0)),
+         (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+         sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9)))),
        msg
-         (pi1 (ks (N 1)),
-         (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-            (rb (N 6)),
+         (pi1 (ks (nonce 1)),
+         (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+            (rb (nonce 6)),
          sign
-           (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-              (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10)))),
+           (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+              (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10)))),
        msg
          (f
-            [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-            (pi1 (ks (N 0)),
-            (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-            sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-            (pi1 (ks (N 1)),
-            (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-               (rb (N 6)),
+            [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+            (pi1 (ks (nonce 0)),
+            (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+            sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+            (pi1 (ks (nonce 1)),
+            (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+               (rb (nonce 6)),
             sign
-              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]),
+              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]),
        msg
          (f
-            [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-            (pi1 (ks (N 0)),
-            (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-            sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-            (pi1 (ks (N 1)),
-            (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-               (rb (N 6)),
+            [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+            (pi1 (ks (nonce 0)),
+            (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+            sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+            (pi1 (ks (nonce 1)),
+            (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+               (rb (nonce 6)),
             sign
-              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))));
+              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))));
             {z
-               (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
-               (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 5))
+               (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
+               (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 5))
                   (f
-                     [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                     (pi1 (ks (N 0)),
-                     (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-                     sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-                     (pi1 (ks (N 1)),
-                     (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                        (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                     [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                     (pi1 (ks (nonce 0)),
+                     (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+                     sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                     (pi1 (ks (nonce 1)),
+                     (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                        (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                      sign
-                       (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                          (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 13]),
+                       (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                          (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 13]),
        msg
          (f
-            [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-            (pi1 (ks (N 0)),
-            (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-            sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-            (pi1 (ks (N 1)),
-            (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-               (rb (N 6)),
+            [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+            (pi1 (ks (nonce 0)),
+            (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+            sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+            (pi1 (ks (nonce 1)),
+            (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+               (rb (nonce 6)),
             sign
-              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))));
+              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))));
             {z
-               (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
-               (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 5))
+               (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
+               (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 5))
                   (f
-                     [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                     (pi1 (ks (N 0)),
-                     (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-                     sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-                     (pi1 (ks (N 1)),
-                     (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                        (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                     [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                     (pi1 (ks (nonce 0)),
+                     (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+                     sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                     (pi1 (ks (nonce 1)),
+                     (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                        (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                      sign
-                       (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                          (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 13;
+                       (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                          (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 13;
             {z
-               (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)),
-               (ub (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 6))
+               (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)),
+               (ub (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 6))
                   (f
-                     [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                     (pi1 (ks (N 0)),
-                     (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-                     sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-                     (pi1 (ks (N 1)),
-                     (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                        (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                     [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                     (pi1 (ks (nonce 0)),
+                     (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+                     sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                     (pi1 (ks (nonce 1)),
+                     (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                        (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                      sign
-                       (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                          (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 14]),
+                       (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                          (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 14]),
        bol
-         (acc (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)
+         (acc (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)
             (f
-               [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-               (pi1 (ks (N 0)),
-               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-               sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-               (pi1 (ks (N 1)),
-               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 6)),
+               [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+               (pi1 (ks (nonce 0)),
+               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+               sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+               (pi1 (ks (nonce 1)),
+               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 6)),
                sign
-                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))])),
+                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))])),
        bol
-         (acc (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 4))) (pubkey x1) (r 6)
+         (acc (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 4))) (pubkey x1) (r 6)
             (f
-               [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-               (pi1 (ks (N 0)),
-               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-               sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-               (pi1 (ks (N 1)),
-               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 6)),
+               [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+               (pi1 (ks (nonce 0)),
+               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+               sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+               (pi1 (ks (nonce 1)),
+               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 6)),
                sign
-                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]))]).
+                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]))]).
 apply EQI_trans with (ml2:= [msg
          (dec
             (pi2
                (pi2
                   (f
-                     [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                     (pi1 (ks (N 0)),
-                     (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                        (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5)),
+                     [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                     (pi1 (ks (nonce 0)),
+                     (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                        (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5)),
                      sign
-                       (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                          (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-                     (pi1 (ks (N 1)),
-                     (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                        (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                       (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                          (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                     (pi1 (ks (nonce 1)),
+                     (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                        (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                      sign
-                       (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                          (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))));
+                       (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                          (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))));
                      {z
-                        (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
-                        (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                           (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))
+                        (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
+                        (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                           (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))
                            (f
-                              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                              (pi1 (ks (N 0)),
-                              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                                 (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5)),
+                              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                              (pi1 (ks (nonce 0)),
+                              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                                 (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5)),
                               sign
-                                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                                   (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-                              (pi1 (ks (N 1)),
-                              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                                 (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                                   (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                              (pi1 (ks (nonce 1)),
+                              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                                 (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                               sign
-                                (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                                   (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 
-                     13; {z (c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 14]))) (pi2 (ke (N 2)))),
+                                (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                                   (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 
+                     13; {z (c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 14]))) (pi2 (ke (nonce 2)))),
       msg
-        (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
-        ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-          (rb (N 5))
+        (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
+        ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+          (rb (nonce 5))
           (f
-             [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-             (pi1 (ks (N 0)),
-             (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 5)),
+             [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+             (pi1 (ks (nonce 0)),
+             (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 5)),
              sign
-               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-             (pi1 (ks (N 1)),
-             (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 6)),
+               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+             (pi1 (ks (nonce 1)),
+             (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 6)),
              sign
-               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))])),
+               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))])),
       msg
-        (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)),
-        ub (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-          (rb (N 6))
+        (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)),
+        ub (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+          (rb (nonce 6))
           (f
-             [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-             (pi1 (ks (N 0)),
-             (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 5)),
+             [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+             (pi1 (ks (nonce 0)),
+             (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 5)),
              sign
-               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-             (pi1 (ks (N 1)),
-             (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 6)),
+               (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+             (pi1 (ks (nonce 1)),
+             (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 6)),
              sign
-               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))])), msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TWO, msg THREE, msg (pi1 (ks (N 0))), msg (pi1 (ks (N 1))), msg (pi1 (ke (N 2))),
+               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))])), msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TWO, msg THREE, msg (pi1 (ks (nonce 0))), msg (pi1 (ks (nonce 1))), msg (pi1 (ke (nonce 2))),
       msg
         {z
-           (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
-           (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-              (rb (N 5))
+           (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
+           (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+              (rb (nonce 5))
               (f
-                 [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                 (pi1 (ks (N 0)),
-                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5)),
+                 [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                 (pi1 (ks (nonce 0)),
+                 (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5)),
                  sign
-                   (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                      (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-                 (pi1 (ks (N 1)),
-                 (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                   (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                      (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                 (pi1 (ks (nonce 1)),
+                 (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                    (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                  sign
-                   (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                      (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 13,
-      msg {z (c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 14, msg (pi2 (ks (N 0))), msg (pi2 (ks (N 1))), msg (rs (N 9)), msg (rs (N 10)),
+                   (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                      (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 13,
+      msg {z (c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 14, msg (pi2 (ks (nonce 0))), msg (pi2 (ks (nonce 1))), msg (rs (nonce 9)), msg (rs (nonce 10)),
       msg
-        (pi1 (ks (N 0)),
-        (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-           (rb (N 5)),
+        (pi1 (ks (nonce 0)),
+        (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+           (rb (nonce 5)),
         sign
-          (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-             (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9)))),
+          (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+             (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9)))),
       msg
-        (pi1 (ks (N 1)),
-        (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-           (rb (N 6)),
+        (pi1 (ks (nonce 1)),
+        (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+           (rb (nonce 6)),
         sign
-          (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-             (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10)))),
+          (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+             (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10)))),
       msg
         (f
-           [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-           (pi1 (ks (N 0)),
-           (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-              (rb (N 5)),
+           [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+           (pi1 (ks (nonce 0)),
+           (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+              (rb (nonce 5)),
            sign
-             (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-           (pi1 (ks (N 1)),
-           (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-              (rb (N 6)),
+             (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+           (pi1 (ks (nonce 1)),
+           (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+              (rb (nonce 6)),
            sign
-             (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]),
+             (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]),
       msg
         (f
-           [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-           (pi1 (ks (N 0)),
-           (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-              (rb (N 5)),
+           [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+           (pi1 (ks (nonce 0)),
+           (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+              (rb (nonce 5)),
            sign
-             (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-           (pi1 (ks (N 1)),
-           (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-              (rb (N 6)),
+             (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+           (pi1 (ks (nonce 1)),
+           (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+              (rb (nonce 6)),
            sign
-             (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))));
+             (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))));
            {z
-              (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
-              (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 5))
+              (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
+              (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 5))
                  (f
-                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                    (pi1 (ks (N 0)),
-                    (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5)),
+                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                    (pi1 (ks (nonce 0)),
+                    (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5)),
                     sign
-                      (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                         (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-                    (pi1 (ks (N 1)),
-                    (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                      (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                         (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                    (pi1 (ks (nonce 1)),
+                    (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                     sign
-                      (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                         (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 13]),
+                      (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                         (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 13]),
       msg
         (f
-           [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-           (pi1 (ks (N 0)),
-           (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-              (rb (N 5)),
+           [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+           (pi1 (ks (nonce 0)),
+           (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+              (rb (nonce 5)),
            sign
-             (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-           (pi1 (ks (N 1)),
-           (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-              (rb (N 6)),
+             (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+           (pi1 (ks (nonce 1)),
+           (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+              (rb (nonce 6)),
            sign
-             (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))));
+             (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))));
            {z
-              (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
-              (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 5))
+              (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
+              (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 5))
                  (f
-                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                    (pi1 (ks (N 0)),
-                    (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5)),
+                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                    (pi1 (ks (nonce 0)),
+                    (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5)),
                     sign
-                      (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                         (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-                    (pi1 (ks (N 1)),
-                    (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                      (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                         (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                    (pi1 (ks (nonce 1)),
+                    (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                     sign
-                      (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                         (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 13;
+                      (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                         (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 13;
            {z (c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 14]),
       bol
-        (acc (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-           (rb (N 5))
+        (acc (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+           (rb (nonce 5))
            (f
-              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-              (pi1 (ks (N 0)),
-              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 5)),
+              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+              (pi1 (ks (nonce 0)),
+              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 5)),
               sign
-                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-              (pi1 (ks (N 1)),
-              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 6)),
+                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+              (pi1 (ks (nonce 1)),
+              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 6)),
               sign
-                (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))])),
+                (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))])),
       bol
-        (acc (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-           (rb (N 6))
+        (acc (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+           (rb (nonce 6))
            (f
-              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-              (pi1 (ks (N 0)),
-              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 5)),
+              [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+              (pi1 (ks (nonce 0)),
+              (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 5)),
               sign
-                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-              (pi1 (ks (N 1)),
-              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (rb (N 6)),
+                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+              (pi1 (ks (nonce 1)),
+              (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (rb (nonce 6)),
               sign
-                (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]))]).
+                (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4))) (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]))]).
 apply H; try split; auto.
 
 
@@ -1024,96 +1024,96 @@ rewrite <- H in H1.
 simpl.  
 
 assert (   {z
-                          (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
-                          (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                             (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))
+                          (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
+                          (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                             (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))
                              (f
-                                [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                                (pi1 (ks (N 0)),
-                                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                                   (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5)),
+                                [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                                (pi1 (ks (nonce 0)),
+                                (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                                   (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5)),
                                 sign
-                                  (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))) 
-                                  (pi2 (ks (N 0))) (rs (N 9))));
-                                (pi1 (ks (N 1)),
-                                (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                                   (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                                  (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                                  (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                                (pi1 (ks (nonce 1)),
+                                (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                                   (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                                 sign
-                                  (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) 
-                                  (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 13 # {z
-                            (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
-                            (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-                               (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 5))
+                                  (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                                  (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 13 # {z
+                            (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
+                            (ub (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+                               (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 5))
                                (f
-                                  [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                                  (pi1 (ks (N 0)),
-                                  (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
-                                  sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-                                  (pi1 (ks (N 1)),
-                                  (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6)),
+                                  [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                                  (pi1 (ks (nonce 0)),
+                                  (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
+                                  sign (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                                  (pi1 (ks (nonce 1)),
+                                  (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                                     (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6)),
                                   sign
-                                    (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 4)))
-                                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (rb (N 6))) 
-                                    (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 13).
+                                    (bl (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 4)))
+                                       (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                                    (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 13).
 Axiom zeroEqlxy: forall x y,  (z x) # (z y).
-rewrite zeroEqlxy with (x:= (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
+rewrite zeroEqlxy with (x:= (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
      (ub
-        (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)))
-        (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) 
-        (rb (N 5))
+        (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)))
+        (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) 
+        (rb (nonce 5))
         (f
-           [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-           (pi1 (ks (N 0)),
+           [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+           (pi1 (ks (nonce 0)),
            (bl
-              (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (kc (N 3)))
-              (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-              (rb (N 5)),
+              (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (kc (nonce 3)))
+              (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+              (rb (nonce 5)),
            sign
              (bl
-                (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (kc (N 3)))
-                (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 5))) (pi2 (ks (N 0))) (rs (N 9))));
-           (pi1 (ks (N 1)),
+                (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (kc (nonce 3)))
+                (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 5))) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+           (pi1 (ks (nonce 1)),
            (bl
-              (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                 (kc (N 4)))
-              (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-              (rb (N 6)),
+              (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                 (kc (nonce 4)))
+              (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+              (rb (nonce 6)),
            sign
              (bl
-                (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (kc (N 4)))
-                (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO))) (y:= (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) (kc (N 3)),
+                (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (kc (nonce 4)))
+                (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO))) (y:= (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3)),
        (ub
-          (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-             (kc (N 3)))
-          (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))])) 
-          (rb (N 5))
+          (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+             (kc (nonce 3)))
+          (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) 
+          (rb (nonce 5))
           (f
-             [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-             (pi1 (ks (N 0)),
-             (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) (pubkey x1) (r 5),
+             [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+             (pi1 (ks (nonce 0)),
+             (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) (pubkey x1) (r 5),
              sign
-               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (N 3))) 
-                  (pubkey x1) (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-             (pi1 (ks (N 1)),
+               (bl (comm (V1 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; vk 0; vk 1; pke 2])) (kc (nonce 3))) 
+                  (pubkey x1) (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+             (pi1 (ks (nonce 1)),
              (bl
-                (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                   (kc (N 4)))
-                (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                (rb (N 6)),
+                (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                   (kc (nonce 4)))
+                (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                (rb (nonce 6)),
              sign
                (bl
-                  (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                     (kc (N 4)))
-                  (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-                  (rb (N 6))) (pi2 (ks (N 1))) (rs (N 10))))]), TWO))).
+                  (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                     (kc (nonce 4)))
+                  (pubkey (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+                  (rb (nonce 6))) (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO))).
 
 reflexivity.
 
@@ -1130,293 +1130,293 @@ rewrite <- H in H1.
 
 clear H.
 
-assert ( [msg (dec (pi2 (pi2 (x5t 0 1))) (pi2 (ke (N 2)))),
+assert ( [msg (dec (pi2 (pi2 (x5t 0 1))) (pi2 (ke (nonce 2)))),
            msg
              (comm
                 (V0
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (kc (N 3)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (kc (nonce 3)),
              ub
                (comm
                   (V0
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (kc (N 3)))
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (kc (nonce 3)))
                (pubkey
                   (f
                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                     pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                     pi1 (ke (N 2))])) (rb (N 5))
+                     pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                     pi1 (ke (nonce 2))])) (rb (nonce 5))
                (f
                   [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                  pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                  pi1 (ke (N 2));
-                  (pi1 (ks (N 0)),
+                  pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                  pi1 (ke (nonce 2));
+                  (pi1 (ks (nonce 0)),
                   (bl
                      (comm
                         (V0
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (kc (N 3)))
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (kc (nonce 3)))
                      (pubkey
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (rb (N 5)),
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (rb (nonce 5)),
                   sign
                     (bl
                        (comm
                           (V0
                              (f
                                 [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                pi1 (ks (N 0)); pi1 (ks (N 1));
-                                pi1 (ke (N 2))])) 
-                          (kc (N 3)))
+                                pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                pi1 (ke (nonce 2))])) 
+                          (kc (nonce 3)))
                        (pubkey
                           (f
                              [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                             pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                             pi1 (ke (N 2))])) (rb (N 5))) 
-                    (pi2 (ks (N 0))) (rs (N 9))));
-                  (pi1 (ks (N 1)),
+                             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                             pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                    (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                  (pi1 (ks (nonce 1)),
                   (bl
                      (comm
                         (V1
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (kc (N 4)))
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (kc (nonce 4)))
                      (pubkey
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (rb (N 6)),
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (rb (nonce 6)),
                   sign
                     (bl
                        (comm
                           (V1
                              (f
                                 [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                pi1 (ks (N 0)); pi1 (ks (N 1));
-                                pi1 (ke (N 2))])) 
-                          (kc (N 4)))
+                                pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                pi1 (ke (nonce 2))])) 
+                          (kc (nonce 4)))
                        (pubkey
                           (f
                              [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                             pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                             pi1 (ke (N 2))])) (rb (N 6))) 
-                    (pi2 (ks (N 1))) (rs (N 10))))])),
+                             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                             pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                    (pi2 (ks (nonce 1))) (rs (nonce 10))))])),
            msg
              (comm
                 (V1
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (kc (N 4)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (kc (nonce 4)),
              ub
                (comm
                   (V1
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (kc (N 4)))
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (kc (nonce 4)))
                (pubkey
                   (f
                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                     pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                     pi1 (ke (N 2))])) (rb (N 6))
+                     pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                     pi1 (ke (nonce 2))])) (rb (nonce 6))
                (f
                   [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                  pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                  pi1 (ke (N 2));
-                  (pi1 (ks (N 0)),
+                  pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                  pi1 (ke (nonce 2));
+                  (pi1 (ks (nonce 0)),
                   (bl
                      (comm
                         (V0
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (kc (N 3)))
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (kc (nonce 3)))
                      (pubkey
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (rb (N 5)),
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (rb (nonce 5)),
                   sign
                     (bl
                        (comm
                           (V0
                              (f
                                 [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                pi1 (ks (N 0)); pi1 (ks (N 1));
-                                pi1 (ke (N 2))])) 
-                          (kc (N 3)))
+                                pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                pi1 (ke (nonce 2))])) 
+                          (kc (nonce 3)))
                        (pubkey
                           (f
                              [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                             pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                             pi1 (ke (N 2))])) (rb (N 5))) 
-                    (pi2 (ks (N 0))) (rs (N 9))));
-                  (pi1 (ks (N 1)),
+                             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                             pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                    (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                  (pi1 (ks (nonce 1)),
                   (bl
                      (comm
                         (V1
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (kc (N 4)))
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (kc (nonce 4)))
                      (pubkey
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (rb (N 6)),
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (rb (nonce 6)),
                   sign
                     (bl
                        (comm
                           (V1
                              (f
                                 [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                pi1 (ks (N 0)); pi1 (ks (N 1));
-                                pi1 (ke (N 2))])) 
-                          (kc (N 4)))
+                                pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                pi1 (ke (nonce 2))])) 
+                          (kc (nonce 4)))
                        (pubkey
                           (f
                              [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                             pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                             pi1 (ke (N 2))])) (rb (N 6))) 
-                    (pi2 (ks (N 1))) (rs (N 10))))])), 
+                             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                             pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                    (pi2 (ks (nonce 1))) (rs (nonce 10))))])), 
            msg A, msg B, msg M, msg C1, msg C2, msg C3, 
-           msg ONE, msg TWO, msg THREE, msg (pi1 (ks (N 0))),
-           msg (pi1 (ks (N 1))), msg (pi1 (ke (N 2))),
+           msg ONE, msg TWO, msg THREE, msg (pi1 (ks (nonce 0))),
+           msg (pi1 (ks (nonce 1))), msg (pi1 (ke (nonce 2))),
            msg
              {(comm
                  (V0
                     (f
                        [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                       pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                       pi1 (ke (N 2))])) (kc (N 3)),
+                       pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                       pi1 (ke (nonce 2))])) (kc (nonce 3)),
               (ub (c 0 3) pk (bk 5) (x3tt 0 1), TWO)) }_ 2 ^^ 11,
            msg {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12,
-           msg (pi2 (ks (N 0))), msg (pi2 (ks (N 1))), 
-           msg (rs (N 9)), msg (rs (N 10)),
+           msg (pi2 (ks (nonce 0))), msg (pi2 (ks (nonce 1))), 
+           msg (rs (nonce 9)), msg (rs (nonce 10)),
            msg
-             (pi1 (ks (N 0)),
+             (pi1 (ks (nonce 0)),
              (bl
                 (comm
                    (V0
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 3)))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 3)))
                 (pubkey
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (rb (N 5)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (rb (nonce 5)),
              sign
                (bl
                   (comm
                      (V0
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 3)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 3)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 5))) 
-               (pi2 (ks (N 0))) (rs (N 9)))),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+               (pi2 (ks (nonce 0))) (rs (nonce 9)))),
            msg
-             (pi1 (ks (N 1)),
+             (pi1 (ks (nonce 1)),
              (bl
                 (comm
                    (V1
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 4)))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 4)))
                 (pubkey
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (rb (N 6)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (rb (nonce 6)),
              sign
                (bl
                   (comm
                      (V1
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 4)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 4)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 6))) 
-               (pi2 (ks (N 1))) (rs (N 10)))),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+               (pi2 (ks (nonce 1))) (rs (nonce 10)))),
            msg
              (f
                 [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                (pi1 (ks (N 0)),
+                pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                (pi1 (ks (nonce 0)),
                 (bl
                    (comm
                       (V0
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 3)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 3)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 5)),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 5)),
                 sign
                   (bl
                      (comm
                         (V0
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (kc (N 3)))
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (kc (nonce 3)))
                      (pubkey
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (rb (N 5))) 
-                  (pi2 (ks (N 0))) (rs (N 9))));
-                (pi1 (ks (N 1)),
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                  (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                (pi1 (ks (nonce 1)),
                 (bl
                    (comm
                       (V1
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 4)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 4)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 6)),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 6)),
                 sign
                   (bl
                      (comm
                         (V1
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (kc (N 4)))
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (kc (nonce 4)))
                      (pubkey
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (rb (N 6))) 
-                  (pi2 (ks (N 1))) (rs (N 10))))]), 
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                  (pi2 (ks (nonce 1))) (rs (nonce 10))))]), 
            msg (x4ttt 0 1), msg (x5t 0 1),
            bol
              (acc
@@ -1424,494 +1424,494 @@ assert ( [msg (dec (pi2 (pi2 (x5t 0 1))) (pi2 (ke (N 2)))),
                    (V0
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 3)))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 3)))
                 (pubkey
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (rb (N 5))
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (rb (nonce 5))
                 (f
                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                   pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                   pi1 (ke (N 2));
-                   (pi1 (ks (N 0)),
+                   pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                   pi1 (ke (nonce 2));
+                   (pi1 (ks (nonce 0)),
                    (bl
                       (comm
                          (V0
                             (f
                                [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                               pi1 (ks (N 0)); pi1 (ks (N 1));
-                               pi1 (ke (N 2))])) (kc (N 3)))
+                               pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                               pi1 (ke (nonce 2))])) (kc (nonce 3)))
                       (pubkey
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (rb (N 5)),
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (rb (nonce 5)),
                    sign
                      (bl
                         (comm
                            (V0
                               (f
                                  [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                 pi1 (ks (N 0)); pi1 (ks (N 1));
-                                 pi1 (ke (N 2))])) 
-                           (kc (N 3)))
+                                 pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                 pi1 (ke (nonce 2))])) 
+                           (kc (nonce 3)))
                         (pubkey
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (rb (N 5))) 
-                     (pi2 (ks (N 0))) (rs (N 9))));
-                   (pi1 (ks (N 1)),
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                     (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                   (pi1 (ks (nonce 1)),
                    (bl
                       (comm
                          (V1
                             (f
                                [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                               pi1 (ks (N 0)); pi1 (ks (N 1));
-                               pi1 (ke (N 2))])) (kc (N 4)))
+                               pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                               pi1 (ke (nonce 2))])) (kc (nonce 4)))
                       (pubkey
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (rb (N 6)),
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (rb (nonce 6)),
                    sign
                      (bl
                         (comm
                            (V1
                               (f
                                  [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                 pi1 (ks (N 0)); pi1 (ks (N 1));
-                                 pi1 (ke (N 2))])) 
-                           (kc (N 4)))
+                                 pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                 pi1 (ke (nonce 2))])) 
+                           (kc (nonce 4)))
                         (pubkey
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (rb (N 6))) 
-                     (pi2 (ks (N 1))) (rs (N 10))))])),
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                     (pi2 (ks (nonce 1))) (rs (nonce 10))))])),
            bol
              (acc
                 (comm
                    (V1
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 4)))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 4)))
                 (pubkey
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (rb (N 6))
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (rb (nonce 6))
                 (f
                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                   pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                   pi1 (ke (N 2));
-                   (pi1 (ks (N 0)),
+                   pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                   pi1 (ke (nonce 2));
+                   (pi1 (ks (nonce 0)),
                    (bl
                       (comm
                          (V0
                             (f
                                [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                               pi1 (ks (N 0)); pi1 (ks (N 1));
-                               pi1 (ke (N 2))])) (kc (N 3)))
+                               pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                               pi1 (ke (nonce 2))])) (kc (nonce 3)))
                       (pubkey
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (rb (N 5)),
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (rb (nonce 5)),
                    sign
                      (bl
                         (comm
                            (V0
                               (f
                                  [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                 pi1 (ks (N 0)); pi1 (ks (N 1));
-                                 pi1 (ke (N 2))])) 
-                           (kc (N 3)))
+                                 pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                 pi1 (ke (nonce 2))])) 
+                           (kc (nonce 3)))
                         (pubkey
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (rb (N 5))) 
-                     (pi2 (ks (N 0))) (rs (N 9))));
-                   (pi1 (ks (N 1)),
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                     (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                   (pi1 (ks (nonce 1)),
                    (bl
                       (comm
                          (V1
                             (f
                                [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                               pi1 (ks (N 0)); pi1 (ks (N 1));
-                               pi1 (ke (N 2))])) (kc (N 4)))
+                               pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                               pi1 (ke (nonce 2))])) (kc (nonce 4)))
                       (pubkey
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (rb (N 6)),
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (rb (nonce 6)),
                    sign
                      (bl
                         (comm
                            (V1
                               (f
                                  [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                 pi1 (ks (N 0)); pi1 (ks (N 1));
-                                 pi1 (ke (N 2))])) 
-                           (kc (N 4)))
+                                 pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                 pi1 (ke (nonce 2))])) 
+                           (kc (nonce 4)))
                         (pubkey
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (rb (N 6))) 
-                     (pi2 (ks (N 1))) (rs (N 10))))]))] ~ [msg (dec (pi2 (pi2 (x5t 1 0))) (pi2 (ke (N 2)))),
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                     (pi2 (ks (nonce 1))) (rs (nonce 10))))]))] ~ [msg (dec (pi2 (pi2 (x5t 1 0))) (pi2 (ke (nonce 2)))),
        msg
          (comm
             (V1
                (f
                   [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                  pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                  pi1 (ke (N 2))])) (kc (N 3)),
+                  pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                  pi1 (ke (nonce 2))])) (kc (nonce 3)),
          ub
            (comm
               (V1
                  (f
                     [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                    pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                    pi1 (ke (N 2))])) (kc (N 3)))
+                    pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                    pi1 (ke (nonce 2))])) (kc (nonce 3)))
            (pubkey
               (f
                  [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                 pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-           (rb (N 5))
+                 pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+           (rb (nonce 5))
            (f
               [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-              pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-              (pi1 (ks (N 0)),
+              pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+              (pi1 (ks (nonce 0)),
               (bl
                  (comm
                     (V1
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (kc (N 3)))
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (kc (nonce 3)))
                  (pubkey
                     (f
                        [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                       pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                       pi1 (ke (N 2))])) (rb (N 5)),
+                       pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                       pi1 (ke (nonce 2))])) (rb (nonce 5)),
               sign
                 (bl
                    (comm
                       (V1
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 3)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 3)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 5))) 
-                (pi2 (ks (N 0))) (rs (N 9))));
-              (pi1 (ks (N 1)),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                (pi2 (ks (nonce 0))) (rs (nonce 9))));
+              (pi1 (ks (nonce 1)),
               (bl
                  (comm
                     (V0
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (kc (N 4)))
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (kc (nonce 4)))
                  (pubkey
                     (f
                        [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                       pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                       pi1 (ke (N 2))])) (rb (N 6)),
+                       pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                       pi1 (ke (nonce 2))])) (rb (nonce 6)),
               sign
                 (bl
                    (comm
                       (V0
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 4)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 4)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 6))) 
-                (pi2 (ks (N 1))) (rs (N 10))))])),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                (pi2 (ks (nonce 1))) (rs (nonce 10))))])),
        msg
          (comm
             (V0
                (f
                   [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                  pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                  pi1 (ke (N 2))])) (kc (N 4)),
+                  pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                  pi1 (ke (nonce 2))])) (kc (nonce 4)),
          ub
            (comm
               (V0
                  (f
                     [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                    pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                    pi1 (ke (N 2))])) (kc (N 4)))
+                    pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                    pi1 (ke (nonce 2))])) (kc (nonce 4)))
            (pubkey
               (f
                  [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                 pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2))]))
-           (rb (N 6))
+                 pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))]))
+           (rb (nonce 6))
            (f
               [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-              pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-              (pi1 (ks (N 0)),
+              pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+              (pi1 (ks (nonce 0)),
               (bl
                  (comm
                     (V1
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (kc (N 3)))
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (kc (nonce 3)))
                  (pubkey
                     (f
                        [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                       pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                       pi1 (ke (N 2))])) (rb (N 5)),
+                       pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                       pi1 (ke (nonce 2))])) (rb (nonce 5)),
               sign
                 (bl
                    (comm
                       (V1
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 3)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 3)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 5))) 
-                (pi2 (ks (N 0))) (rs (N 9))));
-              (pi1 (ks (N 1)),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                (pi2 (ks (nonce 0))) (rs (nonce 9))));
+              (pi1 (ks (nonce 1)),
               (bl
                  (comm
                     (V0
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (kc (N 4)))
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (kc (nonce 4)))
                  (pubkey
                     (f
                        [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                       pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                       pi1 (ke (N 2))])) (rb (N 6)),
+                       pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                       pi1 (ke (nonce 2))])) (rb (nonce 6)),
               sign
                 (bl
                    (comm
                       (V0
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 4)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 4)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 6))) 
-                (pi2 (ks (N 1))) (rs (N 10))))])), 
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                (pi2 (ks (nonce 1))) (rs (nonce 10))))])), 
        msg A, msg B, msg M, msg C1, msg C2, msg C3, 
-       msg ONE, msg TWO, msg THREE, msg (pi1 (ks (N 0))),
-       msg (pi1 (ks (N 1))), msg (pi1 (ke (N 2))),
+       msg ONE, msg TWO, msg THREE, msg (pi1 (ks (nonce 0))),
+       msg (pi1 (ks (nonce 1))), msg (pi1 (ke (nonce 2))),
        msg
          {(comm
              (V1
                 (f
                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                   pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                   pi1 (ke (N 2))])) (kc (N 3)),
+                   pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                   pi1 (ke (nonce 2))])) (kc (nonce 3)),
           (ub
              (comm
                 (V1
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (kc (N 3)))
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (kc (nonce 3)))
              (pubkey
                 (f
                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                   pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                   pi1 (ke (N 2))])) (rb (N 5))
+                   pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                   pi1 (ke (nonce 2))])) (rb (nonce 5))
              (f
                 [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                (pi1 (ks (N 0)),
+                pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                (pi1 (ks (nonce 0)),
                 (bl
                    (comm
                       (V1
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 3)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 3)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 5)),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 5)),
                 sign
                   (bl
                      (comm
                         (V1
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (kc (N 3)))
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (kc (nonce 3)))
                      (pubkey
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (rb (N 5))) 
-                  (pi2 (ks (N 0))) (rs (N 9))));
-                (pi1 (ks (N 1)),
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                  (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                (pi1 (ks (nonce 1)),
                 (bl
                    (comm
                       (V0
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 4)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 4)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 6)),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 6)),
                 sign
                   (bl
                      (comm
                         (V0
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (kc (N 4)))
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (kc (nonce 4)))
                      (pubkey
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (rb (N 6))) 
-                  (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 11,
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                  (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 11,
        msg {(c 0 4, (ub (c 0 4) pk (bk 6) (x3tt 1 0), TWO)) }_ 2 ^^ 12,
-       msg (pi2 (ks (N 0))), msg (pi2 (ks (N 1))), 
-       msg (rs (N 9)), msg (rs (N 10)),
+       msg (pi2 (ks (nonce 0))), msg (pi2 (ks (nonce 1))), 
+       msg (rs (nonce 9)), msg (rs (nonce 10)),
        msg
-         (pi1 (ks (N 0)),
+         (pi1 (ks (nonce 0)),
          (bl
             (comm
                (V1
                   (f
                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                     pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                     pi1 (ke (N 2))])) (kc (N 3)))
+                     pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                     pi1 (ke (nonce 2))])) (kc (nonce 3)))
             (pubkey
                (f
                   [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                  pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                  pi1 (ke (N 2))])) (rb (N 5)),
+                  pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                  pi1 (ke (nonce 2))])) (rb (nonce 5)),
          sign
            (bl
               (comm
                  (V1
                     (f
                        [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                       pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                       pi1 (ke (N 2))])) (kc (N 3)))
+                       pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                       pi1 (ke (nonce 2))])) (kc (nonce 3)))
               (pubkey
                  (f
                     [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                    pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                    pi1 (ke (N 2))])) (rb (N 5))) 
-           (pi2 (ks (N 0))) (rs (N 9)))),
+                    pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                    pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+           (pi2 (ks (nonce 0))) (rs (nonce 9)))),
        msg
-         (pi1 (ks (N 1)),
+         (pi1 (ks (nonce 1)),
          (bl
             (comm
                (V0
                   (f
                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                     pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                     pi1 (ke (N 2))])) (kc (N 4)))
+                     pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                     pi1 (ke (nonce 2))])) (kc (nonce 4)))
             (pubkey
                (f
                   [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                  pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                  pi1 (ke (N 2))])) (rb (N 6)),
+                  pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                  pi1 (ke (nonce 2))])) (rb (nonce 6)),
          sign
            (bl
               (comm
                  (V0
                     (f
                        [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                       pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                       pi1 (ke (N 2))])) (kc (N 4)))
+                       pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                       pi1 (ke (nonce 2))])) (kc (nonce 4)))
               (pubkey
                  (f
                     [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                    pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                    pi1 (ke (N 2))])) (rb (N 6))) 
-           (pi2 (ks (N 1))) (rs (N 10)))),
+                    pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                    pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+           (pi2 (ks (nonce 1))) (rs (nonce 10)))),
        msg
          (f
             [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-            pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-            (pi1 (ks (N 0)),
+            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+            (pi1 (ks (nonce 0)),
             (bl
                (comm
                   (V1
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (kc (N 3)))
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (kc (nonce 3)))
                (pubkey
                   (f
                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                     pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                     pi1 (ke (N 2))])) (rb (N 5)),
+                     pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                     pi1 (ke (nonce 2))])) (rb (nonce 5)),
             sign
               (bl
                  (comm
                     (V1
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (kc (N 3)))
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (kc (nonce 3)))
                  (pubkey
                     (f
                        [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                       pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                       pi1 (ke (N 2))])) (rb (N 5))) 
-              (pi2 (ks (N 0))) (rs (N 9))));
-            (pi1 (ks (N 1)),
+                       pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                       pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+              (pi2 (ks (nonce 0))) (rs (nonce 9))));
+            (pi1 (ks (nonce 1)),
             (bl
                (comm
                   (V0
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (kc (N 4)))
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (kc (nonce 4)))
                (pubkey
                   (f
                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                     pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                     pi1 (ke (N 2))])) (rb (N 6)),
+                     pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                     pi1 (ke (nonce 2))])) (rb (nonce 6)),
             sign
               (bl
                  (comm
                     (V0
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (kc (N 4)))
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (kc (nonce 4)))
                  (pubkey
                     (f
                        [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                       pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                       pi1 (ke (N 2))])) (rb (N 6))) 
-              (pi2 (ks (N 1))) (rs (N 10))))]),
+                       pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                       pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+              (pi2 (ks (nonce 1))) (rs (nonce 10))))]),
        msg (x4ttt 1 0),
           msg (x5t 1 0),
        bol
@@ -1920,140 +1920,140 @@ assert ( [msg (dec (pi2 (pi2 (x5t 0 1))) (pi2 (ke (N 2)))),
                (V1
                   (f
                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                     pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                     pi1 (ke (N 2))])) (kc (N 3)))
+                     pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                     pi1 (ke (nonce 2))])) (kc (nonce 3)))
             (pubkey
                (f
                   [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                  pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                  pi1 (ke (N 2))])) (rb (N 5))
+                  pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                  pi1 (ke (nonce 2))])) (rb (nonce 5))
             (f
                [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-               pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-               (pi1 (ks (N 0)),
+               pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+               (pi1 (ks (nonce 0)),
                (bl
                   (comm
                      (V1
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 3)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 3)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 5)),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 5)),
                sign
                  (bl
                     (comm
                        (V1
                           (f
                              [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                             pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                             pi1 (ke (N 2))])) (kc (N 3)))
+                             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                             pi1 (ke (nonce 2))])) (kc (nonce 3)))
                     (pubkey
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (rb (N 5))) 
-                 (pi2 (ks (N 0))) (rs (N 9))));
-               (pi1 (ks (N 1)),
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                 (pi2 (ks (nonce 0))) (rs (nonce 9))));
+               (pi1 (ks (nonce 1)),
                (bl
                   (comm
                      (V0
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 4)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 4)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 6)),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 6)),
                sign
                  (bl
                     (comm
                        (V0
                           (f
                              [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                             pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                             pi1 (ke (N 2))])) (kc (N 4)))
+                             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                             pi1 (ke (nonce 2))])) (kc (nonce 4)))
                     (pubkey
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (rb (N 6))) 
-                 (pi2 (ks (N 1))) (rs (N 10))))])),
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                 (pi2 (ks (nonce 1))) (rs (nonce 10))))])),
        bol
          (acc
             (comm
                (V0
                   (f
                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                     pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                     pi1 (ke (N 2))])) (kc (N 4)))
+                     pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                     pi1 (ke (nonce 2))])) (kc (nonce 4)))
             (pubkey
                (f
                   [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                  pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                  pi1 (ke (N 2))])) (rb (N 6))
+                  pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                  pi1 (ke (nonce 2))])) (rb (nonce 6))
             (f
                [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-               pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-               (pi1 (ks (N 0)),
+               pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+               (pi1 (ks (nonce 0)),
                (bl
                   (comm
                      (V1
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 3)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 3)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 5)),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 5)),
                sign
                  (bl
                     (comm
                        (V1
                           (f
                              [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                             pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                             pi1 (ke (N 2))])) (kc (N 3)))
+                             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                             pi1 (ke (nonce 2))])) (kc (nonce 3)))
                     (pubkey
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (rb (N 5))) 
-                 (pi2 (ks (N 0))) (rs (N 9))));
-               (pi1 (ks (N 1)),
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                 (pi2 (ks (nonce 0))) (rs (nonce 9))));
+               (pi1 (ks (nonce 1)),
                (bl
                   (comm
                      (V0
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 4)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 4)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 6)),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 6)),
                sign
                  (bl
                     (comm
                        (V0
                           (f
                              [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                             pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                             pi1 (ke (N 2))])) (kc (N 4)))
+                             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                             pi1 (ke (nonce 2))])) (kc (nonce 4)))
                     (pubkey
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (rb (N 6))) 
-                 (pi2 (ks (N 1))) (rs (N 10))))]))]).
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                 (pi2 (ks (nonce 1))) (rs (nonce 10))))]))]).
 
 
 apply EQI_trans with (ml2:= [msg
@@ -2062,106 +2062,106 @@ apply EQI_trans with (ml2:= [msg
                  (pi2
                     (f
                        [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                       pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                       pi1 (ke (N 2));
-                       (pi1 (ks (N 0)),
+                       pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                       pi1 (ke (nonce 2));
+                       (pi1 (ks (nonce 0)),
                        (bl
                           (comm
                              (V1
                                 (f
                                    [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                   pi1 (ks (N 0)); 
-                                   pi1 (ks (N 1)); 
-                                   pi1 (ke (N 2))])) 
-                             (kc (N 3)))
+                                   pi1 (ks (nonce 0)); 
+                                   pi1 (ks (nonce 1)); 
+                                   pi1 (ke (nonce 2))])) 
+                             (kc (nonce 3)))
                           (pubkey
                              (f
                                 [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                pi1 (ks (N 0)); pi1 (ks (N 1));
-                                pi1 (ke (N 2))])) 
-                          (rb (N 5)),
+                                pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                pi1 (ke (nonce 2))])) 
+                          (rb (nonce 5)),
                        sign
                          (bl
                             (comm
                                (V1
                                   (f
                                      [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                     pi1 (ks (N 0)); 
-                                     pi1 (ks (N 1)); 
-                                     pi1 (ke (N 2))])) 
-                               (kc (N 3)))
+                                     pi1 (ks (nonce 0)); 
+                                     pi1 (ks (nonce 1)); 
+                                     pi1 (ke (nonce 2))])) 
+                               (kc (nonce 3)))
                             (pubkey
                                (f
                                   [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                  pi1 (ks (N 0)); 
-                                  pi1 (ks (N 1)); 
-                                  pi1 (ke (N 2))])) 
-                            (rb (N 5))) (pi2 (ks (N 0))) 
-                         (rs (N 9))));
-                       (pi1 (ks (N 1)),
+                                  pi1 (ks (nonce 0)); 
+                                  pi1 (ks (nonce 1)); 
+                                  pi1 (ke (nonce 2))])) 
+                            (rb (nonce 5))) (pi2 (ks (nonce 0))) 
+                         (rs (nonce 9))));
+                       (pi1 (ks (nonce 1)),
                        (bl
                           (comm
                              (V0
                                 (f
                                    [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                   pi1 (ks (N 0)); 
-                                   pi1 (ks (N 1)); 
-                                   pi1 (ke (N 2))])) 
-                             (kc (N 4)))
+                                   pi1 (ks (nonce 0)); 
+                                   pi1 (ks (nonce 1)); 
+                                   pi1 (ke (nonce 2))])) 
+                             (kc (nonce 4)))
                           (pubkey
                              (f
                                 [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                pi1 (ks (N 0)); pi1 (ks (N 1));
-                                pi1 (ke (N 2))])) 
-                          (rb (N 6)),
+                                pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                pi1 (ke (nonce 2))])) 
+                          (rb (nonce 6)),
                        sign
                          (bl
                             (comm
                                (V0
                                   (f
                                      [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                     pi1 (ks (N 0)); 
-                                     pi1 (ks (N 1)); 
-                                     pi1 (ke (N 2))])) 
-                               (kc (N 4)))
+                                     pi1 (ks (nonce 0)); 
+                                     pi1 (ks (nonce 1)); 
+                                     pi1 (ke (nonce 2))])) 
+                               (kc (nonce 4)))
                             (pubkey
                                (f
                                   [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                  pi1 (ks (N 0)); 
-                                  pi1 (ks (N 1)); 
-                                  pi1 (ke (N 2))])) 
-                            (rb (N 6))) (pi2 (ks (N 1))) 
-                         (rs (N 10))));
+                                  pi1 (ks (nonce 0)); 
+                                  pi1 (ks (nonce 1)); 
+                                  pi1 (ke (nonce 2))])) 
+                            (rb (nonce 6))) (pi2 (ks (nonce 1))) 
+                         (rs (nonce 10))));
                        {z
                           (comm
                              (V0
                                 (f
                                    [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                   pi1 (ks (N 0)); 
-                                   pi1 (ks (N 1)); 
-                                   pi1 (ke (N 2))])) 
-                             (kc (N 3)),
+                                   pi1 (ks (nonce 0)); 
+                                   pi1 (ks (nonce 1)); 
+                                   pi1 (ke (nonce 2))])) 
+                             (kc (nonce 3)),
                           (ub
                              (comm
                                 (V0
                                    (f
                                       [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                      pi1 (ks (N 0)); 
-                                      pi1 (ks (N 1)); 
-                                      pi1 (ke (N 2))])) 
-                                (kc (N 3)))
+                                      pi1 (ks (nonce 0)); 
+                                      pi1 (ks (nonce 1)); 
+                                      pi1 (ke (nonce 2))])) 
+                                (kc (nonce 3)))
                              (pubkey
                                 (f
                                    [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                   pi1 (ks (N 0)); 
-                                   pi1 (ks (N 1)); 
-                                   pi1 (ke (N 2))])) 
-                             (rb (N 5))
+                                   pi1 (ks (nonce 0)); 
+                                   pi1 (ks (nonce 1)); 
+                                   pi1 (ke (nonce 2))])) 
+                             (rb (nonce 5))
                              (f
                                 [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                pi1 (ks (N 0)); pi1 (ks (N 1));
-                                pi1 (ke (N 2));
-                                (pi1 (ks (N 0)),
+                                pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                pi1 (ke (nonce 2));
+                                (pi1 (ks (nonce 0)),
                                 (bl
                                    (comm
                                       (V1
@@ -2171,7 +2171,7 @@ apply EQI_trans with (ml2:= [msg
                                             vk 0; 
                                             vk 1; 
                                             pke 2])) 
-                                      (kc (N 3))) 
+                                      (kc (nonce 3))) 
                                    (pubkey x1) (r 5),
                                 sign
                                   (bl
@@ -2183,28 +2183,28 @@ apply EQI_trans with (ml2:= [msg
                                               vk 0; 
                                               vk 1; 
                                               pke 2])) 
-                                        (kc (N 3))) 
+                                        (kc (nonce 3))) 
                                      (pubkey x1) (r 5)) 
-                                  (pi2 (ks (N 0))) 
-                                  (rs (N 9))));
-                                (pi1 (ks (N 1)),
+                                  (pi2 (ks (nonce 0))) 
+                                  (rs (nonce 9))));
+                                (pi1 (ks (nonce 1)),
                                 (bl
                                    (comm
                                       (V0
                                          (f
                                             [A; B; M; C1; C2; C3; ONE; TWO;
                                             THREE; 
-                                            pi1 (ks (N 0)); 
-                                            pi1 (ks (N 1)); 
-                                            pi1 (ke (N 2))])) 
-                                      (kc (N 4)))
+                                            pi1 (ks (nonce 0)); 
+                                            pi1 (ks (nonce 1)); 
+                                            pi1 (ke (nonce 2))])) 
+                                      (kc (nonce 4)))
                                    (pubkey
                                       (f
                                          [A; B; M; C1; C2; C3; ONE; TWO;
-                                         THREE; pi1 (ks (N 0));
-                                         pi1 (ks (N 1)); 
-                                         pi1 (ke (N 2))])) 
-                                   (rb (N 6)),
+                                         THREE; pi1 (ks (nonce 0));
+                                         pi1 (ks (nonce 1)); 
+                                         pi1 (ke (nonce 2))])) 
+                                   (rb (nonce 6)),
                                 sign
                                   (bl
                                      (comm
@@ -2212,208 +2212,208 @@ apply EQI_trans with (ml2:= [msg
                                            (f
                                               [A; B; M; C1; C2; C3; ONE;
                                               TWO; THREE; 
-                                              pi1 (ks (N 0));
-                                              pi1 (ks (N 1));
-                                              pi1 (ke (N 2))])) 
-                                        (kc (N 4)))
+                                              pi1 (ks (nonce 0));
+                                              pi1 (ks (nonce 1));
+                                              pi1 (ke (nonce 2))])) 
+                                        (kc (nonce 4)))
                                      (pubkey
                                         (f
                                            [A; B; M; C1; C2; C3; ONE; TWO;
                                            THREE; 
-                                           pi1 (ks (N 0)); 
-                                           pi1 (ks (N 1)); 
-                                           pi1 (ke (N 2))])) 
-                                     (rb (N 6))) (pi2 (ks (N 1)))
-                                  (rs (N 10))))]), TWO)) }_ 2 ^^ 13;
+                                           pi1 (ks (nonce 0)); 
+                                           pi1 (ks (nonce 1)); 
+                                           pi1 (ke (nonce 2))])) 
+                                     (rb (nonce 6))) (pi2 (ks (nonce 1)))
+                                  (rs (nonce 10))))]), TWO)) }_ 2 ^^ 13;
                        {z (c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 1 0), TWO))
-                       }_ 2 ^^ 14]))) (pi2 (ke (N 2)))),
+                       }_ 2 ^^ 14]))) (pi2 (ke (nonce 2)))),
         msg
           (comm
              (V1
                 (f
                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                   pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                   pi1 (ke (N 2))])) (kc (N 3)),
+                   pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                   pi1 (ke (nonce 2))])) (kc (nonce 3)),
           ub
             (comm
                (V1
                   (f
                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                     pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                     pi1 (ke (N 2))])) (kc (N 3)))
+                     pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                     pi1 (ke (nonce 2))])) (kc (nonce 3)))
             (pubkey
                (f
                   [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                  pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                  pi1 (ke (N 2))])) (rb (N 5))
+                  pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                  pi1 (ke (nonce 2))])) (rb (nonce 5))
             (f
                [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-               pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-               (pi1 (ks (N 0)),
+               pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+               (pi1 (ks (nonce 0)),
                (bl
                   (comm
                      (V1
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 3)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 3)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 5)),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 5)),
                sign
                  (bl
                     (comm
                        (V1
                           (f
                              [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                             pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                             pi1 (ke (N 2))])) (kc (N 3)))
+                             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                             pi1 (ke (nonce 2))])) (kc (nonce 3)))
                     (pubkey
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (rb (N 5))) 
-                 (pi2 (ks (N 0))) (rs (N 9))));
-               (pi1 (ks (N 1)),
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                 (pi2 (ks (nonce 0))) (rs (nonce 9))));
+               (pi1 (ks (nonce 1)),
                (bl
                   (comm
                      (V0
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 4)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 4)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 6)),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 6)),
                sign
                  (bl
                     (comm
                        (V0
                           (f
                              [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                             pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                             pi1 (ke (N 2))])) (kc (N 4)))
+                             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                             pi1 (ke (nonce 2))])) (kc (nonce 4)))
                     (pubkey
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (rb (N 6))) 
-                 (pi2 (ks (N 1))) (rs (N 10))))])),
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                 (pi2 (ks (nonce 1))) (rs (nonce 10))))])),
         msg
           (comm
              (V0
                 (f
                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                   pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                   pi1 (ke (N 2))])) (kc (N 4)),
+                   pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                   pi1 (ke (nonce 2))])) (kc (nonce 4)),
           ub
             (comm
                (V0
                   (f
                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                     pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                     pi1 (ke (N 2))])) (kc (N 4)))
+                     pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                     pi1 (ke (nonce 2))])) (kc (nonce 4)))
             (pubkey
                (f
                   [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                  pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                  pi1 (ke (N 2))])) (rb (N 6))
+                  pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                  pi1 (ke (nonce 2))])) (rb (nonce 6))
             (f
                [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-               pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-               (pi1 (ks (N 0)),
+               pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+               (pi1 (ks (nonce 0)),
                (bl
                   (comm
                      (V1
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 3)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 3)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 5)),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 5)),
                sign
                  (bl
                     (comm
                        (V1
                           (f
                              [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                             pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                             pi1 (ke (N 2))])) (kc (N 3)))
+                             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                             pi1 (ke (nonce 2))])) (kc (nonce 3)))
                     (pubkey
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (rb (N 5))) 
-                 (pi2 (ks (N 0))) (rs (N 9))));
-               (pi1 (ks (N 1)),
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                 (pi2 (ks (nonce 0))) (rs (nonce 9))));
+               (pi1 (ks (nonce 1)),
                (bl
                   (comm
                      (V0
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 4)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 4)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 6)),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 6)),
                sign
                  (bl
                     (comm
                        (V0
                           (f
                              [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                             pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                             pi1 (ke (N 2))])) (kc (N 4)))
+                             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                             pi1 (ke (nonce 2))])) (kc (nonce 4)))
                     (pubkey
                        (f
                           [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                          pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                          pi1 (ke (N 2))])) (rb (N 6))) 
-                 (pi2 (ks (N 1))) (rs (N 10))))])), 
+                          pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                          pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                 (pi2 (ks (nonce 1))) (rs (nonce 10))))])), 
         msg A, msg B, msg M, msg C1, msg C2, msg C3, 
-        msg ONE, msg TWO, msg THREE, msg (pi1 (ks (N 0))),
-        msg (pi1 (ks (N 1))), msg (pi1 (ke (N 2))),
+        msg ONE, msg TWO, msg THREE, msg (pi1 (ks (nonce 0))),
+        msg (pi1 (ks (nonce 1))), msg (pi1 (ke (nonce 2))),
         msg
           {z
              (comm
                 (V0
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (kc (N 3)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (kc (nonce 3)),
              (ub
                 (comm
                    (V0
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 3)))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 3)))
                 (pubkey
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (rb (N 5))
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (rb (nonce 5))
                 (f
                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                   pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                   pi1 (ke (N 2));
-                   (pi1 (ks (N 0)),
+                   pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                   pi1 (ke (nonce 2));
+                   (pi1 (ks (nonce 0)),
                    (bl
                       (comm
                          (V1
                             (f
                                [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
                                vk 0; vk 1; pke 2])) 
-                         (kc (N 3))) (pubkey x1) (r 5),
+                         (kc (nonce 3))) (pubkey x1) (r 5),
                    sign
                      (bl
                         (comm
@@ -2421,242 +2421,242 @@ apply EQI_trans with (ml2:= [msg
                               (f
                                  [A; B; M; C1; C2; C3; ONE; TWO; THREE;
                                  vk 0; vk 1; pke 2])) 
-                           (kc (N 3))) (pubkey x1) 
-                        (r 5)) (pi2 (ks (N 0))) (rs (N 9))));
-                   (pi1 (ks (N 1)),
+                           (kc (nonce 3))) (pubkey x1) 
+                        (r 5)) (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                   (pi1 (ks (nonce 1)),
                    (bl
                       (comm
                          (V0
                             (f
                                [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                               pi1 (ks (N 0)); pi1 (ks (N 1));
-                               pi1 (ke (N 2))])) (kc (N 4)))
+                               pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                               pi1 (ke (nonce 2))])) (kc (nonce 4)))
                       (pubkey
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (rb (N 6)),
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (rb (nonce 6)),
                    sign
                      (bl
                         (comm
                            (V0
                               (f
                                  [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                 pi1 (ks (N 0)); pi1 (ks (N 1));
-                                 pi1 (ke (N 2))])) 
-                           (kc (N 4)))
+                                 pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                 pi1 (ke (nonce 2))])) 
+                           (kc (nonce 4)))
                         (pubkey
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (rb (N 6))) 
-                     (pi2 (ks (N 1))) (rs (N 10))))]), TWO)) }_ 2 ^^ 13,
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                     (pi2 (ks (nonce 1))) (rs (nonce 10))))]), TWO)) }_ 2 ^^ 13,
         msg {z (c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 1 0), TWO)) }_ 2 ^^ 14,
-        msg (pi2 (ks (N 0))), msg (pi2 (ks (N 1))), 
-        msg (rs (N 9)), msg (rs (N 10)),
+        msg (pi2 (ks (nonce 0))), msg (pi2 (ks (nonce 1))), 
+        msg (rs (nonce 9)), msg (rs (nonce 10)),
         msg
-          (pi1 (ks (N 0)),
+          (pi1 (ks (nonce 0)),
           (bl
              (comm
                 (V1
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (kc (N 3)))
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (kc (nonce 3)))
              (pubkey
                 (f
                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                   pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                   pi1 (ke (N 2))])) (rb (N 5)),
+                   pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                   pi1 (ke (nonce 2))])) (rb (nonce 5)),
           sign
             (bl
                (comm
                   (V1
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (kc (N 3)))
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (kc (nonce 3)))
                (pubkey
                   (f
                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                     pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                     pi1 (ke (N 2))])) (rb (N 5))) 
-            (pi2 (ks (N 0))) (rs (N 9)))),
+                     pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                     pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+            (pi2 (ks (nonce 0))) (rs (nonce 9)))),
         msg
-          (pi1 (ks (N 1)),
+          (pi1 (ks (nonce 1)),
           (bl
              (comm
                 (V0
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (kc (N 4)))
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (kc (nonce 4)))
              (pubkey
                 (f
                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                   pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                   pi1 (ke (N 2))])) (rb (N 6)),
+                   pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                   pi1 (ke (nonce 2))])) (rb (nonce 6)),
           sign
             (bl
                (comm
                   (V0
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (kc (N 4)))
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (kc (nonce 4)))
                (pubkey
                   (f
                      [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                     pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                     pi1 (ke (N 2))])) (rb (N 6))) 
-            (pi2 (ks (N 1))) (rs (N 10)))),
+                     pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                     pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+            (pi2 (ks (nonce 1))) (rs (nonce 10)))),
         msg
           (f
              [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-             pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-             (pi1 (ks (N 0)),
+             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+             (pi1 (ks (nonce 0)),
              (bl
                 (comm
                    (V1
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 3)))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 3)))
                 (pubkey
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (rb (N 5)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (rb (nonce 5)),
              sign
                (bl
                   (comm
                      (V1
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 3)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 3)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 5))) 
-               (pi2 (ks (N 0))) (rs (N 9))));
-             (pi1 (ks (N 1)),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+               (pi2 (ks (nonce 0))) (rs (nonce 9))));
+             (pi1 (ks (nonce 1)),
              (bl
                 (comm
                    (V0
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 4)))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 4)))
                 (pubkey
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (rb (N 6)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (rb (nonce 6)),
              sign
                (bl
                   (comm
                      (V0
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 4)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 4)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 6))) 
-               (pi2 (ks (N 1))) (rs (N 10))))]),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+               (pi2 (ks (nonce 1))) (rs (nonce 10))))]),
         msg
           (f
              [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-             pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-             (pi1 (ks (N 0)),
+             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+             (pi1 (ks (nonce 0)),
              (bl
                 (comm
                    (V1
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 3)))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 3)))
                 (pubkey
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (rb (N 5)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (rb (nonce 5)),
              sign
                (bl
                   (comm
                      (V1
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 3)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 3)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 5))) 
-               (pi2 (ks (N 0))) (rs (N 9))));
-             (pi1 (ks (N 1)),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+               (pi2 (ks (nonce 0))) (rs (nonce 9))));
+             (pi1 (ks (nonce 1)),
              (bl
                 (comm
                    (V0
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 4)))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 4)))
                 (pubkey
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (rb (N 6)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (rb (nonce 6)),
              sign
                (bl
                   (comm
                      (V0
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 4)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 4)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 6))) 
-               (pi2 (ks (N 1))) (rs (N 10))));
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+               (pi2 (ks (nonce 1))) (rs (nonce 10))));
              {z
                 (comm
                    (V0
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 3)),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 3)),
                 (ub
                    (comm
                       (V0
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 3)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 3)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 5))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 5))
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2));
-                      (pi1 (ks (N 0)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2));
+                      (pi1 (ks (nonce 0)),
                       (bl
                          (comm
                             (V1
                                (f
                                   [A; B; M; C1; C2; C3; ONE; TWO; THREE;
                                   vk 0; vk 1; pke 2])) 
-                            (kc (N 3))) (pubkey x1) 
+                            (kc (nonce 3))) (pubkey x1) 
                          (r 5),
                       sign
                         (bl
@@ -2665,130 +2665,130 @@ apply EQI_trans with (ml2:= [msg
                                  (f
                                     [A; B; M; C1; C2; C3; ONE; TWO; THREE;
                                     vk 0; vk 1; pke 2])) 
-                              (kc (N 3))) (pubkey x1) 
-                           (r 5)) (pi2 (ks (N 0))) 
-                        (rs (N 9))));
-                      (pi1 (ks (N 1)),
+                              (kc (nonce 3))) (pubkey x1) 
+                           (r 5)) (pi2 (ks (nonce 0))) 
+                        (rs (nonce 9))));
+                      (pi1 (ks (nonce 1)),
                       (bl
                          (comm
                             (V0
                                (f
                                   [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                  pi1 (ks (N 0)); 
-                                  pi1 (ks (N 1)); 
-                                  pi1 (ke (N 2))])) 
-                            (kc (N 4)))
+                                  pi1 (ks (nonce 0)); 
+                                  pi1 (ks (nonce 1)); 
+                                  pi1 (ke (nonce 2))])) 
+                            (kc (nonce 4)))
                          (pubkey
                             (f
                                [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                               pi1 (ks (N 0)); pi1 (ks (N 1));
-                               pi1 (ke (N 2))])) (rb (N 6)),
+                               pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                               pi1 (ke (nonce 2))])) (rb (nonce 6)),
                       sign
                         (bl
                            (comm
                               (V0
                                  (f
                                     [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                    pi1 (ks (N 0)); 
-                                    pi1 (ks (N 1)); 
-                                    pi1 (ke (N 2))])) 
-                              (kc (N 4)))
+                                    pi1 (ks (nonce 0)); 
+                                    pi1 (ks (nonce 1)); 
+                                    pi1 (ke (nonce 2))])) 
+                              (kc (nonce 4)))
                            (pubkey
                               (f
                                  [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                 pi1 (ks (N 0)); pi1 (ks (N 1));
-                                 pi1 (ke (N 2))])) 
-                           (rb (N 6))) (pi2 (ks (N 1))) 
-                        (rs (N 10))))]), TWO)) }_ 2 ^^ 13]),
+                                 pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                 pi1 (ke (nonce 2))])) 
+                           (rb (nonce 6))) (pi2 (ks (nonce 1))) 
+                        (rs (nonce 10))))]), TWO)) }_ 2 ^^ 13]),
         msg
           (f
              [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-             pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-             (pi1 (ks (N 0)),
+             pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+             (pi1 (ks (nonce 0)),
              (bl
                 (comm
                    (V1
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 3)))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 3)))
                 (pubkey
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (rb (N 5)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (rb (nonce 5)),
              sign
                (bl
                   (comm
                      (V1
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 3)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 3)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 5))) 
-               (pi2 (ks (N 0))) (rs (N 9))));
-             (pi1 (ks (N 1)),
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+               (pi2 (ks (nonce 0))) (rs (nonce 9))));
+             (pi1 (ks (nonce 1)),
              (bl
                 (comm
                    (V0
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 4)))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 4)))
                 (pubkey
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (rb (N 6)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (rb (nonce 6)),
              sign
                (bl
                   (comm
                      (V0
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (kc (N 4)))
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (kc (nonce 4)))
                   (pubkey
                      (f
                         [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                        pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                        pi1 (ke (N 2))])) (rb (N 6))) 
-               (pi2 (ks (N 1))) (rs (N 10))));
+                        pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                        pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+               (pi2 (ks (nonce 1))) (rs (nonce 10))));
              {z
                 (comm
                    (V0
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (kc (N 3)),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (kc (nonce 3)),
                 (ub
                    (comm
                       (V0
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 3)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 3)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 5))
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 5))
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2));
-                      (pi1 (ks (N 0)),
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2));
+                      (pi1 (ks (nonce 0)),
                       (bl
                          (comm
                             (V1
                                (f
                                   [A; B; M; C1; C2; C3; ONE; TWO; THREE;
                                   vk 0; vk 1; pke 2])) 
-                            (kc (N 3))) (pubkey x1) 
+                            (kc (nonce 3))) (pubkey x1) 
                          (r 5),
                       sign
                         (bl
@@ -2797,41 +2797,41 @@ apply EQI_trans with (ml2:= [msg
                                  (f
                                     [A; B; M; C1; C2; C3; ONE; TWO; THREE;
                                     vk 0; vk 1; pke 2])) 
-                              (kc (N 3))) (pubkey x1) 
-                           (r 5)) (pi2 (ks (N 0))) 
-                        (rs (N 9))));
-                      (pi1 (ks (N 1)),
+                              (kc (nonce 3))) (pubkey x1) 
+                           (r 5)) (pi2 (ks (nonce 0))) 
+                        (rs (nonce 9))));
+                      (pi1 (ks (nonce 1)),
                       (bl
                          (comm
                             (V0
                                (f
                                   [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                  pi1 (ks (N 0)); 
-                                  pi1 (ks (N 1)); 
-                                  pi1 (ke (N 2))])) 
-                            (kc (N 4)))
+                                  pi1 (ks (nonce 0)); 
+                                  pi1 (ks (nonce 1)); 
+                                  pi1 (ke (nonce 2))])) 
+                            (kc (nonce 4)))
                          (pubkey
                             (f
                                [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                               pi1 (ks (N 0)); pi1 (ks (N 1));
-                               pi1 (ke (N 2))])) (rb (N 6)),
+                               pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                               pi1 (ke (nonce 2))])) (rb (nonce 6)),
                       sign
                         (bl
                            (comm
                               (V0
                                  (f
                                     [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                    pi1 (ks (N 0)); 
-                                    pi1 (ks (N 1)); 
-                                    pi1 (ke (N 2))])) 
-                              (kc (N 4)))
+                                    pi1 (ks (nonce 0)); 
+                                    pi1 (ks (nonce 1)); 
+                                    pi1 (ke (nonce 2))])) 
+                              (kc (nonce 4)))
                            (pubkey
                               (f
                                  [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                                 pi1 (ks (N 0)); pi1 (ks (N 1));
-                                 pi1 (ke (N 2))])) 
-                           (rb (N 6))) (pi2 (ks (N 1))) 
-                        (rs (N 10))))]), TWO)) }_ 2 ^^ 13;
+                                 pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                                 pi1 (ke (nonce 2))])) 
+                           (rb (nonce 6))) (pi2 (ks (nonce 1))) 
+                        (rs (nonce 10))))]), TWO)) }_ 2 ^^ 13;
              {z (c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 1 0), TWO)) }_ 2 ^^ 14]),
         bol
           (acc
@@ -2839,140 +2839,140 @@ apply EQI_trans with (ml2:= [msg
                 (V1
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (kc (N 3)))
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (kc (nonce 3)))
              (pubkey
                 (f
                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                   pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                   pi1 (ke (N 2))])) (rb (N 5))
+                   pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                   pi1 (ke (nonce 2))])) (rb (nonce 5))
              (f
                 [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                (pi1 (ks (N 0)),
+                pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                (pi1 (ks (nonce 0)),
                 (bl
                    (comm
                       (V1
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 3)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 3)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 5)),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 5)),
                 sign
                   (bl
                      (comm
                         (V1
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (kc (N 3)))
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (kc (nonce 3)))
                      (pubkey
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (rb (N 5))) 
-                  (pi2 (ks (N 0))) (rs (N 9))));
-                (pi1 (ks (N 1)),
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                  (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                (pi1 (ks (nonce 1)),
                 (bl
                    (comm
                       (V0
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 4)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 4)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 6)),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 6)),
                 sign
                   (bl
                      (comm
                         (V0
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (kc (N 4)))
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (kc (nonce 4)))
                      (pubkey
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (rb (N 6))) 
-                  (pi2 (ks (N 1))) (rs (N 10))))])),
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                  (pi2 (ks (nonce 1))) (rs (nonce 10))))])),
         bol
           (acc
              (comm
                 (V0
                    (f
                       [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                      pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                      pi1 (ke (N 2))])) (kc (N 4)))
+                      pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                      pi1 (ke (nonce 2))])) (kc (nonce 4)))
              (pubkey
                 (f
                    [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                   pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                   pi1 (ke (N 2))])) (rb (N 6))
+                   pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                   pi1 (ke (nonce 2))])) (rb (nonce 6))
              (f
                 [A; B; M; C1; C2; C3; ONE; TWO; THREE; 
-                pi1 (ks (N 0)); pi1 (ks (N 1)); pi1 (ke (N 2));
-                (pi1 (ks (N 0)),
+                pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2));
+                (pi1 (ks (nonce 0)),
                 (bl
                    (comm
                       (V1
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 3)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 3)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 5)),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 5)),
                 sign
                   (bl
                      (comm
                         (V1
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (kc (N 3)))
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (kc (nonce 3)))
                      (pubkey
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (rb (N 5))) 
-                  (pi2 (ks (N 0))) (rs (N 9))));
-                (pi1 (ks (N 1)),
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (rb (nonce 5))) 
+                  (pi2 (ks (nonce 0))) (rs (nonce 9))));
+                (pi1 (ks (nonce 1)),
                 (bl
                    (comm
                       (V0
                          (f
                             [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                            pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                            pi1 (ke (N 2))])) (kc (N 4)))
+                            pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                            pi1 (ke (nonce 2))])) (kc (nonce 4)))
                    (pubkey
                       (f
                          [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                         pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                         pi1 (ke (N 2))])) (rb (N 6)),
+                         pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                         pi1 (ke (nonce 2))])) (rb (nonce 6)),
                 sign
                   (bl
                      (comm
                         (V0
                            (f
                               [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                              pi1 (ks (N 0)); pi1 (ks (N 1));
-                              pi1 (ke (N 2))])) (kc (N 4)))
+                              pi1 (ks (nonce 0)); pi1 (ks (nonce 1));
+                              pi1 (ke (nonce 2))])) (kc (nonce 4)))
                      (pubkey
                         (f
                            [A; B; M; C1; C2; C3; ONE; TWO; THREE;
-                           pi1 (ks (N 0)); pi1 (ks (N 1)); 
-                           pi1 (ke (N 2))])) (rb (N 6))) 
-                  (pi2 (ks (N 1))) (rs (N 10))))]))]).
+                           pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); 
+                           pi1 (ke (nonce 2))])) (rb (nonce 6))) 
+                  (pi2 (ks (nonce 1))) (rs (nonce 10))))]))]).
 apply ftran.
 apply H1; try split; auto. simpl.
 clear ftran.

@@ -46,7 +46,7 @@ pose proof(ENCCPA' (b 0 7, unblind pkat (b 0 7) (r 8) (pi1 (x3tt 0 1))) (b 1 7, 
         (bacc pkat (b 1 9) (r 10) (pi2 (x3tt 0 1)));
       msg
         (enc (b 0 9, unblind pkat (b 0 9) (r 10) (pi2 (x4ttt 1 0))) 
-           (pk 5) (rr (N 54)))]));try reflexivity. simpl. 
+           (pk 5) (rr (nonce 54)))]));try reflexivity. simpl. 
 (**********************************************)
 assert ( (L (b 0 7, unblind pkat (b 0 7) (r 8) (pi1 (x3tt 0 1)))) # (L (b 1 7, unblind pkat (b 1 7) (r 8) (pi1 (x3tt 1 0))))).
     try apply len_trm4; try apply len_trm3; try apply len_trm2; try apply len_trm1; try apply len_nonce.     apply EQmsg' in H1. apply H0 in H1; try reflexivity.
@@ -73,7 +73,7 @@ assert(tmp1: [msg (pk 1); msg (pk 2); msg (pk 5); msg pkat;
          (bacc pkat (b 1 9) (r 10) (pi2 (x3tt 0 1)));
        msg
          (enc (b 1 9, unblind pkat (b 1 9) (r 10) (pi2 (x4ttt 0 1))) 
-            (pk 5) (rr (N 54)))] ~ [msg (pk 1); msg (pk 2); msg (pk 5); msg pkat; 
+            (pk 5) (rr (nonce 54)))] ~ [msg (pk 1); msg (pk 2); msg (pk 5); msg pkat; 
        msg (vt 0); msg (vt 1); bol (eqm (to x1) (V 1));
        msg (pk 1, (e (b 0 7) 8, sign (sk 1) (e (b 0 7) 8) (r 30)));
        bol (eqm (to (x2t 0)) (V 2));
@@ -83,13 +83,13 @@ assert(tmp1: [msg (pk 1); msg (pk 2); msg (pk 5); msg pkat;
          (bacc pkat (b 0 7) (r 8) (pi1 (x3tt 0 1)));
        msg
          (enc (b 1 7, unblind pkat (b 1 7) (r 8) (pi1 (x3tt 1 0))) 
-            (pk 5) (rr (N 50)));
+            (pk 5) (rr (nonce 50)));
        bol
          (eqm (to (x4ttt 0 1)) (V 2)) &
          (bacc pkat (b 1 9) (r 10) (pi2 (x3tt 0 1)));
        msg
          (enc (b 0 9, unblind pkat (b 0 9) (r 10) (pi2 (x4ttt 1 0))) 
-            (pk 5) (rr (N 54)))]);
+            (pk 5) (rr (nonce 54)))]);
 try apply EQI_trans with (ml2:= [msg (pk 1); msg (pk 2); msg (pk 5); msg pkat; 
       msg (vt 0); msg (vt 1); bol (eqm (to x1) (V 1));
       msg (pk 1, (e (b 0 7) 8, sign (sk 1) (e (b 0 7) 8) (r 30)));
@@ -106,20 +106,20 @@ try apply EQI_trans with (ml2:= [msg (pk 1); msg (pk 2); msg (pk 5); msg pkat;
         (bacc pkat (b 1 9) (r 10) (pi2 (x3tt 0 1)));
       msg
         (enc (b 0 9, unblind pkat (b 0 9) (r 10) (pi2 (x4ttt 1 0))) 
-           (pk 5) (rr (N 54)))]); 
+           (pk 5) (rr (nonce 54)))]); 
 try assumption; clear -tmp1.
 
 (** l ++ [t1'; t2'] ~ l' ++ [t1'; t2'] *)
 
 
 afunapptrmhyp (msg (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) 
-                             (pk 5) (rr (N 25))))) (msg (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25))))) H1. 
+                             (pk 5) (rr (nonce 25))))) (msg (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25))))) H1. 
 funapptrmhyp (msg (sign (sk 1) (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) 
-                                          (pk 5) (rr (N 25)))))) (msg (sign (sk 1) (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25)))))) H1.
+                                          (pk 5) (rr (nonce 25)))))) (msg (sign (sk 1) (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25)))))) H1.
 
 funapptrmhyp (msg ((enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) 
-             (pk 5) (rr (N 25))), (sign (sk 1) (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) 
-             (pk 5) (rr (N 25))))))) (msg  ((enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25))), (sign (sk 1) (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25))))))) H1. 
+             (pk 5) (rr (nonce 25))), (sign (sk 1) (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) 
+             (pk 5) (rr (nonce 25))))))) (msg  ((enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25))), (sign (sk 1) (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25))))))) H1. 
 do 3 dropone_in H1. 
 do 3 (restrproj_in 17 H1).  
 restr_swap_in 16 17 H1.

@@ -8,36 +8,36 @@ simpl.
 apply IFBRANCH_M5 with (ml1:= phi0) (ml2:= phi0).
 simpl. 
 apply IFBRANCH_M4 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)))]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)))]). simpl.
 repeat unfold q11, q11_s, q11_s'.        
 repeat unfold q111, qs111. 
 apply IFBRANCH_M3 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 (x2t 0)));
     msg ok]) (ml2:=  [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 1)) & (bacc (pk 3) (b 1 7) (r 8) (pi1 (x2t 1)));
    msg ok]).
 simpl.
 
 apply IFBRANCH_M2 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 (x2t 0)));
     msg ok; bol (eqm (to (x3tt 0)) (V 2));
     msg (pk 2, (e (b 1 19) 20, sign (sk 2) (ONE, e (b 1 19) 20)))])(ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 1)) & (bacc (pk 3) (b 1 7) (r 8) (pi1 (x2t 1)));
    msg ok; bol (eqm (to (x3tt 1)) (V 2));
    msg (pk 2, (e (b 0 19) 20, sign (sk 2) (ONE, e (b 0 19) 20)))]). simpl. repeat unfold q111v1. 
 apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 (x2t 0)));
     msg ok; bol (eqm (to (x3tt 0)) (V 2));
@@ -46,7 +46,7 @@ apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
       (eqm (to (x4ttt 0 1)) (V 2)) &
       (bacc (pk 3) (b 1 19) (r 20) (pi2 (x4ttt 0 1))); 
     msg ok])(ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 1)) & (bacc (pk 3) (b 1 7) (r 8) (pi1 (x2t 1)));
    msg ok; bol (eqm (to (x3tt 1)) (V 2));
@@ -57,7 +57,7 @@ apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
    msg ok]). simpl. repeat unfold vtrm. 
 
 pose proof( commit_swap (vt 0) (vt 1) _ 7 7 19 19 [ msg (r 25); msg (sk 1); msg (sk 2); msg (r 8); msg (r 20); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1))]); simpl in H.
 assert( (L (vt 0)) # (L (vt 1))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0. 
@@ -83,10 +83,10 @@ funapptrmhyp (msg (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0)))) (msg (unblind (b
 funapptrmhyp (msg (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (r 25))) (msg (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (r 25))) H.
 
 
-funapptrmhyp (msg (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (N 25))))) (msg (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25))))) H.
+funapptrmhyp (msg (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (nonce 25))))) (msg (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25))))) H.
  
-funapptrmhyp (msg (sign (sk 1) (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (N 25))))))  (msg (sign (sk 1) (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25)))))) H.
-funapptrmhyp (msg ((enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (N 25))), (sign (sk 1) (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (N 25)))))))  (msg ((enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25))), (sign (sk 1) (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25))))))) H.  
+funapptrmhyp (msg (sign (sk 1) (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (nonce 25))))))  (msg (sign (sk 1) (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25)))))) H.
+funapptrmhyp (msg ((enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (nonce 25))), (sign (sk 1) (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (nonce 25)))))))  (msg ((enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25))), (sign (sk 1) (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25))))))) H.  
 restrsublis H.
 (*(** apply ENCCPA *)
 
@@ -96,7 +96,7 @@ try apply len_trm4; try apply len_trm3; try apply len_trm2; try apply len_trm1; 
        
     
 pose proof(ENCCPA' (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1)))  O 0 5 25 25 [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 (x2t 0)));
     msg ok; bol (eqm (to (x3tt 0)) (V 2));
@@ -109,14 +109,14 @@ apply EQmsg' in lenc.
 apply H in lenc; try reflexivity.
 clear H; rename lenc into H.  simpl.     simpl in H.
 
-funapptrmhyp (msg (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (N 25))))) (msg (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25))))) H.
+funapptrmhyp (msg (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (nonce 25))))) (msg (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25))))) H.
  
-funapptrmhyp (msg (sign (sk 1) (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (N 25))))))  (msg (sign (sk 1) (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25)))))) H.
-funapptrmhyp (msg ((enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (N 25))), (sign (sk 1) (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (N 25)))))))  (msg ((enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25))), (sign (sk 1) (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25))))))) H.  
+funapptrmhyp (msg (sign (sk 1) (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (nonce 25))))))  (msg (sign (sk 1) (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25)))))) H.
+funapptrmhyp (msg ((enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (nonce 25))), (sign (sk 1) (TWO, (enc (unblind (b 0 7) (pk 3) (r 8) (pi1 (x2t 0))) (pk 5) (rr (nonce 25)))))))  (msg ((enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25))), (sign (sk 1) (TWO, (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25))))))) H.  
 do 5 (restrproj_in 16 H). rename H into H'.
 
 assert([msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 (x2t 0)));
     msg ok; bol (eqm (to (x3tt 0)) (V 2));
@@ -128,7 +128,7 @@ assert([msg (pk 1); msg (pk 2); msg (pk 3);
      (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (r 25),
      sign (sk 1)
        (TWO, enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (r 25)))] ~ [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 1)) & (bacc (pk 3) (b 1 7) (r 8) (pi1 (x2t 1)));
    msg ok; bol (eqm (to (x3tt 1)) (V 2));
@@ -141,12 +141,12 @@ assert([msg (pk 1); msg (pk 2); msg (pk 3);
      (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (r 25),
      sign (sk 1)
        (TWO, enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (r 25)))]). 
-pose proof( commit_swap (vt 0) (vt 1) _ 7 7 19 19 [ msg (sk 1); msg (sk 2); msg (r 8); msg (r 20); msg (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (N 25)),
+pose proof( commit_swap (vt 0) (vt 1) _ 7 7 19 19 [ msg (sk 1); msg (sk 2); msg (r 8); msg (r 20); msg (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) (pk 5) (rr (nonce 25)),
          sign (sk 1)
            (TWO,
            enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) 
-             (pk 5) (rr (N 25)))); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1))]); simpl in H.
+             (pk 5) (rr (nonce 25)))); msg (pk 1); msg (pk 2); msg (pk 3); 
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1))]); simpl in H.
 assert( (L (vt 0)) # (L (vt 1))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0. 

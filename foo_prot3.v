@@ -20,14 +20,14 @@ Section foo_prot2.
 [(pk 0)] represents a public key used in commitment shceme. *) 
  
    
-Definition vt (n:nat) := (v (N n)).
-Definition phi0:= [msg (pk 0); msg (pk 1); msg (pk 2);  msg (pk 3); msg (N 4); msg (pk 5)].
+Definition vt (n:nat) := (v (nonce n)).
+Definition phi0:= [msg (pk 0); msg (pk 1); msg (pk 2);  msg (pk 3); msg (nonce 4); msg (pk 5)].
 
 (** * Frame [phi111] *)
 
 (** commitments *) 
  
-Definition b (n' n'':nat) := (commit (pk 0) (v (N n')) (r n'')).
+Definition b (n' n'':nat) := (commit (pk 0) (v (nonce n')) (r n'')).
 Definition e (t:message) (n':nat) := (blind t (pk 3) (r n')).
 
 
@@ -712,7 +712,7 @@ with subtrmls_msg' (t:message) : list oursum :=
          | lnc => (cons (msg lnc) nil)
          | lsk => (cons (msg lsk) nil)
          | O => (cons (msg O) nil)
-         | N n'=> (cons (msg (N n')) nil)
+         | nonce n'=> (cons (msg (nonce n')) nil)
          | new =>  (cons (msg new) nil)
          | exp t11 t2 t3 => (app (subtrmls_msg' t11) (app (subtrmls_msg' t2) (subtrmls_msg' t3)))
          | pair t11 t2 =>  (app (subtrmls_msg'  t11) (subtrmls_msg' t2) )
@@ -777,7 +777,7 @@ Ltac funapptrmhyp m1 m2 H :=
  
  (** blindness *) 
 Ltac aply_blindnes n n3 n4 m0 m1 t11 t2 t3 t4 l H H0  := pose proof( blindness n n3 n4 m0 m1 t11 t2 t3 t4 l ) as H ;
-assert( H0:  (Fresh [0; 1; n3; n4] (l++[ msg (N n); msg m0; msg m1]) = true) /\ (check_rn_blind_listm [0;1;n3;n4] [t11;t2;t3;t4] = true)); try split; try reflexivity;
+assert( H0:  (Fresh [0; 1; n3; n4] (l++[ msg (nonce n); msg m0; msg m1]) = true) /\ (check_rn_blind_listm [0;1;n3;n4] [t11;t2;t3;t4] = true)); try split; try reflexivity;
 apply H0 in H; clear H; simpl in H.
 
 (** Using [funapptrmhyp] *)
@@ -817,12 +817,12 @@ Theorem frame2Ind:  (phi11 0 1 )~ (phi11 1 0).
 Proof. repeat unf.
        simpl.
 apply IFBRANCH_M1 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5)]) (ml2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5)]).
+    msg (nonce 4); msg (pk 5)]) (ml2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
+    msg (nonce 4); msg (pk 5)]).
 simpl. 
    
 pose proof(blindness 3 8 9 0 1 (b 0 7) (b 1 7) ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                           msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2) ] ).
+                                                                                           msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2) ] ).
 simpl in H. 
  
 aplyprojn 2 14 H ;try split; try reflexivity.
@@ -836,12 +836,12 @@ appconst H.
 
  simpl.
 apply IFBRANCH_M1 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x11) (V 1))]) (ml2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x11) (V 1))]).
+    msg (nonce 4); msg (pk 5); bol (eqm (to x11) (V 1))]) (ml2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
+    msg (nonce 4); msg (pk 5); bol (eqm (to x11) (V 1))]).
 simpl.
 
 pose proof(blindness 3 10 11 0 1 (b 1 9) (b 0 9) ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                           msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2) ] ).
+                                                                                           msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2) ] ).
 simpl in H. 
  
 aplyprojn 2 14 H ;try split; try reflexivity.
@@ -856,12 +856,12 @@ Qed.
 Theorem frame3Ind: (phi12 ) ~ (phi12 1 0).
   Proof. repeat unf.
          simpl.
-         apply IFBRANCH_M2 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); msg (N 4); msg (pk 5)]) (ml2 := [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); msg (N 4); msg (pk 5)]).
+         apply IFBRANCH_M2 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); msg (nonce 4); msg (pk 5)]) (ml2 := [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); msg (nonce 4); msg (pk 5)]).
          simpl.
 apply IFBRANCH_M1 with (ml1:=      [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x11) (V 1));
+    msg (nonce 4); msg (pk 5); bol (eqm (to x11) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (e (b 0 7) 8)))]) (ml2:=    [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); bol (eqm (to x11) (V 1));
+   msg (nonce 4); msg (pk 5); bol (eqm (to x11) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (e (b 1 7) 8)))]).
 simpl. 
 (** Subgoal-I *)
@@ -869,7 +869,7 @@ simpl.
 
 
  pose proof(blindness 3 8 10 0 1 (b 0 7) (b 1 9) ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                           msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2) ] ).
+                                                                                           msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2) ] ).
 simpl in H. 
  aplyprojn 1 14 H ;try split; try reflexivity.
 appconst H.
@@ -888,26 +888,26 @@ funapptrmh
 Focus 2. 
  simpl.
 apply IFBRANCH_M1 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x11) (V 1));
+    msg (nonce 4); msg (pk 5); bol (eqm (to x11) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (e (b 0 7) 8)));
     bol
       (eqm (to x12) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 x12))]) (ml2:=  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); bol (eqm (to x11) (V 1));
+   msg (nonce 4); msg (pk 5); bol (eqm (to x11) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (e (b 1 7) 8)));
    bol (eqm (to (x2 1 0)) (V 1)) & (bacc (pk 3) (b 1 7) (r 8) (pi1 (x2 1 0)))]). simpl.
 
 
 
 pose proof(blindness 3 8 10 0 1 (b 0 7) (b 1 7) ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                           msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2) ;msg (sk 3)] ).
+                                                                                           msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2) ;msg (sk 3)] ).
 simpl in H.
 aplyprojn 1 15 H ;try split; try reflexivity.  
 pose proof (fresh_commit 
 1 7 10 0 7 10 9 [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2);  msg (sk 3);
-       msg (N 3); msg (b 0 7); msg (b 1 7); msg (blind (b 0 7) (pk 3) (r 8))] [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-      msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3);
-      msg (N 3); msg (b 0 7); msg (b 1 7); msg (blind (b 1 7) (pk 3) (r 8))]).  simpl in H0. 
+       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2);  msg (sk 3);
+       msg (nonce 3); msg (b 0 7); msg (b 1 7); msg (blind (b 0 7) (pk 3) (r 8))] [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
+      msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3);
+      msg (nonce 3); msg (b 0 7); msg (b 1 7); msg (blind (b 1 7) (pk 3) (r 8))]).  simpl in H0. 
 apply H0 in H;try reflexivity. clear H0.
 appconst H.
 x1checks H.
@@ -931,8 +931,8 @@ retmylis H.
 reswap_in 14 49 H. 
 clear l. 
 apply fresh_commit with (l1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); 
-       msg (sk 3); msg (N 3); msg (b 0 7); msg (b 1 7);
+       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); 
+       msg (sk 3); msg (nonce 3); msg (b 0 7); msg (b 1 7);
        msg (blind (b 0 7) (pk 3) (r 8)); bol (eqm (to x12) (V 1));
        msg ok; msg (V 1); msg (V 2); msg O; msg x11; 
        msg (to x11); bol (eqm (to x11) (V 1)); bol (eqm (to x11) (V 2));
@@ -958,8 +958,8 @@ apply fresh_commit with (l1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3);
             (pk 2, (e (b 1 9) 10, sign (sk 2) (e (b 1 9) 10))) 
             (admin x11)); msg (q0 ); msg x12; 
        msg (to x12)])  (0:=1) (1:= 9) (n3:= 10) (n4:= 0) (n5:= 9) (n6:= 10) (n7:=11) (l2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-      msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); 
-      msg (sk 3); msg (N 3); msg (b 0 7); msg (b 1 7);
+      msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); 
+      msg (sk 3); msg (nonce 3); msg (b 0 7); msg (b 1 7);
       msg (blind (b 1 7) (pk 3) (r 8)); bol (eqm (to (x2 1 0)) (V 1));
       msg ok; msg (V 1); msg (V 2); msg O; msg x11; 
       msg (to x11); bol (eqm (to x11) (V 1)); bol (eqm (to x11) (V 2));
@@ -986,8 +986,8 @@ apply fresh_commit with (l1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3);
            (admin x11)); msg (q0 1 0); msg (x2 1 0); 
       msg (to (x2 1 0))]) in H;try reflexivity; simpl in H. 
 apply fresh_blind with (l1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); 
-       msg (sk 3); msg (N 3); msg (b 0 7); msg (b 1 7);
+       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); 
+       msg (sk 3); msg (nonce 3); msg (b 0 7); msg (b 1 7);
        msg (blind (b 0 7) (pk 3) (r 8)); bol (eqm (to x12) (V 1));
        msg ok; msg (V 1); msg (V 2); msg O; msg x11; 
        msg (to x11); bol (eqm (to x11) (V 1)); bol (eqm (to x11) (V 2));
@@ -1013,8 +1013,8 @@ apply fresh_blind with (l1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3);
             (pk 2, (e (b 1 9) 10, sign (sk 2) (e (b 1 9) 10))) 
             (admin x11)); msg (q0 ); msg x12; 
        msg (to x12)])  (0:=1) (1:= 11) (n3:= 10) (n4:= 0) (n5:= 11) (n6:= 10) (n7:=12) (l2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-      msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); 
-      msg (sk 3); msg (N 3); msg (b 0 7); msg (b 1 7);
+      msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); 
+      msg (sk 3); msg (nonce 3); msg (b 0 7); msg (b 1 7);
       msg (blind (b 1 7) (pk 3) (r 8)); bol (eqm (to (x2 1 0)) (V 1));
       msg ok; msg (V 1); msg (V 2); msg O; msg x11; 
       msg (to x11); bol (eqm (to x11) (V 1)); bol (eqm (to x11) (V 2));
@@ -1047,15 +1047,15 @@ restrsublis H.
 simpl. 
 
 pose proof(blindness 3 8 10 0 1 (b 0 7) (b 1 7) ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                           msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2) ;msg (sk 3)] ).
+                                                                                           msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2) ;msg (sk 3)] ).
 simpl in H.
 aplyprojn 1 15 H ;try split; try reflexivity.  
 pose proof (fresh_commit 
 1 7 10 0 7 10 9 [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2);  msg (sk 3);
-       msg (N 3); msg (b 0 7); msg (b 1 7); msg (blind (b 0 7) (pk 3) (r 8))] [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-      msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3);
-      msg (N 3); msg (b 0 7); msg (b 1 7); msg (blind (b 1 7) (pk 3) (r 8))]).  simpl in H0. 
+       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2);  msg (sk 3);
+       msg (nonce 3); msg (b 0 7); msg (b 1 7); msg (blind (b 0 7) (pk 3) (r 8))] [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
+      msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3);
+      msg (nonce 3); msg (b 0 7); msg (b 1 7); msg (blind (b 1 7) (pk 3) (r 8))]).  simpl in H0. 
 apply H0 in H;try reflexivity.
 appconst H.
 x1checks H. clear H0.
@@ -1079,15 +1079,15 @@ funapptrmhyp (msg (pi1 (x2 0 1 ))) (msg (pi1 (x2 1 0))) H.
 
 (**********************************************************)
 pose proof(blindness 3 8 10 0 1 (b 0 7) (b 1 7) ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                           msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2) ;msg (sk 3)] ).
+                                                                                           msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2) ;msg (sk 3)] ).
 simpl in H.
 aplyprojn 1 15 H ;try split; try reflexivity.  
 pose proof (fresh_commit 
 1 7 10 0 7 10 9 [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2);  msg (sk 3);
-       msg (N 3); msg (b 0 7); msg (b 1 7); msg (blind (b 0 7) (pk 3) (r 8))] [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-      msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3);
-      msg (N 3); msg (b 0 7); msg (b 1 7); msg (blind (b 1 7) (pk 3) (r 8))]).  simpl in H0. 
+       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2);  msg (sk 3);
+       msg (nonce 3); msg (b 0 7); msg (b 1 7); msg (blind (b 0 7) (pk 3) (r 8))] [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
+      msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3);
+      msg (nonce 3); msg (b 0 7); msg (b 1 7); msg (blind (b 1 7) (pk 3) (r 8))]).  simpl in H0. 
 apply H0 in H;try reflexivity.
 appconst H.
 x1checks H. clear H0.
@@ -1112,27 +1112,27 @@ restrsublis H.
 
 simpl.
 apply IFBRANCH_M2 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x11) (V 1))]) (ml2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); bol (eqm (to x11) (V 1))]) .
+    msg (nonce 4); msg (pk 5); bol (eqm (to x11) (V 1))]) (ml2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
+   msg (nonce 4); msg (pk 5); bol (eqm (to x11) (V 1))]) .
 simpl. 
 apply IFBRANCH_M1 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x11) (V 1)); 
+    msg (nonce 4); msg (pk 5); bol (eqm (to x11) (V 1)); 
     bol (eqm (to x11) (V 2));
     msg (pk 2, (e (b 1 9) 10, sign (sk 2) (e (b 1 9) 10)))]) (ml2:=  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); bol (eqm (to x11) (V 1)); 
+   msg (nonce 4); msg (pk 5); bol (eqm (to x11) (V 1)); 
    bol (eqm (to x11) (V 2));
    msg (pk 2, (e (b 0 9) 10, sign (sk 2) (e (b 0 9) 10)))]) . simpl.
 
 pose proof(blindness 3 8 10 0 1 (b 0 7) (b 1 7) ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                           msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2) ;msg (sk 3)] ).
+                                                                                           msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2) ;msg (sk 3)] ).
 simpl in H. 
 aplyprojn 1 15 H ;try split; try reflexivity.  
 pose proof (fresh_commit 
 1 7 10 0 7 10 9 [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2);  msg (sk 3);
-       msg (N 3); msg (b 0 7); msg (b 1 7); msg (blind (b 0 7) (pk 3) (r 8))] [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-      msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3);
-      msg (N 3); msg (b 0 7); msg (b 1 7); msg (blind (b 1 7) (pk 3) (r 8))]).  simpl in H0. 
+       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2);  msg (sk 3);
+       msg (nonce 3); msg (b 0 7); msg (b 1 7); msg (blind (b 0 7) (pk 3) (r 8))] [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
+      msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3);
+      msg (nonce 3); msg (b 0 7); msg (b 1 7); msg (blind (b 1 7) (pk 3) (r 8))]).  simpl in H0. 
 apply H0 in H;try reflexivity. clear H0.
 appconst H.
 x1checks H.
@@ -1160,12 +1160,12 @@ restrsublis H.
 simpl.
 
 apply IFBRANCH_M1 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x11) (V 1)); 
+    msg (nonce 4); msg (pk 5); bol (eqm (to x11) (V 1)); 
     bol (eqm (to x11) (V 2));
     msg (pk 2, (e (b 1 9) 10, sign (sk 2) (e (b 1 9) 10)));
     bol
       (eqm (to x12) (V 2)) & (bacc (pk 3) (b 1 9) (r 10) (pi2 x12))]) (ml2:=  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); bol (eqm (to x11) (V 1)); 
+   msg (nonce 4); msg (pk 5); bol (eqm (to x11) (V 1)); 
    bol (eqm (to x11) (V 2));
    msg (pk 2, (e (b 0 9) 10, sign (sk 2) (e (b 0 9) 10)));
    bol
@@ -1174,15 +1174,15 @@ simpl.
 
 
 pose proof(blindness 3 8 10 0 1 (b 0 7) (b 1 7) ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                           msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2) ;msg (sk 3)] ).
+                                                                                           msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2) ;msg (sk 3)] ).
 simpl in H.
 aplyprojn 1 15 H ;try split; try reflexivity.  
 pose proof (fresh_commit 
 1 7 10 0 7 10 9 [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2);  msg (sk 3);
-       msg (N 3); msg (b 0 7); msg (b 1 7); msg (blind (b 0 7) (pk 3) (r 8))] [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-      msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3);
-      msg (N 3); msg (b 0 7); msg (b 1 7); msg (blind (b 1 7) (pk 3) (r 8))]).  simpl in H0. 
+       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2);  msg (sk 3);
+       msg (nonce 3); msg (b 0 7); msg (b 1 7); msg (blind (b 0 7) (pk 3) (r 8))] [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
+      msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3);
+      msg (nonce 3); msg (b 0 7); msg (b 1 7); msg (blind (b 1 7) (pk 3) (r 8))]).  simpl in H0. 
 apply H0 in H;try reflexivity. clear H0.
 appconst H.
 x1checks H.
@@ -1204,8 +1204,8 @@ funapptrmhyp (bol (eqm (to x12) (V 1))) (bol (eqm (to (x2 1 0)) (V 1))) H.
 
 reswap_in 13 49 H. 
 apply fresh_commit with (l1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); 
-       msg (sk 3); msg (N 3); msg (b 0 7); msg (b 1 7);
+       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); 
+       msg (sk 3); msg (nonce 3); msg (b 0 7); msg (b 1 7);
        bol (eqm (to x12) (V 1)); msg (e (b 1 9) 10); 
        msg ok; msg (V 1); msg (V 2); msg O; msg x11; 
        msg (to x11); bol (eqm (to x11) (V 1)); bol (eqm (to x11) (V 2));
@@ -1231,8 +1231,8 @@ apply fresh_commit with (l1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3);
             (pk 2, (e (b 1 9) 10, sign (sk 2) (e (b 1 9) 10))) 
             (admin x11)); msg (q0 ); msg x12; 
        msg (to x12)]) (l2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-      msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); 
-      msg (sk 3); msg (N 3); msg (b 0 7); msg (b 1 7);
+      msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); 
+      msg (sk 3); msg (nonce 3); msg (b 0 7); msg (b 1 7);
       bol (eqm (to (x2 1 0)) (V 1)); msg (e (b 0 9) 10); 
       msg ok; msg (V 1); msg (V 2); msg O; msg x11; 
       msg (to x11); bol (eqm (to x11) (V 1)); bol (eqm (to x11) (V 2));
@@ -1259,8 +1259,8 @@ apply fresh_commit with (l1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3);
            (admin x11)); msg (q0 1 0); msg (x2 1 0); 
       msg (to (x2 1 0))]) (0:= 0) (1:=7) (n3:= 8) (n4:= 1) (n5:= 7) (n6:=8) (n7:=13) in H; simpl in H; try reflexivity.
 apply fresh_blind with (l1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); 
-       msg (sk 3); msg (N 3); msg (b 0 7); msg (b 1 7);
+       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); 
+       msg (sk 3); msg (nonce 3); msg (b 0 7); msg (b 1 7);
        bol (eqm (to x12) (V 1)); msg (e (b 1 9) 10); 
        msg ok; msg (V 1); msg (V 2); msg O; msg x11; 
        msg (to x11); bol (eqm (to x11) (V 1)); bol (eqm (to x11) (V 2));
@@ -1286,8 +1286,8 @@ apply fresh_blind with (l1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3);
             (pk 2, (e (b 1 9) 10, sign (sk 2) (e (b 1 9) 10))) 
             (admin x11)); msg (q0 ); msg x12; 
        msg (to x12)]) (l2:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-      msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); 
-      msg (sk 3); msg (N 3); msg (b 0 7); msg (b 1 7);
+      msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); 
+      msg (sk 3); msg (nonce 3); msg (b 0 7); msg (b 1 7);
       bol (eqm (to (x2 1 0)) (V 1)); msg (e (b 0 9) 10); 
       msg ok; msg (V 1); msg (V 2); msg O; msg x11; 
       msg (to x11); bol (eqm (to x11) (V 1)); bol (eqm (to x11) (V 2));
@@ -1319,15 +1319,15 @@ simpl.
 simpl. 
 
 pose proof(blindness 3 8 10 0 1 (b 0 7) (b 1 7) ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                           msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2) ;msg (sk 3)] ).
+                                                                                           msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2) ;msg (sk 3)] ).
 simpl in H.
 aplyprojn 1 15 H ;try split; try reflexivity.  
 pose proof (fresh_commit 
 1 7 10 0 7 10 9 [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2);  msg (sk 3);
-       msg (N 3); msg (b 0 7); msg (b 1 7); msg (blind (b 0 7) (pk 3) (r 8))] [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-      msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3);
-      msg (N 3); msg (b 0 7); msg (b 1 7); msg (blind (b 1 7) (pk 3) (r 8))]).  simpl in H0. 
+       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2);  msg (sk 3);
+       msg (nonce 3); msg (b 0 7); msg (b 1 7); msg (blind (b 0 7) (pk 3) (r 8))] [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
+      msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3);
+      msg (nonce 3); msg (b 0 7); msg (b 1 7); msg (blind (b 1 7) (pk 3) (r 8))]).  simpl in H0. 
 apply H0 in H;try reflexivity.
 appconst H.
 x1checks H. clear H0.

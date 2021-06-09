@@ -174,12 +174,12 @@ Axiom IFBRANCH_M2: forall (n: nat) (ml1 ml2 : mylist n) (b b' : Bool)(x1 x1' x2 
 
 (** [Fresh] *)
 
-Definition r (n:nat) := (re (N n)).
+Definition r (n:nat) := (re (nonce n)).
 Notation " '[[' x ']]'" := (cons x nil): msg_scope.
 
-Axiom FRESHIND : forall (n n1 n2:nat) (v w: mylist n),   (v ~ w) ->   ((closMylist (v++w)) = true) /\ ( (Fresh [[n1]] (v++w)) = true) /\ ( (Fresh [[n2]] (v++w)) = true) -> ((msg  (N n1)) +++ v) ~ (( msg  (N n2)) +++w ).
+Axiom FRESHIND : forall (n n1 n2:nat) (v w: mylist n),   (v ~ w) ->   ((closMylist (v++w)) = true) /\ ( (Fresh [[n1]] (v++w)) = true) /\ ( (Fresh [[n2]] (v++w)) = true) -> ((msg  (nonce n1)) +++ v) ~ (( msg  (nonce n2)) +++w ).
 
-Axiom FRESHNEQ: forall (n : nat) (m : message), ((closMsg m) = true)/\ ( (Fresh [[n]] [msg m]) = true) ->[bol (eqm (N n) m)]~ [bol FAlse]. 
+Axiom FRESHNEQ: forall (n : nat) (m : message), ((closMsg m) = true)/\ ( (Fresh [[n]] [msg m]) = true) ->[bol (eqm (nonce n) m)]~ [bol FAlse]. 
 
 
 Axiom FRESHIND_rs: forall (n n1 n2:nat) (v w: mylist n),  (v ~ w) -> ((closMylist (v++w)) = true) /\ ( (Fresh [[n1]]  (v++w)) = true) /\ ( (Fresh [[n2]] (v++w)) = true)   -> ((msg (r n1) ) +++ v) ~ (( msg (r n2)) +++w ).
@@ -328,7 +328,7 @@ Axiom correctness :  forall (n:nat) (t t' :message), (ver (vk n)  t (sign (ssk n
       |  0 , _ => FAlse
       |  S _, nil => FAlse             
       | S j',  h :: tl => match h with
-                             | (sign (pi2 (ks (N n))) t1 t2) =>   IF (eqm t t1) then (ver (vk n) t1 u) else (unforgb j' n tl t u)
+                             | (sign (pi2 (ks (nonce n))) t1 t2) =>   IF (eqm t t1) then (ver (vk n) t1 u) else (unforgb j' n tl t u)
                              | _ => FAlse
                            end
     end.    

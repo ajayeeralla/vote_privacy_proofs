@@ -3,10 +3,10 @@ Theorem frame8TraceInd:
                 let u':= (c 1 3, (ub (c 1 3) pk (bk 5) (x3tt 1 0), TWO)) in
                 let v:= (c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) in
                 let v':= (c 0 4, (ub (c 0 4) pk (bk 6) (x3tt 1 0), TWO)) in
-                let u1 := (label (c 0 3) (x6t 0 1), (kc (N 3), THREE)) in
-                let v1:= (label (c 0 4) (x7t 0 1), (kc (N 4), THREE)) in
-                let u1' := (label (c 1 3) (x6t 1 0), (kc (N 3), THREE)) in
-                let v1' := (label (c 1 4) (x7t 1 0), (kc (N 4), THREE)) in 
+                let u1 := (label (c 0 3) (x6t 0 1), (kc (nonce 3), THREE)) in
+                let v1:= (label (c 0 4) (x7t 0 1), (kc (nonce 4), THREE)) in
+                let u1' := (label (c 1 3) (x6t 1 0), (kc (nonce 3), THREE)) in
+                let v1' := (label (c 1 4) (x7t 1 0), (kc (nonce 4), THREE)) in 
    [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TWO, msg THREE, msg (vk 0), msg (vk 1), 
    msg (pke 2), bol (theta x1 A), msg (tr 0 0 3 5 9), bol (theta (x2t 0) B), msg (tr 1 1 4 6 10), 
    bol (to (x3tt 0 1)) #? A, bol (acpt 0 3 5 (x3tt 0 1)),

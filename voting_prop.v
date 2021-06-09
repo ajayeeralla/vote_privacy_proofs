@@ -4,8 +4,7 @@
 (************************************************************************)
      
 Require Export cpacca.
-SearchAbout pair.
- 
+
 Axiom gen_ifmf_f3: forall (b:Bool) (t1 t2 t3 t4: message) {f}, (f (If b then t1 else t2) t3 t4) # If b then (f t1 t3 t4) else (f t2 t3 t4).
 
 Axiom len_reg: forall x1 y1 x2 y2, (|x1|#?|y1|) & (|x2|#?|y2|) ## TRue ->  (|(x1, x2)| #? |(y1, y2)|) ## TRue. 
@@ -13,7 +12,7 @@ Axiom Example14_M: forall (m1 m2: message), (eqm m1 m2) ##  (eqm m2 m1).
 
 
 
-Axiom clos_sub_vtrm: forall n1 s1 n2 s2 t, let mvl:= (distMvars [msg t]) in [n1;n2]= mvl \/ [n2;n1] = mvl -> closMsg ({{n1:=s1}} ({{n2:=s2}}t)) = true. 
+Axiom clos_sub_vtrm: forall n1 s1 n2 s2 t, let mvl:= (distMvars [msg t]) in (cons n1  (cons n2 nil))= mvl \/ (cons n2 (cons n1 nil)) = mvl -> closMsg ({{n1:=s1}} ({{n2:=s2}}t)) = true. 
 
 
 Axiom cca2comp_sym : forall t1 t2 n1 n2 t3 t4 t, (cca2compmsg t1 t2 n1 n2 t3 t4 t) = (cca2compmsg t1 t2 n1 n2 t4 t3 t).
@@ -21,14 +20,14 @@ Axiom gen_ifmf_eql1: forall b t1 t2 t3 t4 t5 t6 t7 t8 t9 t10,  (If b then ((If (
 Axiom gen_ifmf_eql2: forall b t1 t2 t3 t4, (|If b then t1 else t2| #? |If b then t3 else t4|)  ## (IF b then (|t1|#?|t3|) else (|t2|#?|t4|)).
 Axiom gen_ifmf_eql3: forall b t1 t2 t3 t4 t5 t6 t7 t8 t9 t10,  (If b then ((t8, t7), (If (|(t1, t2)|) #? (|(t3,t4)|) then t5 else t6, t9)) else t10) #  (If b then ((t8, t7), (If (|(t1, (If b then t2 else O))|) #? (|(t3, (If b then t4 else O))|) then t5 else t6, t9)) else t10).
 
-Theorem votingProp:  forall (t t0 t1 : message),   let v0 := (V0 (N 0)) in
-                                                   let v1 := (V1 (N 0)) in
-                                                                                                      (|v0|#?|v1|) ## TRue ->  (Fresh [1; 2; 3; 4] ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
-    let mvl:= [5; 6] in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
+Theorem votingProp:  forall (t t0 t1 : message),   let v0 := (V0 (nonce 0)) in
+                                                   let v1 := (V1 (nonce 0)) in
+                                                                                                      (|v0|#?|v1|) ## TRue ->  (Fresh (cons 1 (cons 2 (cons 3 (cons 4 nil)))) ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
+    let mvl:= (cons 5 (cons 6 nil)) in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
                  let r0 := (r 1) in
                  let r1 := (r 2) in
-                 let k0 := (kc (N 3)) in
-                 let k1 := (kc (N 4)) in
+                 let k0 := (kc (nonce 3)) in
+                 let k1 := (kc (nonce 4)) in
                  let c00 := (comm v0 k0) in
                  let c01 := (comm v0 k1) in
                  let c10 := (comm v1 k0) in
@@ -110,11 +109,11 @@ rewrite swapElseBranches with (t1:= rt3).
         unfold lt1, rt1.
 unfold e10, e01. 
 
-assert(let ct:= (comm (V0 (N 0)) (kc (N 4)),
-                     ub (comm (V0 (N 0)) (kc (N 4))) t r1 t5) in 
+assert(let ct:= (comm (V0 (nonce 0)) (kc (nonce 4)),
+                     ub (comm (V0 (nonce 0)) (kc (nonce 4))) t r1 t5) in 
                          
-       let ct':= (comm (V1 (N 0)) (kc (N 3)),
-                     ub (comm (V1 (N 0)) (kc (N 3))) t r0 t4) in
+       let ct':= (comm (V1 (nonce 0)) (kc (nonce 3)),
+                     ub (comm (V1 (nonce 0)) (kc (nonce 3))) t r0 t4) in
                        
        let p:= |_ in let p1:=(pi1 (pi2 p), pi1 p) in let p2:= pi2 (pi2 p) in   [msg (bl c00 t r0), msg (bl c11 t r1), bol (acc c00 t r0 t2) & (acc c11 t r1 t3),
    msg
@@ -125,9 +124,9 @@ assert(let ct:= (comm (V0 (N 0)) (kc (N 4)),
   msg
     (If (acc c10 t r0 t4) & (acc c01 t r1 t5)
         then ({ct }_ 11 ^^ 7,
-                   {kc (N 4) }_ 11 ^^ 9,
+                   {kc (nonce 4) }_ 11 ^^ 9,
                    ({ct'}_ 11 ^^ 8,
-                   {kc (N 3) }_ 11 ^^ 10)) 
+                   {kc (nonce 3) }_ 11 ^^ 10)) 
         else ({p1 }_ 11 ^^ 7, {p2}_ 11 ^^ 9, ({ p1 }_ 11 ^^ 8, {p2 }_ 11 ^^ 10)))]).
 simpl. 
    restrsublis H9.
@@ -140,19 +139,19 @@ simpl. repeat rewrite msg_beq_refl; auto. simpl. apply H9. clear H9.
 (** Apply ENCCA2:1 **)
 
 
-pose proof (let ct:= (comm (V0 (N 0)) (kc (N 4)),
-                     ub (comm (V0 (N 0)) (kc (N 4))) t r1 t5) in
+pose proof (let ct:= (comm (V0 (nonce 0)) (kc (nonce 4)),
+                     ub (comm (V0 (nonce 0)) (kc (nonce 4))) t r1 t5) in
                       
-       let ct':= (comm (V1 (N 0)) (kc (N 3)),
-                     ub (comm (V1 (N 0)) (kc (N 3))) t r0 t4) in 
+       let ct':= (comm (V1 (nonce 0)) (kc (nonce 3)),
+                     ub (comm (V1 (nonce 0)) (kc (nonce 3))) t r0 t4) in 
                     
        let p:= |_ in let p1:=(pi1 (pi2 p), pi1 p) in let p2:= pi2 (pi2 p) in ENCCCA2 O O ct ct' O 0 11 7 7 [msg (bl c10 t r0), msg (bl c01 t r1), bol (acc c10 t r0 t4) & (acc c01 t r1 t5),
   msg
     (If (acc c10 t r0 t4) & (acc c01 t r1 t5)
         then (Mvar 0,
-                   {kc (N 4) }_ 11 ^^ 9,
+                   {kc (nonce 4) }_ 11 ^^ 9,
                    ({ct'}_ 11 ^^ 8,
-                   {kc (N 3) }_ 11 ^^ 10)) 
+                   {kc (nonce 3) }_ 11 ^^ 10)) 
      else ({p1 }_ 11 ^^ 7, {p2}_ 11 ^^ 9, ({ p1 }_ 11 ^^ 8, {p2 }_ 11 ^^ 10)))]).
 
 simpl in H9. 
@@ -165,7 +164,7 @@ simpl in H9.
 rewrite sub_clos with (t:=t) in H9; simpl in H1; try rewrite Bool.andb_true_r in H1; auto.
 rewrite sub_clos with (t:=t) in H9; simpl in H1; try rewrite Bool.andb_true_r in H1; auto.
 
-assert( (| comm (V0 (N 0)) (kc (N 4)) |) #? (| comm (V1 (N 0)) (kc (N 3)) |) ## TRue).
+assert( (| comm (V0 (nonce 0)) (kc (nonce 4)) |) #? (| comm (V1 (nonce 0)) (kc (nonce 3)) |) ## TRue).
 pose proof(commEql 4 3 v0 v1). 
 
 
@@ -182,7 +181,7 @@ simpl.
  rewrite sub_ident with (n:=0) (t:= t5) in H9.
  rewrite sub_ident with (n:=0) (t:= t5) in H9. simpl in H9. simpl.
  
- fold (acc (comm (V1 (N 0)) (kc (N 3))) t (rb (N 1)) t4) & (acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2)) t5) in H9. 
+ fold (acc (comm (V1 (nonce 0)) (kc (nonce 3))) t (rb (nonce 1)) t4) & (acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2)) t5) in H9. 
 
  
 rewrite gen_ifmf_eql1 in H9.
@@ -255,19 +254,19 @@ rewrite IFTRUE_M in H9.
 (** apply ENCCCA2 :2 *)
   
 
-pose proof (let ct:= (comm (V0 (N 0)) (kc (N 4)),
-                     ub (comm (V0 (N 0)) (kc (N 4))) t r1 t5) in
+pose proof (let ct:= (comm (V0 (nonce 0)) (kc (nonce 4)),
+                     ub (comm (V0 (nonce 0)) (kc (nonce 4))) t r1 t5) in
                       
-       let ct':= (comm (V1 (N 0)) (kc (N 3)),
-                     ub (comm (V1 (N 0)) (kc (N 3))) t r0 t4) in 
+       let ct':= (comm (V1 (nonce 0)) (kc (nonce 3)),
+                     ub (comm (V1 (nonce 0)) (kc (nonce 3))) t r0 t4) in 
                     
        let p:= |_ in let p1:=(pi1 (pi2 p), pi1 p) in let p2:= pi2 (pi2 p) in ENCCCA2 O O ct' ct O 0 11 8 8 [msg (bl c10 t r0), msg (bl c01 t r1), bol (acc c10 t r0 t4) & (acc c01 t r1 t5),
   msg
     (If (acc c10 t r0 t4) & (acc c01 t r1 t5)
         then ({ct'}_11^^7,
-                   {kc (N 4) }_ 11 ^^ 9,
+                   {kc (nonce 4) }_ 11 ^^ 9,
                    (Mvar 0,
-                   {kc (N 3) }_ 11 ^^ 10)) 
+                   {kc (nonce 3) }_ 11 ^^ 10)) 
         else ({p1 }_ 11 ^^ 7, {p2}_ 11 ^^ 9, ({ p1 }_ 11 ^^ 8, {p2 }_ 11 ^^ 10)))]).
 simpl in H12.
 
@@ -288,7 +287,7 @@ simpl.
  
  
 
- fold (acc (comm (V1 (N 0)) (kc (N 3))) t (rb (N 1)) t4) & (acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2)) t5) in H12. 
+ fold (acc (comm (V1 (nonce 0)) (kc (nonce 3))) t (rb (nonce 1)) t4) & (acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2)) t5) in H12. 
  
 
  
@@ -363,9 +362,9 @@ fold (r 1) in H12. fold r0 in H12. fold v0 v1 k0 k1 c10 c01 (pke 11) (er 11) (r 
 pose proof (ENCCCA2 O O k1 k0 O 0 11 9 9 [msg (bl c10 t r0), msg (bl c01 t r1), bol (acc c10 t r0 t4) & (acc c01 t r1 t5),
         msg
           (If (acc c10 t r0 t4) & (acc c01 t r1 t5)
-              then ((e10, (Mvar 0)), (e01, enc k0 (pke 11) (re (N 10)))) 
-              else (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (N 7)), enc (pi2 (pi2 |_)) (pke 11) (re (N 9)),
-                   (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (N 8)), enc (pi2 (pi2 |_)) (pke 11) (re (N 10)))))]).
+              then ((e10, (Mvar 0)), (e01, enc k0 (pke 11) (re (nonce 10)))) 
+              else (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (nonce 7)), enc (pi2 (pi2 |_)) (pke 11) (re (nonce 9)),
+                   (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (nonce 8)), enc (pi2 (pi2 |_)) (pke 11) (re (nonce 10)))))]).
 simpl in H13.
  
 rewrite sub_clos with (t:=t) in H13; simpl in H1; try rewrite Bool.andb_true_r in H1; auto.
@@ -380,7 +379,7 @@ rewrite sub_ident with (n:=0) (t:= t4) in H13.
  
 rewrite commKeyEql with (n1:= 4) (n2:=3) in H13.
 repeat rewrite IFTRUE_M in H13. 
-fold (acc (comm (V1 (N 0)) (kc (N 3))) t (rb (N 1)) t4) & (acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2)) t5) in H13.
+fold (acc (comm (V1 (nonce 0)) (kc (nonce 3))) t (rb (nonce 1)) t4) & (acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2)) t5) in H13.
 fold v0 v1 k0 k1 c10 c01 (pke 11) (er 11) (r 2) (r 1) r0 r1 in H13.
 
 (** apply ENCCCA2:4 **)
@@ -389,10 +388,10 @@ pose proof(ENCCCA2 O O k0 k1 O 0 11 10 10
 [msg (bl c10 t r0), msg (bl c01 t r1), bol (acc c10 t r0 t4) & (acc c01 t r1 t5),
         msg
           (If (acc c10 t r0 t4) & (acc c01 t r1 t5)
-              then (enc (c10, ub c10 t r0 t4) (pke 11) (re (N 7)), {k0 }_ 11 ^^ 9,
-                   (enc (c01, ub c01 t r1 t5) (pke 11) (re (N 8)), Mvar 0)) 
-              else (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (N 7)), enc (pi2 (pi2 |_)) (pke 11) (re (N 9)),
-                   (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (N 8)), enc (pi2 (pi2 |_)) (pke 11) (re (N 10)))))]).
+              then (enc (c10, ub c10 t r0 t4) (pke 11) (re (nonce 7)), {k0 }_ 11 ^^ 9,
+                   (enc (c01, ub c01 t r1 t5) (pke 11) (re (nonce 8)), Mvar 0)) 
+              else (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (nonce 7)), enc (pi2 (pi2 |_)) (pke 11) (re (nonce 9)),
+                   (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (nonce 8)), enc (pi2 (pi2 |_)) (pke 11) (re (nonce 10)))))]).
 simpl in H14.
 rewrite sub_clos with (t:=t) in H14; simpl in H1; try rewrite Bool.andb_true_r in H1; auto.
 rewrite sub_clos with (t:=t) in H14; simpl in H1; try rewrite Bool.andb_true_r in H1; auto.
@@ -404,14 +403,14 @@ rewrite sub_ident with (n:=0) (t:= t4) in H14.
  unfold k1, k0 in H14.
 rewrite commKeyEql with (n1:= 3) (n2:=4) in H14.
 repeat rewrite IFTRUE_M in H14. 
-fold (acc (comm (V1 (N 0)) (kc (N 3))) t (rb (N 1)) t4) & (acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2)) t5) v0 v1 k0 k1 c10 c01 (pke 11) (er 11) (r 2) (r 1) r0 r1 in H14.
+fold (acc (comm (V1 (nonce 0)) (kc (nonce 3))) t (rb (nonce 1)) t4) & (acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2)) t5) v0 v1 k0 k1 c10 c01 (pke 11) (er 11) (r 2) (r 1) r0 r1 in H14.
 
 (** apply transitivity repeatedly *)
  
 simpl in H10. 
 
 
-fold (acc (comm (V1 (N 0)) (kc (N 3))) t (rb (N 1)) t4) & (acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2)) t5) v0 v1 k0 k1 c10 c01 (pke 11) (er 11) (r 2) (r 1) r0 r1 in H9, H10, H12, H13, H14.
+fold (acc (comm (V1 (nonce 0)) (kc (nonce 3))) t (rb (nonce 1)) t4) & (acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2)) t5) v0 v1 k0 k1 c10 c01 (pke 11) (er 11) (r 2) (r 1) r0 r1 in H9, H10, H12, H13, H14.
 
 
 apply ext_trans with (l2:= let e1:= (c01, ub c01 t r1 t5) in let e2:= (c10, ub c10 t r0 t4) in let p:= |_ in let p':= (pi1 (pi2 p), pi1 p) in [msg (bl c10 t r0), msg (bl c01 t r1), bol (acc c10 t r0 t4) & (acc c01 t r1 t5),
@@ -423,17 +422,17 @@ apply ext_trans with (l2:= let e1:= (c01, ub c01 t r1 t5) in let e2:= (c10, ub c
                      (l3:= let e2:= (c10, ub c10 t r0 t4) in let p:= |_ in let p':= (pi1 (pi2 p), pi1 p) in [msg (bl c10 t r0), msg (bl c01 t r1), bol (acc c10 t r0 t4) & (acc c01 t r1 t5),
        msg
          (If (acc c10 t r0 t4) & (acc c01 t r1 t5)
-             then ({e2 }_ 11 ^^ 7, enc k1 (pke 11) (re (N 9)),
-                  (enc (c10, ub c10 t r0 t4) (pke 11) (re (N 8)), enc k0 (pke 11) (re (N 10)))) 
-             else (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (N 7)), enc (pi2 (pi2 |_)) (pke 11) (re (N 9)),
-                   (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (N 8)), enc (pi2 (pi2 |_)) (pke 11) (re (N 10)))))])
+             then ({e2 }_ 11 ^^ 7, enc k1 (pke 11) (re (nonce 9)),
+                  (enc (c10, ub c10 t r0 t4) (pke 11) (re (nonce 8)), enc k0 (pke 11) (re (nonce 10)))) 
+             else (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (nonce 7)), enc (pi2 (pi2 |_)) (pke 11) (re (nonce 9)),
+                   (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (nonce 8)), enc (pi2 (pi2 |_)) (pke 11) (re (nonce 10)))))])
                      (l4:= let e1:= (c01, ub c01 t r1 t5) in [msg (bl c10 t r0), msg (bl c01 t r1), bol (acc c10 t r0 t4) & (acc c01 t r1 t5),
         msg
           (If (acc c10 t r0 t4) & (acc c01 t r1 t5)
-              then (enc (c10, ub c10 t r0 t4) (pke 11) (re (N 7)), enc k1 (pke 11) (re (N 9)),
-                   ({e1 }_ 11 ^^ 8, enc k0 (pke 11) (re (N 10)))) 
-              else (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (N 7)), enc (pi2 (pi2 |_)) (pke 11) (re (N 9)),
-                    (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (N 8)), enc (pi2 (pi2 |_)) (pke 11) (re (N 10)))))]). 
+              then (enc (c10, ub c10 t r0 t4) (pke 11) (re (nonce 7)), enc k1 (pke 11) (re (nonce 9)),
+                   ({e1 }_ 11 ^^ 8, enc k0 (pke 11) (re (nonce 10)))) 
+              else (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (nonce 7)), enc (pi2 (pi2 |_)) (pke 11) (re (nonce 9)),
+                    (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (nonce 8)), enc (pi2 (pi2 |_)) (pke 11) (re (nonce 10)))))]). 
 repeat split.
 simpl.
 apply H10;auto.  
@@ -443,7 +442,7 @@ repeat split.
 
 repeat rewrite clos_sub_vtrm; auto. rewrite H1; auto.
 unfold distMvars. inversion H4. simpl.
-rewrite H15. 
+(** rewrite H15. *)
 auto. 
 unfold distMvars. 
 inversion H4. simpl.
@@ -532,10 +531,10 @@ auto.
 apply EQI_trans with (ml2:= ([msg (bl c10 t r0), msg (bl c01 t r1), bol (acc c10 t r0 t4) & (acc c01 t r1 t5),
          msg
            (If (acc c10 t r0 t4) & (acc c01 t r1 t5)
-               then (enc (c10, ub c10 t r0 t4) (pke 11) (re (N 7)), enc k0 (pke 11) (re (N 9)),
-                    (enc (c01, ub c01 t r1 t5) (pke 11) (re (N 8)), {k0 }_ 11 ^^ 10)) 
-               else (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (N 7)), enc (pi2 (pi2 |_)) (pke 11) (re (N 9)),
-                    (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (N 8)), enc (pi2 (pi2 |_)) (pke 11) (re (N 10)))))])).
+               then (enc (c10, ub c10 t r0 t4) (pke 11) (re (nonce 7)), enc k0 (pke 11) (re (nonce 9)),
+                    (enc (c01, ub c01 t r1 t5) (pke 11) (re (nonce 8)), {k0 }_ 11 ^^ 10)) 
+               else (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (nonce 7)), enc (pi2 (pi2 |_)) (pke 11) (re (nonce 9)),
+                    (enc (pi1 (pi2 |_), pi1 |_) (pke 11) (re (nonce 8)), enc (pi2 (pi2 |_)) (pke 11) (re (nonce 10)))))])).
 apply H13.
 Focus 2.
 apply H14.
@@ -668,7 +667,6 @@ pose proof(compHid_ext 3 4 0 1 v0 v1 [] (let u:= ( (Mvar 0), (ub (Mvar 0) t (r 1
    msg ({u }_11^^7, |_)])).
 simpl in H9.  simpl in H1.
 
-SearchAbout andb.
 rewrite Bool.andb_true_r in H1.
 do 4 rewrite sub_clos with (t:= t) in H9; auto.
 simpl in H9. 

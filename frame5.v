@@ -8,7 +8,7 @@ Load "foo_prot2".
       |  0 , _ => FAlse
       |  S _, nil  => FAlse             
       | S j', cons h tl => match h with
-                             | (bsign ( pi2 (k (N n))) (blind t1 t2 t3)) =>   ifb  (eqm t t1)  & (eqm (pk n) t2) & (eqm t' t3) (bver (pk n) t (unblind t (pk n) t' u)) (bverufcma j' n tl t t'  u)
+                             | (bsign ( pi2 (k (nonce n))) (blind t1 t2 t3)) =>   ifb  (eqm t t1)  & (eqm (pk n) t2) & (eqm t' t3) (bver (pk n) t (unblind t (pk n) t' u)) (bverufcma j' n tl t t'  u)
                              | _ => FAlse
                            end
     end.    
@@ -160,7 +160,7 @@ repeat redg.
  apply IFBRANCH_M5 with (ml1:= phi0) (ml2:= phi0).
  simpl.
  aply_blindness 3 8 12 0 1 (b 0 7) (b 1 11)  ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
+                                                                                       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
 aplyprojn 1 16 H; try split; try reflexivity.
 rep_commits 0 1 11 30 7 31 fr1 fr2 temp H H0.
 rename H0 into H;
@@ -264,8 +264,8 @@ simpl.
 repeat redg.
 repeat unfold q2232.
 apply IFBRANCH_M5 with (ml1:= [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1))]) (ml2:=   [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                               msg (N 4); msg (pk 5); bol (eqm (to x1) (V 1))]). simpl.
+    msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1))]) (ml2:=   [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
+                                                               msg (nonce 4); msg (pk 5); bol (eqm (to x1) (V 1))]). simpl.
 (** subgoal *)
  repeat aply_andB_elm' (bacc (pk 3) (b 1 9) (r 10) (pi2 (x4ftftfft 0 1))). repeat aply_andB_elm' (bacc (pk 3) (b 0 9) (r 10) (pi2 (x4ftftfft 1 0))). 
 rew_mupbver; aply_bver'; simpl; repeat rewrite -> IFFALSE_M.  
@@ -278,7 +278,7 @@ repeat redg.
 rew_mupbver; aply_bver'; simpl; repeat rewrite -> IFFALSE_M.
 repeat redg.
 aply_blindness 3 10 14 0 1 (b 1 9) (b 0 13)  ((Mvar 0), (Mvar 1)) ((Mvar 0), (Mvar 1))  [msg (pk 0); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                                       msg (N 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
+                                                                                       msg (nonce 4); msg (pk 5); msg (sk 1); msg (sk 2); msg (sk 3) ] ; simpl;
 aplyprojn 1 16 H; try split; try reflexivity.
 rep_commits 1 0 13 30 9 31 fr1 fr2 temp H H0.
 rename H0 into H;

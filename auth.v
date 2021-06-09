@@ -21,19 +21,19 @@ Definition v (n:nat) := match n with
 
 Eval compute in kc.
 
-Definition ssk (n:nat) := pi2 (ks (N n)).
-Definition k0 := (kc (N 3)) .
-Definition k1 := (kc (N 4)).
-Definition rb0 := (rb (N 5)).
-Definition rb1 := (rb (N 6)).
+Definition ssk (n:nat) := pi2 (ks (nonce n)).
+Definition k0 := (kc (nonce 3)) .
+Definition k1 := (kc (nonce 4)).
+Definition rb0 := (rb (nonce 5)).
+Definition rb1 := (rb (nonce 6)).
 Definition ssk0 := (ssk 0).
 Definition ssk1 := (ssk 1).
-Definition rs0 := (rs (N 9)).
-Definition rs1 := (rs (N 10)).
+Definition rs0 := (rs (nonce 9)).
+Definition rs1 := (rs (nonce 10)).
 
-Definition c (n k: nat) := (comm (v n) (kc (N k))).
-Definition b (n k r : nat) := (bl (c n k) pk (rb (N r))).
-Definition s (n k r n' r' : nat) := (sign (b n k r) (ssk n') (rs (N r'))).
+Definition c (n k: nat) := (comm (v n) (kc (nonce k))).
+Definition b (n k r : nat) := (bl (c n k) pk (rb (nonce r))).
+Definition s (n k r n' r' : nat) := (sign (b n k r) (ssk n') (rs (nonce r'))).
 Definition tr (a n k r r':nat) := ( (vk a), ((b n k r), (s n k r a r'))).
  
 Definition theta (x a: message) :=  ((to x) #? a) & (vcheck (v 0))&(vcheck (v  1)).
@@ -61,14 +61,14 @@ simpl.
 pose proof (let x1:= f (toListm phi0) in
             let v0 := V0(x1) in
             let v1 := V1(x1) in
-            let k0 := (kc (N 3)) in
-            let k1 := (kc (N 4)) in
-            let rb0 := (rb (N 5)) in
-            let rb1 := (rb (N 6)) in
-            let rs0 := (rs (N 7)) in
-            let rs1 := (rs (N 8)) in
-            let ssk0 := pi2 (ks (N 9)) in
-            let ssk1 := pi2 (ks (N 10)) in
+            let k0 := (kc (nonce 3)) in
+            let k1 := (kc (nonce 4)) in
+            let rb0 := (rb (nonce 5)) in
+            let rb1 := (rb (nonce 6)) in
+            let rs0 := (rs (nonce 7)) in
+            let rs1 := (rs (nonce 8)) in
+            let ssk0 := pi2 (ks (nonce 9)) in
+            let ssk1 := pi2 (ks (nonce 10)) in
             compHid 3 4 O (V0(f (toListm phi0)))  (V1(f (toListm phi0))) (phi0++[msg x1, bol ((to x1) #? A) & (vcheck v0)&(vcheck v1),  msg rb0, msg rb1, msg rs0, msg rs1, msg ssk0, msg ssk1])).
 simpl in H.
 assert ( (| V0 x1 | #? |V1 x1|) ## TRue).
@@ -79,22 +79,22 @@ funappf1 pi2 22 H.
 repeat rewrite proj1, proj2 in H.
 funappf1 pubkey 15 H. 
 fold x1. 
-funapptrmhyp (msg (bl (comm (V0 x1) (kc (N 3))) (pubkey x1) (rb (N 5)))) (msg (bl (comm (V1 x1) (kc (N 3))) (pubkey x1) (rb (N 5)))) H;simpl; try reflexivity. 
+funapptrmhyp (msg (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))) (msg (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))) H;simpl; try reflexivity. 
  
-funapptrmhyp (msg (sign (bl (comm (V0 x1) (kc (N 3))) (pubkey x1) (rb (N 5))) 
-       (pi2 (ks (N 9))) (rs (N 7)))) (msg (sign (bl (comm (V1 x1) (kc (N 3))) (pubkey x1) (rb (N 5))) (pi2 (ks (N 9))) (rs (N 7)))) H;simpl; try reflexivity.
-funapptrmhyp (msg (bl (comm (V0 x1) (kc (N 3))) (pubkey x1) (rb (N 5)),
-     sign (bl (comm (V0 x1) (kc (N 3))) (pubkey x1) (rb (N 5))) 
-       (pi2 (ks (N 9))) (rs (N 7)))) (msg (bl (comm (V1 x1) (kc (N 3))) (pubkey x1) (rb (N 5)),
-    sign (bl (comm (V1 x1) (kc (N 3))) (pubkey x1) (rb (N 5))) 
-      (pi2 (ks (N 9))) (rs (N 7)))) H; simpl; try reflexivity.
+funapptrmhyp (msg (sign (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+       (pi2 (ks (nonce 9))) (rs (nonce 7)))) (msg (sign (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) (pi2 (ks (nonce 9))) (rs (nonce 7)))) H;simpl; try reflexivity.
+funapptrmhyp (msg (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)),
+     sign (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+       (pi2 (ks (nonce 9))) (rs (nonce 7)))) (msg (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)),
+    sign (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+      (pi2 (ks (nonce 9))) (rs (nonce 7)))) H; simpl; try reflexivity.
 funapptrmhyp (msg (vk 0,
-     (bl (comm (V0 x1) (kc (N 3))) (pubkey x1) (rb (N 5)),
-     sign (bl (comm (V0 x1) (kc (N 3))) (pubkey x1) (rb (N 5))) 
-       (pi2 (ks (N 9))) (rs (N 7))))) (msg (vk 0,
-    (bl (comm (V1 x1) (kc (N 3))) (pubkey x1) (rb (N 5)),
-    sign (bl (comm (V1 x1) (kc (N 3))) (pubkey x1) (rb (N 5))) 
-      (pi2 (ks (N 9))) (rs (N 7))))) H; simpl; try reflexivity.
+     (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)),
+     sign (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+       (pi2 (ks (nonce 9))) (rs (nonce 7))))) (msg (vk 0,
+    (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)),
+    sign (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+      (pi2 (ks (nonce 9))) (rs (nonce 7))))) H; simpl; try reflexivity.
 
 restrsublis H.  auto. simpl; try reflexivity.  simpl. reflexivity. try split.
 reflexivity. split. reflexivity. reflexivity.
@@ -111,14 +111,14 @@ apply IFBRANCH_M1 with (ml1:= [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg 
 pose proof (let x1:= f (toListm phi0) in
             let v0 := V0(x1) in
             let v1 := V1(x1) in
-            let k0 := (kc (N 3)) in
-            let k1 := (kc (N 4)) in
-            let rb0 := (rb (N 5)) in
-            let rb1 := (rb (N 6)) in
-            let rs0 := (rs (N 7)) in
-            let rs1 := (rs (N 8)) in
-            let ssk0 := pi2 (ks (N 9)) in
-            let ssk1 := pi2 (ks (N 10)) in
+            let k0 := (kc (nonce 3)) in
+            let k1 := (kc (nonce 4)) in
+            let rb0 := (rb (nonce 5)) in
+            let rb1 := (rb (nonce 6)) in
+            let rs0 := (rs (nonce 7)) in
+            let rs1 := (rs (nonce 8)) in
+            let ssk0 := pi2 (ks (nonce 9)) in
+            let ssk1 := pi2 (ks (nonce 10)) in
             compHid 3 4 O (V0(f (toListm phi0)))  (V1(f (toListm phi0))) (phi0++[msg x1,bol ((to x1) #? A) & (vcheck (V1 x1)) & (vcheck (V0 x1)),
    bol ((to x1) #? B) & (vcheck (V1 x1)) & (vcheck (V0 x1)),msg rb0, msg rb1, msg rs0, msg rs1, msg ssk0, msg ssk1])).
 simpl in H.
@@ -128,22 +128,22 @@ apply vote_len_reg. repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H.
  funappf1 pi1 22 H.
 funappf1 pi2 23 H.
 repeat rewrite proj1, proj2 in H. 
- funapptrmhyp (msg (bl (comm (V1 x1) (kc (N 4))) (pubkey x1) (rb (N 6)))) (msg (bl (comm (V0 x1) (kc (N 4))) (pubkey x1) (rb (N 6)))) H;simpl; try reflexivity.
+ funapptrmhyp (msg (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)))) (msg (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)))) H;simpl; try reflexivity.
    
-funapptrmhyp (msg (sign (bl (comm (V1 x1) (kc (N 4))) (pubkey x1) (rb (N 6))) 
-       (pi2 (ks (N 10))) (rs (N 8)))) (msg (sign (bl (comm (V0 x1) (kc (N 4))) (pubkey x1) (rb (N 6))) (pi2 (ks (N 10))) (rs (N 8)))) H;simpl; try reflexivity. 
-funapptrmhyp (msg (bl (comm (V1 x1) (kc (N 4))) (pubkey x1) (rb (N 6)),
-     sign (bl (comm (V1 x1) (kc (N 4))) (pubkey x1) (rb (N 6))) 
-       (pi2 (ks (N 10))) (rs (N 8)))) (msg (bl (comm (V0 x1) (kc (N 4))) (pubkey x1) (rb (N 6)),
-    sign (bl (comm (V0 x1) (kc (N 4))) (pubkey x1) (rb (N 6))) 
-      (pi2 (ks (N 10))) (rs (N 8)))) H; simpl; try reflexivity.
+funapptrmhyp (msg (sign (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+       (pi2 (ks (nonce 10))) (rs (nonce 8)))) (msg (sign (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) (pi2 (ks (nonce 10))) (rs (nonce 8)))) H;simpl; try reflexivity. 
+funapptrmhyp (msg (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)),
+     sign (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+       (pi2 (ks (nonce 10))) (rs (nonce 8)))) (msg (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)),
+    sign (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+      (pi2 (ks (nonce 10))) (rs (nonce 8)))) H; simpl; try reflexivity.
 funapptrmhyp (msg (vk 1,
-     (bl (comm (V1 x1) (kc (N 4))) (pubkey x1) (rb (N 6)),
-     sign (bl (comm (V1 x1) (kc (N 4))) (pubkey x1) (rb (N 6))) 
-       (pi2 (ks (N 10))) (rs (N 8))))) (msg (vk 1,
-    (bl (comm (V0 x1) (kc (N 4))) (pubkey x1) (rb (N 6)),
-    sign (bl (comm (V0 x1) (kc (N 4))) (pubkey x1) (rb (N 6))) 
-      (pi2 (ks (N 10))) (rs (N 8))))) H; simpl; try reflexivity.
+     (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)),
+     sign (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+       (pi2 (ks (nonce 10))) (rs (nonce 8))))) (msg (vk 1,
+    (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)),
+    sign (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+      (pi2 (ks (nonce 10))) (rs (nonce 8))))) H; simpl; try reflexivity.
 
  restrsublis H; try assumption;  simpl; try reflexivity. repeat (simpl; try split; try reflexivity).  reflexivity.
 Qed.
@@ -248,16 +248,16 @@ repeat red_in H. rewrite H.
 reflexivity.
 Qed.
 (** Go back apply ext_comphid in this way in prop1 and voting_prop*)
-Axiom compHid_ext': forall (n2 n3 n4 n5:nat) (t2 t3 : message) {n} {m} (z: mylist n) (l:mylist m), closMylist [msg t2, msg t3] = true /\ closMylist z = true /\ Fresh [n2; n3] (z++[msg t2, msg t3]) = true  ->
+Axiom compHid_ext': forall (n2 n3 n4 n5:nat) (t2 t3 : message) {n} {m} (z: mylist n) (l:mylist m), closMylist [msg t2, msg t3] = true /\ closMylist z = true /\ Fresh (cons n2 (cons n3 nil)) (z++[msg t2, msg t3]) = true  ->
                                                                                 ((length (distMvars l))=? 2)%nat = true -> 
-                                                                                let mvl:= [n4; n5] in ((distMvars l) = mvl \/ (distMvars l) = [n5; n4])  ->
+                                                                                let mvl:= (cons n4 (cons n5 nil)) in ((distMvars l) = mvl \/ (distMvars l) = (cons n5 (cons n4 nil))  ->
                                                                                                         
                                                                                                          let m0 := (comm t2 (k n2)) in
                                                                                                          let m1 := (comm t3 (k n3)) in
                                                                                                          let m0':= (comm t3 (k n2)) in
                                                                                                          let m1':= (comm t2 (k n3)) in 
                                                                                                                                                           
-(z ++ ([n4 <- (If |t2|#?|t3| then m0 else O)]([n5 <- (If |t2|#?|t3| then m1 else O)]l))) ~ (z ++ ([n4 <- (If |t2|#?|t3| then m0' else O)]([n5 <- (If |t2|#?|t3| then m1' else O)]l))).
+(z ++ (n4 (If |t2|#?|t3| then m0 else O)]([n5 <- (If |t2|#?|t3| then m1 else O)]l))) ~ (z ++ ([n4 <- (If |t2|#?|t3| then m0' else O)]([n5 <- (If |t2|#?|t3| then m1' else O)]l))).
 
 
 Axiom ifmr_gen1_msg: forall f b t1 t2, (f (If b then t1 else t2)) # (If b then (f t1) else (f t2)).
@@ -289,9 +289,9 @@ Proof. intros. unfold phi2, phi1. unfold t1, t2. simpl.
 pose proof(compHid_ext 3 4 0 1 (v 0) (v 1) [] (phi0++
 [msg
      (If IF (to x1) #? A then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
-         then (vk 0, (bl (Mvar 0) pk (rb (N 5)), sign (bl (Mvar 0) pk (rb (N 5))) (ssk 0) (rs (N 9)))) 
+         then (vk 0, (bl (Mvar 0) pk (rb (nonce 5)), sign (bl (Mvar 0) pk (rb (nonce 5))) (ssk 0) (rs (nonce 9)))) 
          else If IF (to x1) #? B then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
-                 then (vk 1, (bl (Mvar 1) pk (rb (N 6)), sign (bl (Mvar 1) pk (rb (N 6))) (ssk 1) (rs (N 10)))) 
+                 then (vk 1, (bl (Mvar 1) pk (rb (nonce 6)), sign (bl (Mvar 1) pk (rb (nonce 6))) (ssk 1) (rs (nonce 10)))) 
                  else O),
    msg
      (If IF (to x1) #? A then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
@@ -299,9 +299,9 @@ pose proof(compHid_ext 3 4 0 1 (v 0) (v 1) [] (phi0++
                        (f
                           (toListm
                              (phi0 ++
-                              [msg (vk 0, (bl (Mvar 0) pk (rb (N 5)), sign (bl (Mvar 0) pk (rb (N 5))) (ssk 0) (rs (N 9))))])))) #?
+                              [msg (vk 0, (bl (Mvar 0) pk (rb (nonce 5)), sign (bl (Mvar 0) pk (rb (nonce 5))) (ssk 0) (rs (nonce 9))))])))) #?
                     B then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
-                 then (vk 1, (bl (Mvar 1) pk (rb (N 6)), sign (bl (Mvar 1) pk (rb (N 6))) (ssk 1) (rs (N 10)))) 
+                 then (vk 1, (bl (Mvar 1) pk (rb (nonce 6)), sign (bl (Mvar 1) pk (rb (nonce 6))) (ssk 1) (rs (nonce 10)))) 
                  else O 
          else If IF (to x1) #? B then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
                  then If IF (to
@@ -309,9 +309,9 @@ pose proof(compHid_ext 3 4 0 1 (v 0) (v 1) [] (phi0++
                                   (toListm
                                      (phi0 ++
                                       [msg
-                                         (vk 1, (bl (Mvar 1) pk (rb (N 6)), sign (bl (Mvar 1) pk (rb (N 6))) (ssk 1) (rs (N 10))))]))))
+                                         (vk 1, (bl (Mvar 1) pk (rb (nonce 6)), sign (bl (Mvar 1) pk (rb (nonce 6))) (ssk 1) (rs (nonce 10))))]))))
                             #? A then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
-                         then (vk 0, (bl (Mvar 0) pk (rb (N 5)), sign (bl (Mvar 0) pk (rb (N 5))) (ssk 0) (rs (N 9)))) 
+                         then (vk 0, (bl (Mvar 0) pk (rb (nonce 5)), sign (bl (Mvar 0) pk (rb (nonce 5))) (ssk 0) (rs (nonce 9)))) 
                          else O 
                  else O)])).
 simpl in H1.
@@ -348,7 +348,7 @@ funapptrmhyp (msg (tr 0 0 3 5 9)) (msg (tr 0 1 3 5 9)) H; simpl; try reflexivity
 funapptrmhyp (msg (x2t 0)) (msg (x2t 1)) H; simpl; try reflexivity.
 funapptrmhyp (msg (to (x2t 0))) (msg (to (x2t 1))) H; simpl; try reflexivity.
 funapptrmhyp  (bol ((to (x2t 0)) #? B) & (vcheck (V0 x1)) & (vcheck (V1 x1))) ( bol ((to (x2t 1)) #? B) & (vcheck (V0 x1)) & (vcheck (V1 x1))) H; simpl; try reflexivity. 
-funapptrmhyp (msg (bl (comm (V1 x1) (kc (N 4))) pk (rb (N 6)))) (msg (bl (comm (V0 x1) (kc (N 4))) pk (rb (N 6)))) H; simpl; try reflexivity.  
+funapptrmhyp (msg (bl (comm (V1 x1) (kc (nonce 4))) pk (rb (nonce 6)))) (msg (bl (comm (V0 x1) (kc (nonce 4))) pk (rb (nonce 6)))) H; simpl; try reflexivity.  
 funapptrmhyp (msg (s 1 4 6 1 10)) (msg (s 0 4 6 1 10)) H; simpl; try reflexivity.
 
 funapptrmhyp (msg (tr 1 1 4 6 10)) (msg (tr 1 0 4 6 10)) H; simpl; try reflexivity.

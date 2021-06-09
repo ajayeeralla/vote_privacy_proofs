@@ -20,14 +20,14 @@ Section foo_prot1.
 [(pk 0)] represents a public key used in commitment shceme. *) 
 
   
-Definition vt (n:nat) := (v (N n)).
-Definition phi0:= [msg (pk 0); msg (pk 1); msg (pk 2);  msg (N 3); msg (N 4); msg (pk 5)].
+Definition vt (n:nat) := (v (nonce n)).
+Definition phi0:= [msg (pk 0); msg (pk 1); msg (pk 2);  msg (nonce 3); msg (nonce 4); msg (pk 5)].
 
 (** * Frame [phi11] *)
 
 (** commitments *) 
 
-Definition b (n n' n'':nat) := (commit (pk n) (v (N n')) (r n'')).
+Definition b (n n' n'':nat) := (commit (pk n) (v (nonce n')) (r n'')).
 Definition e (n :nat) (t:message) (n':nat) := (blind t (pk n) (r n')).
 
 
@@ -616,7 +616,7 @@ with subtrmls_msg' (t:message) : list message :=
          | lnc => (cons lnc nil)
          | lsk => (cons lsk nil)
          | O => (cons O nil)
-         | N n'=> (cons (N n') nil)
+         | nonce n'=> (cons (nonce n') nil)
          | new =>  (cons new nil)
          | exp t1 t2 t3 => (app (subtrmls_msg' t1) (app (subtrmls_msg' t2) (subtrmls_msg' t3)))
          | pair t1 t2 =>  (app (subtrmls_msg'  t1) (subtrmls_msg' t2) )
@@ -653,7 +653,7 @@ with subtrmls_msg' (t:message) : list message :=
          | _ => nil
        end.
 
- Eval compute in subtrmls_msg' (f [k (N 0) ; O]).
+ Eval compute in subtrmls_msg' (f [k (nonce 0) ; O]).
  Eval compute in subtrmls_msg' (sk 1).
  
 Eval compute in (subtrmls_msg' (sign (if_then_else_M TRue (dec O (sk 1)) O) new)).
@@ -834,7 +834,7 @@ with subtrmls_msg'' (t:message) : list oursum :=
          | lnc => (cons (msg lnc) nil)
          | lsk => (cons (msg lsk) nil)
          | O => (cons (msg O) nil)
-         | N n'=> (cons (msg (N n')) nil)
+         | nonce n'=> (cons (msg (nonce n')) nil)
          | new =>  (cons (msg new) nil)
          | exp t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))
          | pair t1 t2 =>  (app (subtrmls_msg''  t1) (subtrmls_msg'' t2) )
@@ -872,7 +872,7 @@ with subtrmls_msg'' (t:message) : list oursum :=
          | _ => nil
        end.
 
- Eval compute in subtrmls_msg'' (f [k (N 0) ; O]).
+ Eval compute in subtrmls_msg'' (f [k (nonce 0) ; O]).
  Eval compute in subtrmls_msg'' (sk 1).
  
 Eval compute in (subtrmls_msg'' (sign (if_then_else_M TRue (dec O (sk 1)) O) new)).
@@ -909,7 +909,7 @@ Ltac funapptrmhyp m1 m2 H :=
  
  (** blindness *) 
 Ltac aply_blindnes n n1 n2 n3 n4 m0 m1 t1 t2 t3 t4 l H H0  := pose proof( blindness n n1 n2 n3 n4 m0 m1 t1 t2 t3 t4 l ) as H ;
-assert( H0:  (Fresh [n1; n2; n3; n4] (l++[ msg (N n); msg m0; msg m1]) = true) /\ (check_rn_blind_listm [n1;n2;n3;n4] [t1;t2;t3;t4] = true)); try split; try reflexivity;
+assert( H0:  (Fresh [n1; n2; n3; n4] (l++[ msg (nonce n); msg m0; msg m1]) = true) /\ (check_rn_blind_listm [n1;n2;n3;n4] [t1;t2;t3;t4] = true)); try split; try reflexivity;
 apply H0 in H; clear H; simpl in H.
 
 (** Using [funapptrmhyp] *)
@@ -999,8 +999,8 @@ repeat rewrite getmsg.
 repeat rewrite andB_elm'.
 
 repeat rewrite ifmorph_shuffle2.
-apply IFBRANCH_M1 with (ml1:= ([msg (pk 0); msg (pk 1); msg (pk 2); msg (N 4); 
-    msg (N 5); msg qa00; msg t11; msg t12; msg t13; 
+apply IFBRANCH_M1 with (ml1:= ([msg (pk 0); msg (pk 1); msg (pk 2); msg (nonce 4); 
+    msg (nonce 5); msg qa00; msg t11; msg t12; msg t13; 
     bol (EQ_M (to x1) (V 1));
     bol
       ((EQ_M (to x12) (V 1)) & (bacc (pk 3) (b 0 0 5) (r 6) (pi1 x12))) &
@@ -1008,8 +1008,8 @@ apply IFBRANCH_M1 with (ml1:= ([msg (pk 0); msg (pk 1); msg (pk 2); msg (N 4);
     bol
       ((EQ_M (to x14) (V 2)) & (bacc (pk 3) (b 0 0 21) (r 22) (pi1 x14))) &
       (bacc (pk 3) (b 0 1 23) (r 24) (pi2 x14)); bol (EQ_M (to x15) (V 1));
-    bol (EQ_M (dv x15) (vt 1))])) (ml2:=  [msg (pk 0); msg (pk 1); msg (pk 2); msg (N 4); 
-   msg (N 5); msg qa00; msg t11; msg t12; msg t13; 
+    bol (EQ_M (dv x15) (vt 1))])) (ml2:=  [msg (pk 0); msg (pk 1); msg (pk 2); msg (nonce 4); 
+   msg (nonce 5); msg qa00; msg t11; msg t12; msg t13; 
    bol (EQ_M (to x1) (V 1));
    bol
      ((EQ_M (to x12) (V 1)) & (bacc (pk 3) (b 0 0 5) (r 6) (pi1 x12))) &
@@ -1020,8 +1020,8 @@ apply IFBRANCH_M1 with (ml1:= ([msg (pk 0); msg (pk 1); msg (pk 2); msg (N 4);
    bol (EQ_M (dv x15) (vt 1))]) .
 simpl.
 
-apply IFBRANCH_M1 with (ml1:= ([msg (pk 0); msg (pk 1); msg (pk 2); msg (N 4); 
-    msg (N 5); msg qa00; msg t11; msg t12; msg t13; 
+apply IFBRANCH_M1 with (ml1:= ([msg (pk 0); msg (pk 1); msg (pk 2); msg (nonce 4); 
+    msg (nonce 5); msg qa00; msg t11; msg t12; msg t13; 
     bol (EQ_M (to x1) (V 1));
     bol
       ((EQ_M (to x12) (V 1)) & (bacc (pk 3) (b 0 0 5) (r 6) (pi1 x12))) &
@@ -1029,8 +1029,8 @@ apply IFBRANCH_M1 with (ml1:= ([msg (pk 0); msg (pk 1); msg (pk 2); msg (N 4);
     bol
       ((EQ_M (to x14) (V 2)) & (bacc (pk 3) (b 0 0 21) (r 22) (pi1 x14))) &
       (bacc (pk 3) (b 0 1 23) (r 24) (pi2 x14)); bol (EQ_M (to x15) (V 1));
-    bol (EQ_M (dv x15) (vt 1)); bol (EQ_M (to x16) (V 2))]))(ml2:= ([msg (pk 0); msg (pk 1); msg (pk 2); msg (N 4); 
-    msg (N 5); msg qa00; msg t11; msg t12; msg t13; 
+    bol (EQ_M (dv x15) (vt 1)); bol (EQ_M (to x16) (V 2))]))(ml2:= ([msg (pk 0); msg (pk 1); msg (pk 2); msg (nonce 4); 
+    msg (nonce 5); msg qa00; msg t11; msg t12; msg t13; 
     bol (EQ_M (to x1) (V 1));
     bol
       ((EQ_M (to x12) (V 1)) & (bacc (pk 3) (b 0 0 5) (r 6) (pi1 x12))) &
@@ -1044,11 +1044,11 @@ Axiom dec_enc: forall n n' t, (dec (enc t (pk n) (r n')) (sk n)) # t.
 repeat rewrite dec_enc.
 
 (*
- pose proof (blindness2 3 5 6 7 8 21 22 23 24  0 1 (v (N 0)) (v (N 1))
-                       (commit (pk 0) (Mvar 0) (r 5)) (commit (pk 0) (Mvar 1) (r 7)) (commit (pk 0) (Mvar 0) (r 21)) (commit (pk 0) (Mvar 1) (r 23)) ( (blind (pk 3) (commit (pk 0) (Mvar 0) (r 5)) (r 6)),(blind (pk 3) (commit (pk 0) (Mvar 0) (r 7)) (r 8)))  ( (blind (pk 3) (commit (pk 0) (Mvar 0) (r 21)) (r 22)),(blind (pk 3) (commit (pk 0) (Mvar 0) (r 23)) (r 24)))  (bsign (sk 3) ( (blind (pk 3) (commit (pk 0) (Mvar 0) (r 5)) (r 6)),(blind (pk 3) (commit (pk 0) (Mvar 0) (r 7)) (r 8))))  (bsign (sk 3) ( (blind (pk 3) (commit (pk 0) (Mvar 0) (r 21)) (r 22)),(blind (pk 3) (commit (pk 0) (Mvar 0) (r 23)) (r 24))))) [msg (pk 0); msg (pk 1); msg (pk 2); msg (N 4); msg (N 5) ; msg (sk 1) ; msg (sk 2)].
+ pose proof (blindness2 3 5 6 7 8 21 22 23 24  0 1 (v (nonce 0)) (v (nonce 1))
+                       (commit (pk 0) (Mvar 0) (r 5)) (commit (pk 0) (Mvar 1) (r 7)) (commit (pk 0) (Mvar 0) (r 21)) (commit (pk 0) (Mvar 1) (r 23)) ( (blind (pk 3) (commit (pk 0) (Mvar 0) (r 5)) (r 6)),(blind (pk 3) (commit (pk 0) (Mvar 0) (r 7)) (r 8)))  ( (blind (pk 3) (commit (pk 0) (Mvar 0) (r 21)) (r 22)),(blind (pk 3) (commit (pk 0) (Mvar 0) (r 23)) (r 24)))  (bsign (sk 3) ( (blind (pk 3) (commit (pk 0) (Mvar 0) (r 5)) (r 6)),(blind (pk 3) (commit (pk 0) (Mvar 0) (r 7)) (r 8))))  (bsign (sk 3) ( (blind (pk 3) (commit (pk 0) (Mvar 0) (r 21)) (r 22)),(blind (pk 3) (commit (pk 0) (Mvar 0) (r 23)) (r 24))))) [msg (pk 0); msg (pk 1); msg (pk 2); msg (nonce 4); msg (nonce 5) ; msg (sk 1) ; msg (sk 2)].
 assert(Fresh [5; 6; 7; 8; 21; 22; 23; 24]
-         ([msg (pk 0); msg (pk 1); msg (pk 2); msg (N 4); msg (N 5); msg (sk 1) ; msg (sk 2)] ++
-          [msg (N 3); msg (v (N 0)); msg (v (N 1))]) = true ->
+         ([msg (pk 0); msg (pk 1); msg (pk 2); msg (nonce 4); msg (nonce 5); msg (sk 1) ; msg (sk 2)] ++
+          [msg (nonce 3); msg (v (nonce 0)); msg (v (nonce 1))]) = true ->
        let mvl := (cons 0 (cons 1 nil)) in
        mvars_msg (commit (pk 0) (Mvar 0) (r 5), commit (pk 0) (Mvar 1) (r 7)) =
        mvl /\

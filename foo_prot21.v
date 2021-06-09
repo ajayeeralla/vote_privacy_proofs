@@ -7,27 +7,27 @@ Proof. repeat unfold phi4, phi3, phi2, phi1. simpl. repeat unfold t1, t2, t3. re
 apply IFBRANCH_M4 with (ml1:= phi0) (ml2:= phi0).
 simpl.
 apply IFBRANCH_M3 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)))] ) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)))]).
 simpl.
 apply IFBRANCH_M2 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 (x2t 0)));
     msg ok]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 1)) & (bacc (pk 3) (b 1 7) (r 8) (pi1 (x2t 1)));
    msg ok]).
 simpl.  apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 (x2t 0)));
     msg ok; bol (eqm (to (x3tt 0)) (V 2));
     msg (pk 2, (e (b 1 19) 20, sign (sk 2) (ONE, e (b 1 19) 20)))]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 1)) & (bacc (pk 3) (b 1 7) (r 8) (pi1 (x2t 1)));
    msg ok; bol (eqm (to (x3tt 1)) (V 2));
@@ -35,7 +35,7 @@ simpl.  apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
 simpl.  
 (** subgoal *) 
 pose proof( commit_swap (vt 0) (vt 1) _ 7 7 19 19 [ msg (sk 1); msg (sk 2); msg (r 8); msg (r 20); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 0)) # (L (vt 1))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0. 
@@ -57,7 +57,7 @@ funapptrmhyp (bol (eqm (to (x4ttt 0 1)) (V 2))&(bacc (pk 3) (b 1 19) (r 20) (pi2
 restrsublis H. 
 (** subgoal *)
 pose proof( commit_swap (vt 0) (vt 1) _ 7 7 19 19 [ msg (sk 1); msg (sk 2); msg (r 8); msg (r 20); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 0)) # (L (vt 1))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0. 
@@ -81,7 +81,7 @@ restrsublis H.
 (** subgoal *)
 simpl. 
 pose proof( commit_swap (vt 0) (vt 1) _ 7 7 19 19 [ msg (sk 1); msg (sk 2); msg (r 8); msg (r 20); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 0)) # (L (vt 1))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -99,27 +99,27 @@ restrsublis H.
 (** subgoal *) 
 simpl. 
 apply IFBRANCH_M3 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 (x2t 0)))]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 1)) & (bacc (pk 3) (b 1 7) (r 8) (pi1 (x2t 1)))]).
 simpl. simpl. 
 apply IFBRANCH_M2 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 (x2t 0)));
     bol (eqm (to (x2t 0)) (V 2));
     msg (pk 2, (e (b 1 11) 12, sign (sk 2) (ONE, e (b 1 11) 12)))]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 1)) & (bacc (pk 3) (b 1 7) (r 8) (pi1 (x2t 1)));
    bol (eqm (to (x2t 1)) (V 2));
    msg (pk 2, (e (b 0 11) 12, sign (sk 2) (ONE, e (b 0 11) 12)))]).
 simpl.
 apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 (x2t 0)));
     bol (eqm (to (x2t 0)) (V 2));
@@ -128,7 +128,7 @@ apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
       (eqm (to (x3tft 0 1)) (V 1)) &
       (bacc (pk 3) (b 0 7) (r 8) (pi1 (x3tft 0 1))); 
     msg ok]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 1)) & (bacc (pk 3) (b 1 7) (r 8) (pi1 (x2t 1)));
    bol (eqm (to (x2t 1)) (V 2));
@@ -139,7 +139,7 @@ apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
    msg ok]).
 simpl.
 pose proof( commit_swap (vt 0) (vt 1) _ 7 7 11 11 [ msg (sk 1); msg (sk 2); msg (r 8); msg (r 12); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 0)) # (L (vt 1))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -166,7 +166,7 @@ restrsublis H.
 simpl.
 
 pose proof( commit_swap (vt 0) (vt 1) _ 7 7 11 11 [ msg (sk 1); msg (sk 2); msg (r 8); msg (r 12); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 0)) # (L (vt 1))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -192,7 +192,7 @@ restrsublis H.
 (** subgoal *)
 simpl. 
 apply IFBRANCH_M2 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 (x2t 0)));
     bol (eqm (to (x2t 0)) (V 2));
@@ -200,7 +200,7 @@ apply IFBRANCH_M2 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
     bol
       (eqm (to (x3tft 0 1)) (V 1)) &
       (bacc (pk 3) (b 0 7) (r 8) (pi1 (x3tft 0 1)))]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 1)) & (bacc (pk 3) (b 1 7) (r 8) (pi1 (x2t 1)));
    bol (eqm (to (x2t 1)) (V 2));
@@ -210,7 +210,7 @@ apply IFBRANCH_M2 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
      (bacc (pk 3) (b 1 7) (r 8) (pi1 (x3tft 1 0)))]).
 simpl.
 apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     msg (pk 1, (e (b 0 7) 8, sign (sk 1) (ONE, e (b 0 7) 8)));
     bol (eqm (to (x2t 0)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (pi1 (x2t 0)));
     bol (eqm (to (x2t 0)) (V 2));
@@ -222,7 +222,7 @@ apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
       (eqm (to (x3tft 0 1)) (V 2)) &
       (bacc (pk 3) (b 1 11) (r 12) (pi2 (x3tft 0 1))); 
     msg ok]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    msg (pk 1, (e (b 1 7) 8, sign (sk 1) (ONE, e (b 1 7) 8)));
    bol (eqm (to (x2t 1)) (V 1)) & (bacc (pk 3) (b 1 7) (r 8) (pi1 (x2t 1)));
    bol (eqm (to (x2t 1)) (V 2));
@@ -236,7 +236,7 @@ apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
    msg ok]). simpl.
 
 pose proof( commit_swap (vt 0) (vt 1) _ 7 7 11 11 [ msg (sk 1); msg (sk 2); msg (r 8); msg (r 12); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 0)) # (L (vt 1))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -263,7 +263,7 @@ funapptrmhyp (bol (eqm (to (x4tftft 0 1)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (p
 restrsublis H. simpl. 
 (** subgoal *)
 pose proof( commit_swap (vt 0) (vt 1) _ 7 7 11 11 [ msg (sk 1); msg (sk 2); msg (r 8); msg (r 12); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 0)) # (L (vt 1))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -291,7 +291,7 @@ funapptrmhyp (bol (eqm (to (x4tftft 0 1)) (V 1)) & (bacc (pk 3) (b 0 7) (r 8) (p
 restrsublis H. simpl.
 (** subgoal *) simpl.
 pose proof( commit_swap (vt 0) (vt 1) _ 7 7 11 11 [ msg (sk 1); msg (sk 2); msg (r 8); msg (r 12); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 0)) # (L (vt 1))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -317,7 +317,7 @@ restrsublis H.
 (** subgoal *)
 simpl .
 pose proof( commit_swap (vt 0) (vt 1) _ 7 7 11 11 [ msg (sk 1); msg (sk 2); msg (r 8); msg (r 12); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 0)) # (L (vt 1))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -334,38 +334,38 @@ restrsublis H.
 (** subgoal *)
 simpl .
 apply IFBRANCH_M4 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1))]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                                        msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1))]).
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1))]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
+                                                                        msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1))]).
 simpl . repeat unfold q2.
 apply IFBRANCH_M3 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     bol (eqm (to x1) (V 2));
     msg (pk 2, (e (b 1 9) 10, sign (sk 2) (ONE, e (b 1 9) 10)))]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    bol (eqm (to x1) (V 2));
    msg (pk 2, (e (b 0 9) 10, sign (sk 2) (ONE, e (b 0 9) 10)))]). simpl.
 apply IFBRANCH_M2 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     bol (eqm (to x1) (V 2));
     msg (pk 2, (e (b 1 9) 10, sign (sk 2) (ONE, e (b 1 9) 10)));
     bol
       (eqm (to (x2ft 1)) (V 2)) & (bacc (pk 3) (b 1 9) (r 10) (pi2 (x2ft 1)));
     msg ok]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    bol (eqm (to x1) (V 2));
    msg (pk 2, (e (b 0 9) 10, sign (sk 2) (ONE, e (b 0 9) 10)));
    bol
      (eqm (to (x2ft 0)) (V 2)) & (bacc (pk 3) (b 0 9) (r 10) (pi2 (x2ft 0)));
    msg ok]). simpl .
 apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     bol (eqm (to x1) (V 2));
     msg (pk 2, (e (b 1 9) 10, sign (sk 2) (ONE, e (b 1 9) 10)));
     bol
       (eqm (to (x2ft 1)) (V 2)) & (bacc (pk 3) (b 1 9) (r 10) (pi2 (x2ft 1)));
     msg ok; bol (eqm (to (x3ftt 1)) (V 1));
     msg (pk 1, (e (b 0 23) 24, sign (sk 1) (ONE, e (b 0 23) 24)))]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    bol (eqm (to x1) (V 2));
    msg (pk 2, (e (b 0 9) 10, sign (sk 2) (ONE, e (b 0 9) 10)));
    bol
@@ -373,7 +373,7 @@ apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
    msg ok; bol (eqm (to (x3ftt 0)) (V 1));
    msg (pk 1, (e (b 1 23) 24, sign (sk 1) (ONE, e (b 1 23) 24)))]). simpl.
 pose proof( commit_swap (vt 1) (vt 0) _ 9 9 23 23 [ msg (sk 1); msg (sk 2); msg (r 10); msg (r 24); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 1)) # (L (vt 0))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -394,7 +394,7 @@ funapptrmhyp (bol (eqm (to (x4fttt 0 1)) (V 1)) & (bacc (pk 3) (b 0 23) (r 24) (
 restrsublis H.
 (** subgoal *) simpl. 
 pose proof( commit_swap (vt 1) (vt 0) _ 9 9 23 23 [ msg (sk 1); msg (sk 2); msg (r 10); msg (r 24); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 1)) # (L (vt 0))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -416,7 +416,7 @@ restrsublis H.
 (** subgoal *)
 simpl. 
 pose proof( commit_swap (vt 1) (vt 0) _ 9 9 23 23 [ msg (sk 1); msg (sk 2); msg (r 10); msg (r 24); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 1)) # (L (vt 0))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -433,26 +433,26 @@ restrsublis H.
 (** subgoal *)
 simpl.
 apply IFBRANCH_M3 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     bol (eqm (to x1) (V 2));
     msg (pk 2, (e (b 1 9) 10, sign (sk 2) (ONE, e (b 1 9) 10)));
     bol
       (eqm (to (x2ft 1)) (V 2)) & (bacc (pk 3) (b 1 9) (r 10) (pi2 (x2ft 1)))]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    bol (eqm (to x1) (V 2));
    msg (pk 2, (e (b 0 9) 10, sign (sk 2) (ONE, e (b 0 9) 10)));
    bol
      (eqm (to (x2ft 0)) (V 2)) & (bacc (pk 3) (b 0 9) (r 10) (pi2 (x2ft 0)))]).
 simpl. 
 apply IFBRANCH_M2 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     bol (eqm (to x1) (V 2));
     msg (pk 2, (e (b 1 9) 10, sign (sk 2) (ONE, e (b 1 9) 10)));
     bol
       (eqm (to (x2ft 1)) (V 2)) & (bacc (pk 3) (b 1 9) (r 10) (pi2 (x2ft 1)));
     bol (eqm (to (x2ft 1)) (V 1));
     msg (pk 1, (e (b 0 13) 14, sign (sk 1) (ONE, e (b 0 13) 14)))])(ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    bol (eqm (to x1) (V 2));
    msg (pk 2, (e (b 0 9) 10, sign (sk 2) (ONE, e (b 0 9) 10)));
    bol
@@ -461,7 +461,7 @@ apply IFBRANCH_M2 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
    msg (pk 1, (e (b 1 13) 14, sign (sk 1) (ONE, e (b 1 13) 14)))]).
 simpl. 
 apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     bol (eqm (to x1) (V 2));
     msg (pk 2, (e (b 1 9) 10, sign (sk 2) (ONE, e (b 1 9) 10)));
     bol
@@ -472,7 +472,7 @@ apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
       (eqm (to (x3ftft 0 1)) (V 1)) &
       (bacc (pk 3) (b 0 13) (r 14) (pi1 (x3ftft 0 1))); 
     msg ok])(ml2:=  [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    bol (eqm (to x1) (V 2));
    msg (pk 2, (e (b 0 9) 10, sign (sk 2) (ONE, e (b 0 9) 10)));
    bol
@@ -485,7 +485,7 @@ apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
    msg ok]).
 simpl. 
 pose proof( commit_swap (vt 1) (vt 0) _ 9 9 13 13 [ msg (sk 1); msg (sk 2); msg (r 10); msg (r 14); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 1)) # (L (vt 0))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -511,7 +511,7 @@ restrsublis H.
 (** subgoal *)
 simpl. 
 pose proof( commit_swap (vt 1) (vt 0) _ 9 9 13 13 [ msg (sk 1); msg (sk 2); msg (r 10); msg (r 14); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 1)) # (L (vt 0))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -537,7 +537,7 @@ restrsublis H.
 (** subgoal *)
 simpl .
 apply IFBRANCH_M2 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     bol (eqm (to x1) (V 2));
     msg (pk 2, (e (b 1 9) 10, sign (sk 2) (ONE, e (b 1 9) 10)));
     bol
@@ -547,7 +547,7 @@ apply IFBRANCH_M2 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
     bol
       (eqm (to (x3ftft 0 1)) (V 1)) &
       (bacc (pk 3) (b 0 13) (r 14) (pi1 (x3ftft 0 1)))]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    bol (eqm (to x1) (V 2));
    msg (pk 2, (e (b 0 9) 10, sign (sk 2) (ONE, e (b 0 9) 10)));
    bol
@@ -559,7 +559,7 @@ apply IFBRANCH_M2 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
      (bacc (pk 3) (b 1 13) (r 14) (pi1 (x3ftft 1 0)))]).
 simpl .
 apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-    msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+    msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
     bol (eqm (to x1) (V 2));
     msg (pk 2, (e (b 1 9) 10, sign (sk 2) (ONE, e (b 1 9) 10)));
     bol
@@ -573,7 +573,7 @@ apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
       (eqm (to (x3ftft 0 1)) (V 2)) &
       (bacc (pk 3) (b 1 9) (r 10) (pi2 (x3ftft 0 1))); 
     msg ok]) (ml2:= [msg (pk 1); msg (pk 2); msg (pk 3); 
-   msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1));
+   msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1));
    bol (eqm (to x1) (V 2));
    msg (pk 2, (e (b 0 9) 10, sign (sk 2) (ONE, e (b 0 9) 10)));
    bol
@@ -588,7 +588,7 @@ apply IFBRANCH_M1 with (ml1:= [msg (pk 1); msg (pk 2); msg (pk 3);
      (bacc (pk 3) (b 0 9) (r 10) (pi2 (x3ftft 1 0))); 
    msg ok]). simpl .
 pose proof( commit_swap (vt 1) (vt 0) _ 9 9 13 13 [ msg (sk 1); msg (sk 2); msg (r 10); msg (r 14); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 1)) # (L (vt 0))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -616,7 +616,7 @@ funapptrmhyp (bol (eqm (to (x4ftftft 0 1)) (V 1)) & (bacc (pk 3) (b 0 13) (r 14)
 restrsublis H.
 (** subgoal *)
 pose proof( commit_swap (vt 1) (vt 0) _ 9 9 13 13 [ msg (sk 1); msg (sk 2); msg (r 10); msg (r 14); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 1)) # (L (vt 0))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -645,7 +645,7 @@ restrsublis H.
 (** subgoal *)
 simpl.
 pose proof( commit_swap (vt 1) (vt 0) _ 9 9 13 13 [ msg (sk 1); msg (sk 2); msg (r 10); msg (r 14); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1)); bol (eqm (to x1) (V 2))]); simpl in H.
 assert( (L (vt 1)) # (L (vt 0))).
 eapply len_f1; eapply len_nonce.
 eapply EQmsg' in H0.
@@ -669,12 +669,12 @@ funapptrmhyp (bol (eqm (to (x3ftft 0 1)) (V 2)) & (bacc (pk 3) (b 1 9) (r 10) (p
 
 restrsublis H . simpl.
 pose proof(commit_ind (vt 1) (vt 0) _ 9 9 [ msg (sk 1); msg (sk 2); msg (r 10); msg (pk 1); msg (pk 2); msg (pk 3); 
-                                                msg (N 4); msg (pk 5); msg (N 6); bol (eqm (to x1) (V 1))]) ; try reflexivity; simpl in H.
+                                                msg (nonce 4); msg (pk 5); msg (nonce 6); bol (eqm (to x1) (V 1))]) ; try reflexivity; simpl in H.
 assert( (L (vt 1)) # (L (vt 0))).
 eapply len_f1; eapply len_nonce. simpl. 
 eapply EQmsg' in H0.
 apply H in H0; clear H; rename H0 into H; try reflexivity.
-funapptrmhyp (msg (blind (commit (v (N 1)) (r 9)) (pk 3) (r 10))) (msg (blind (commit (v (N 0)) (r 9)) (pk 3) (r 10))) H.  
+funapptrmhyp (msg (blind (commit (v (nonce 1)) (r 9)) (pk 3) (r 10))) (msg (blind (commit (v (nonce 0)) (r 9)) (pk 3) (r 10))) H.  
  appconst H. 
 x1checks x1 x1 H. 
 funapp_vtrm 2 1 0 9 10 ONE H. simpl.  

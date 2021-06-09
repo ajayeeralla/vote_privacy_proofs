@@ -45,7 +45,7 @@ Inductive message: Type :=
 (** Core symbols *)  
 | Mvar: nat -> message  (** Variable of type message *)           
 | O: message(** Empty message *)
-| N: nat -> message(** Names *)
+| nonce: nat -> message(** Names *)
 | ifm_then_else_: Bool -> message-> message-> message
 | pair: message-> message-> message
 | pi1: message-> message
@@ -157,7 +157,7 @@ Hypothesis O_case: P O.
 Print message_Bool_ind.
  Hypothesis f0 : forall n : nat, P (Mvar n).
  Hypothesis f1 : P O.
- Hypothesis f2 : forall n : nat, P (N n).
+ Hypothesis f2 : forall n : nat, P (nonce n).
  Hypothesis f3 : forall b : Bool,
         P0 b -> forall m : message, P m -> forall m0 : message, P m0 -> P (ifm_then_else_ b m m0).
  Hypothesis f4 : forall m : message, P m -> forall m0 : message, P m0 -> P (pair m m0).
@@ -220,7 +220,7 @@ Fixpoint message_Bool_ind' (t:message) : P t :=
    match t with
    | Mvar n => f0 n
    | O => f1
-   | N n => f2 n
+   | nonce n => f2 n
    | ifm_then_else_ b t1 t2 => (f3 b (Bool_message_ind' b) t1 (message_Bool_ind' t1) t2 (message_Bool_ind' t2))
    | pair t1 t2 =>  (f4 t1 (message_Bool_ind' t1) t2 (message_Bool_ind' t2))
    | pi1 t1 =>  (f5 t1 (message_Bool_ind' t1))
@@ -297,7 +297,7 @@ Notation "|_" := bot:msg_scope.
 
 Eval compute in message_beq O O.
 
-(** Eval compute in message_beq (f [(N 1); O]) (f [(N 1); (N 2)]) *)
+(** Eval compute in message_beq (f [(nonce 1); O]) (f [(nonce 1); (nonce 2)]) *)
 
 (** [oursum] *)
 
@@ -403,21 +403,21 @@ Definition eql m1 m2 := |m1|#?|m2|.
 
 (** * Encryptions *)
 
-Definition pke (n:nat) := (pi1 (ke (N n))).
-Definition ske (n:nat) := (pi2 (ke (N n))).
-Definition er (n:nat) := (re (N n)).
+Definition pke (n:nat) := (pi1 (ke (nonce n))).
+Definition ske (n:nat) := (pi2 (ke (nonce n))).
+Definition er (n:nat) := (re (nonce n)).
 Notation "'{' x '}_' n '^^' n' " := (enc x (pke n) (er n')) (at level 0, right associativity): msg_scope.
 
 Eval compute in { O }_ 2 ^^ 3.
 (** * Blind singatures *)
  
-Definition pkb (n:nat) := (pi1 (kb (N n))).
-Definition skb (n:nat) := (pi2 (kb (N n))).
+Definition pkb (n:nat) := (pi1 (kb (nonce n))).
+Definition skb (n:nat) := (pi2 (kb (nonce n))).
 
 (** * Digital Signatures *)
 
-Definition vk (n:nat) := (pi1 (ks (N n))).
-Definition ssk (n:nat) := (pi2 (ks (N n))).
+Definition vk (n:nat) := (pi1 (ks (nonce n))).
+Definition ssk (n:nat) := (pi2 (ks (nonce n))).
 
 
 
@@ -541,7 +541,7 @@ with submsg_msg (n : nat )(s:message) (t:message) : message :=
   (** Core syntax *)  
   | Mvar n' => if (beq_nat n n') then s else t        
   | O       => t
-  | N n' => t
+  | nonce n' => t
   | ifm_then_else_ b1 t1 t2 =>  ifm_then_else_ ([[n:=s]] b1) ({{n:= s }} t1) ({{ n:=s }} t2)
   | pair t1 t2  => pair ({{n:= s }} t1) ( {{ n:=s }} t2)
   | pi1 t1 => pi1 ({{n:= s }} t1) 
@@ -598,8 +598,8 @@ match l with
 | [] => []
 | h:t  =>  ({{n := s}} h) : (submsg_mlist n s t )
 end.
-(*Eval compute in (submsg_msg 1 O  (f [ (Mvar 1) ; (N 2) ; (N 1)])). *)
-Eval compute in  ( {{ 1 := O }} (N 1) ).
+(*Eval compute in (submsg_msg 1 O  (f [ (Mvar 1) ; (nonce 2) ; (nonce 1)])). *)
+Eval compute in  ( {{ 1 := O }} (nonce 1) ).
 
  
 (** Substitutions for [Bool] variable in [Bool] and [msg] *)
@@ -955,7 +955,7 @@ Fixpoint occur_name_bol (n : nat )(t:Bool) : bool :=
 with occur_name_msg (n : nat )(t:message) : bool :=
   match t with 
   | ifm_then_else_ b3 t1 t2 => (occur_name_bol n b3) || (occur_name_msg n  t1) || (occur_name_msg n t2)
-  | N n'=> if (beq_nat n' n) then true else false                                             
+  | nonce n'=> if (beq_nat n' n) then true else false                                             
   | pair t1 t2 => (occur_name_msg n t1) || (occur_name_msg n t2)
   | pi1 t1 => (occur_name_msg n t1)
   | pi2 t1 => (occur_name_msg n t1)
@@ -1065,7 +1065,7 @@ Fixpoint occNlistMlist {n:nat} (nl:ilist nat n){m}(ml:ilist message m): bool :=
     | h:t=>  (occur_mlist h ml) (notocclist_mlist t ml))
   end.
 
-Eval compute in (occur_mlist 1 [(N 2),(N 4)]).
+Eval compute in (occur_mlist 1 [(nonce 2),(nonce 4)]).
 Eval compute in True \/ False.
 *)
 (** Check if each element in (ilist nat n) occurs in (mylist m) *)
@@ -1075,7 +1075,7 @@ match nl with
 |nil => false
 | h::t=> (occur_name_mylist h ml) || (occurNlistMylist t ml)
 end.
-Eval compute in (occurNlistMylist (cons 1 nil) [msg (N 2), msg (N 4)]).
+Eval compute in (occurNlistMylist (cons 1 nil) [msg (nonce 2), msg (nonce 4)]).
 
 
 (** Check if an element occurs in [ilist] *)
@@ -1092,7 +1092,7 @@ Eval compute in (S (pred 1)).*)
 
 Definition Fresh {m:nat} (nl : Nlist)(ml : mylist m): bool := (noDupNlist nl) && (negb (occurNlistMylist nl ml)).
 Eval compute in noDupNlist (cons 1 nil).
-  Eval compute in Fresh (cons 1 nil) [msg (comm (V0 (N 1)) (kc (N 7)))].
+  Eval compute in Fresh (cons 1 nil) [msg (comm (V0 (nonce 1)) (kc (nonce 7)))].
 (** Check if an [exp term (exp (G n) (g n) (r n1))] occurs in a term *)
 (** Check if a term t of type msg occurs in a term of either [msg] or [Bool] type *)
 
@@ -1217,7 +1217,7 @@ Fixpoint app_elt_front (x:oursum) {n} (ml: mylist n) : mylist ( S n):=
     | ml3 => (appMylist [x] ml3)
   end.
 Notation " x +++ m1 " := (app_elt_front x m1)(at level 0, right associativity).
-Eval compute in getelt_at_pos  2 [bol (Bvar 1) , bol (Bvar 2), msg (N 1), msg (N 2), msg (N 3)].
+Eval compute in getelt_at_pos  2 [bol (Bvar 1) , bol (Bvar 2), msg (nonce 1), msg (nonce 2), msg (nonce 3)].
 
 
 (** Appending an element of [mylist] at rear *)
@@ -1268,7 +1268,7 @@ match  (chkbol_os (getelt_at_pos p ml)) with
 | false =>  [(getelt_at_pos p ml)]
 end .
 
-Eval compute in neg_at_pos  2  [bol (Bvar 1) , bol (Bvar 2), msg (N 1), msg (N 2), msg (N 3)].
+Eval compute in neg_at_pos  2  [bol (Bvar 1) , bol (Bvar 2), msg (nonce 1), msg (nonce 2), msg (nonce 3)].
 
 (** Pairing two elements from [mylist] *)
 
@@ -1410,7 +1410,7 @@ Definition ifm_nespair {m}  (p1 p2 p3 p4 :nat)(ml : mylist m) : message :=
               end
   end.
 
-Eval compute in ifm_nespair  1 3 4 5  [bol (Bvar 1) , bol (Bvar 2), msg (N 1), msg (N 2), msg (N 3)].
+Eval compute in ifm_nespair  1 3 4 5  [bol (Bvar 1) , bol (Bvar 2), msg (nonce 1), msg (nonce 2), msg (nonce 3)].
 
 
 (** [If_then_else_M] b1 m1 (m2, m3) : b1 at n1, m1 at n2, m2 at n3, m3 at n4 *)
@@ -1427,7 +1427,7 @@ Definition ifm_pair {m}  (p1 p2 p3 p4 :nat)(ml : mylist m) : message :=
               end
   end.
             
-Eval compute in ifm_pair 1 2 3 4  [bol (Bvar 1) , bol (Bvar 2), msg (N 1), msg (N 2), msg (N 3)].
+Eval compute in ifm_pair 1 2 3 4  [bol (Bvar 1) , bol (Bvar 2), msg (nonce 1), msg (nonce 2), msg (nonce 3)].
   
 (** Dropping the last element in [mylist] *)
 
@@ -1472,12 +1472,12 @@ Definition m_at_pos {n} (p:nat) (ml:mylist n) : message :=
     | true =>  m (ostomsg (getelt_at_pos p ml) )
     | false => m O
   end. 
-Eval compute in to_at_pos 4 [bol (Bvar 1) , bol (Bvar 2), msg (N 1), msg (N 2), msg (N 3)]. 
+Eval compute in to_at_pos 4 [bol (Bvar 1) , bol (Bvar 2), msg (nonce 1), msg (nonce 2), msg (nonce 3)]. 
 *)
 (** Constant function [const] *)
 
 Definition const {X:Type}{Y:Type}(a : X) := fun _ : Y => a.
-Eval compute in (const (N 0) O ).
+Eval compute in (const (nonce 0) O ).
 
 (** Substitute [Bool] in [mylist] *)
 
@@ -1705,8 +1705,8 @@ with check_eq_msg ( t t' : msg ) : bool :=
                    | acc => true
                    | _ => false 
                  end
-     | N n'=>  match t' with
-                 | N n'' => if (beq_nat n' n'') then true else false
+     | nonce n'=>  match t' with
+                 | nonce n'' => if (beq_nat n' n'') then true else false
                  | _ => false 
                end
 
@@ -2102,7 +2102,7 @@ with subtrmls_msg (t:message) : Mlist :=
          | ks t' => (app (cons (ks t') nil ) (subtrmls_msg t'))
          | rs t' => (app (cons (rs t') nil ) (subtrmls_msg t'))
          | sign t1 t2 t3 => (app (app (app (cons (sign t1 t2 t3) nil) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
-         | N n'=> (cons (N n') nil)
+         | nonce n'=> (cons (nonce n') nil)
   
          | pair t1 t2 => (app (cons (pair t1 t2) nil) (app (subtrmls_msg  t1) (subtrmls_msg t2) ))
          | pi1 t1 => (app (cons (pi1 t1) nil) (subtrmls_msg t1) )
@@ -2132,7 +2132,7 @@ Fixpoint subtrmls_mylist {n} (l:mylist n) : Mlist :=
     | h: t => (app (subtrmls_os h) (subtrmls_mylist t))
   end.
 
-(** Check if [(N n)] occurs only under either [sk] or [pk] . *)
+(** Check if [(nonce n)] occurs only under either [sk] or [pk] . *)
 
 (** [msg] or [Bool]. *) 
 Fixpoint onlyin_pkrsk_bol (n : nat )(t:Bool) : bool :=
@@ -2149,15 +2149,15 @@ Fixpoint onlyin_pkrsk_bol (n : nat )(t:Bool) : bool :=
 with onlyin_pkrsk_msg (n : nat )(t:message) : bool :=
        match t with
          | (Mvar n') =>  if (beq_nat n' n) then false else true
-         | N n'=> if (beq_nat n' n) then false else true
+         | nonce n'=> if (beq_nat n' n) then false else true
          | ifm_then_else_ b1 t1 t2 => (andb (onlyin_pkrsk_bol n b1) (andb (onlyin_pkrsk_msg n t1) ( onlyin_pkrsk_msg n t2)))
          | pair t1 t2 =>  andb (onlyin_pkrsk_msg n t1) ( onlyin_pkrsk_msg n t2)
          | pi1 t1 => match t1 with
-                       | (ks (N n)) => true
+                       | (ks (nonce n)) => true
                        | _ => true
                      end
          | pi2 t1 => match t1 with
-                       | (ks (N n)) => true
+                       | (ks (nonce n)) => true
                        | _ => true
                      end
          | to t1 => (onlyin_pkrsk_msg n t1) 
@@ -2221,11 +2221,11 @@ Fixpoint insec_n_bol (n : nat )(t:Bool) : bool :=
 with insec_n_msg (n : nat )(t:message) : bool :=
        match t with
          | (Mvar n') => false
-         | N n'=> (beq_nat n' n)
+         | nonce n'=> (beq_nat n' n)
          | ifm_then_else_ b1 t1 t2 => (orb (insec_n_bol n b1) (orb (insec_n_msg n t1) ( insec_n_msg n t2)))
          | pair t1 t2 =>  orb (insec_n_msg n t1) ( insec_n_msg n t2)
          | pi1 t1 => match t1 with
-                       | (ks (N _)) => false
+                       | (ks (nonce _)) => false
                        | _ => (insec_n_msg n t1)
                      end
          | pi2 t1 => (message_beq (ssk n) t)
@@ -2251,7 +2251,7 @@ with insec_n_msg (n : nat )(t:message) : bool :=
          | ks t1 =>  (insec_n_msg n t1)
          | rs t1 =>  (insec_n_msg n t1) 
          | sign t1 t2 t3 =>  match t1 with
-                           | pi2 (ks (N _)) =>  (orb (insec_n_msg n t2) (insec_n_msg n t3))
+                           | pi2 (ks (nonce _)) =>  (orb (insec_n_msg n t2) (insec_n_msg n t3))
                            | _ => (orb (orb (insec_n_msg n t1) (insec_n_msg n t2)) (insec_n_msg n t3) )
                              end
          | z t1 => false
@@ -2287,13 +2287,13 @@ Eval compute in insec_n_msg 1 (sign (ssk 2) (ssk 1) O).
     end. 
  
 
-(** List of subterms of the form [sign ( sk(N n), t1),.....,sign ( sk(N n), tl)]. *)
+(** List of subterms of the form [sign ( sk(nonce n), t1),.....,sign ( sk(nonce n), tl)]. *)
 
 Fixpoint list_skn_in_sign (n:nat) (l:Mlist) : Mlist :=
   match l with 
     | nil => nil
     | cons h t => (app (match h with 
-                          | sign (pi2 (ks (N n'))) _ _ => if (beq_nat n' n) then (cons h nil) else nil
+                          | sign (pi2 (ks (nonce n'))) _ _ => if (beq_nat n' n) then (cons h nil) else nil
                           | _ => nil
                         end) 
                        (list_skn_in_sign n t))
@@ -2507,7 +2507,7 @@ with subtrmls'_msg (t:message) : oslist :=
          | ks t' => (app (cons (msg (ks t')) nil ) (subtrmls'_msg t'))
          | rs t' => (app (cons (msg (rs t')) nil ) (subtrmls'_msg t'))
          | sign t1 t2 t3 => (app (app (app (cons (msg (sign t1 t2 t3)) nil) (subtrmls'_msg t1)) (subtrmls'_msg t2)) (subtrmls'_msg t3))
-         | N n'=> (cons (msg (N n')) nil)
+         | nonce n'=> (cons (msg (nonce n')) nil)
   
          | pair t1 t2 => (app (cons (msg (pair t1 t2)) nil) (app (subtrmls'_msg  t1) (subtrmls'_msg t2) ))
          | pi1 t1 => (app (cons (msg (pi1 t1)) nil) (subtrmls'_msg t1) )
@@ -2722,7 +2722,7 @@ Eval compute in (If TRue then O else O).
 
 
 
-(** Substitution: (N n) <- (N n') in t *)
+(** Substitution: (nonce n) <- (nonce n') in t *)
 
 Reserved Notation "'(' n '<-' s ')' t" (at level 0).
 Reserved Notation "'[' n '<-' s ']' t" (at level 0).
@@ -2741,7 +2741,7 @@ Fixpoint subname_bol (n : nat )(s:nat) (b:Bool) : Bool :=
 with subname_msg (n : nat )(s:nat) (t:message) : message :=
   match t with 
        (** Core syntax *)  
-  | N n' => if (beq_nat n' n) then (N s) else t
+  | nonce n' => if (beq_nat n' n) then (nonce s) else t
   | ifm_then_else_ b1 t1 t2 =>  ifm_then_else_ ([n<-s] b1) ((n<- s ) t1) (( n<-s ) t2)
   | pair t1 t2  => pair ((n<- s ) t1) ( ( n<-s ) t2)
   | pi1 t1 => pi1 ((n<- s ) t1) 
@@ -2802,8 +2802,8 @@ match l with
            | bol b  => bol ([n<- s]b) 
            end): (subname_mylist n s t)
 end.
-(*Eval compute in (subname_msg 1 O  (f [ (Mvar 1) ; (N 2) ; (N 1)])). *)
-Eval compute in  ( ( 1 <- 2 ) (N 1) ).
+(*Eval compute in (subname_msg 1 O  (f [ (Mvar 1) ; (nonce 2) ; (nonce 1)])). *)
+Eval compute in  ( ( 1 <- 2 ) (nonce 1) ).
 Eval compute in (O, O, O).
 Eval compute in { O }_2^^3.
 

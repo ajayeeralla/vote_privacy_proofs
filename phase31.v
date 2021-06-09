@@ -15,7 +15,7 @@ Load "phase23".
 
 Definition shuftrm (x1:message) :=  (shuf (dec (pi1 (pi1 x1)) (sk 5)) (dec (pi1 (pi2 x1)) (sk 5))).
    
-Definition phi77t n1 n2 := (phi66t n1 n2) ++ [msg  (shuf (unblind (commit (v (N 0)) (rr (N 7))) (pi1 (k (N 3))) (rr (N 8)) (pi1 (x2t 0)))
+Definition phi77t n1 n2 := (phi66t n1 n2) ++ [msg  (shuf (unblind (commit (v (nonce 0)) (rr (nonce 7))) (pi1 (k (nonce 3))) (rr (nonce 8)) (pi1 (x2t 0)))
                                                          (unblind (b 1 19) (pk 3) (r 20) (pi2 (x4ttt 0 1)))) ].
   
 Definition x87t n1 n2 := (f (conv_mylist_listm (phi77t n1 n2))).

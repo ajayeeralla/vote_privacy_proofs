@@ -10,8 +10,8 @@ Section lemma14_8.
 
   Definition V (b:bool) :=
     match b with
-    | false => (V0 (N 0))
-    | true => (V1 (N 0))
+    | false => (V0 (nonce 0))
+    | true => (V1 (nonce 0))
     end.
 
   Definition cn (b:bool) :nat :=
@@ -39,7 +39,7 @@ Definition bcheck (x y:message):Bool := (isin x ((tau 1 (pi2 (tau 1 y))), ((tau 
 Definition ncheck (x y:message):Bool := (isin x ((tau 3 (pi2 (tau 1 y))), ((tau 3 (pi2 (tau 2 y))), (tau 3 (pi2 (tau 3 y)))))).
  
 
-Definition lbl:= |(N 100)|.
+Definition lbl:= |(nonce 100)|.
 Definition label x y := If (x #? (tau 2 (pi2 (tau 1 y)))) then (pi1 (tau 1 y))
                            else  (If (x#? (tau 2 (pi2 (tau 2 y)))) then (pi1 (tau 2 y))
                                                        else (If (x #? (tau 2 (pi2 (tau 3 y)))) then (pi1 (tau 3 y))
@@ -87,8 +87,8 @@ Add Parametric Morphism: (@orB) with
       signature EQb ==> EQb ==> EQb as orB_mor.
 Proof. intros. apply orB_cong; auto.  Qed.           
 Lemma rep_first_ballot: forall t t0 t1 : message,
-      let v0 := V0 (N 0) in
-      let v1 := V1 (N 0) in
+      let v0 := V0 (nonce 0) in
+      let v1 := V1 (nonce 0) in
       (| v0 |) #? (| v1 |) ## TRue ->
       Fresh [1; 2; 3; 4] [msg t, msg v0, msg v1, msg t0, msg t1] = true ->
       closMylist [msg t] = true ->
@@ -99,8 +99,8 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
                 
                  let r0 := (r 1) in
                  let r1 := (r 2) in
-                 let k0 := (kc (N 3)) in
-                 let k1 := (kc (N 4)) in
+                 let k0 := (kc (nonce 3)) in
+                 let k1 := (kc (nonce 4)) in
                  let c00 := (comm v0 k0) in
                  let c01 := (comm v0 k1) in
                  let c10 := (comm v1 k0) in
@@ -113,14 +113,14 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
                  let t3 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t1)) in
                  let t4 := ({{ 5 := (bl c10 t r0) }} ({{ 6:=(bl c01 t r1) }} t0)) in
                  let t5 := ({{ 5 := (bl c10 t r0) }} ({{ 6:=(bl c01 t r1) }} t1)) in
-                 let e00 := (enc ((c00, ((ub c00 t r0 t2), (N 0))), TWO) (pke 11) (er 7)) in
-                 let e11 := (enc ((c11, ((ub c11 t r1 t3), (N 1))), TWO) (pke 11) (er 8)) in
-                 let e10 := (enc ((c10, ((ub c10 t r0 t4), (N 0))), TWO) (pke 11) (er 7)) in
-                 let e01 := (enc ((c01, ((ub c01 t r1 t5), (N 1))), TWO) (pke 11) (er 8)) in
-                 let pv00 := (c00, ((ub c00 t r0 t2), (N 0))) in
-                 let pv11 := (c11, ((ub c11 t r1 t3), (N 1))) in
-                 let pv10 := (c10, ((ub c10 t r0 t4), (N 0))) in
-                 let pv01 := (c01, ((ub c01 t r1 t5), (N 1))) in
+                 let e00 := (enc ((c00, ((ub c00 t r0 t2), (nonce 0))), TWO) (pke 11) (er 7)) in
+                 let e11 := (enc ((c11, ((ub c11 t r1 t3), (nonce 1))), TWO) (pke 11) (er 8)) in
+                 let e10 := (enc ((c10, ((ub c10 t r0 t4), (nonce 0))), TWO) (pke 11) (er 7)) in
+                 let e01 := (enc ((c01, ((ub c01 t r1 t5), (nonce 1))), TWO) (pke 11) (er 8)) in
+                 let pv00 := (c00, ((ub c00 t r0 t2), (nonce 0))) in
+                 let pv11 := (c11, ((ub c11 t r1 t3), (nonce 1))) in
+                 let pv10 := (c10, ((ub c10 t r0 t4), (nonce 0))) in
+                 let pv01 := (c01, ((ub c01 t r1 t5), (nonce 1))) in
                  let phi02:= [msg b00, msg b11, msg e00, msg e11] in
                  let phi12:= [msg b10, msg b01, msg e10, msg e01] in
                  let fphi02:= f (toListm phi02) in
@@ -138,11 +138,11 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
                  let phi03:= phi02 ++[msg dv0] in
                  let phi13:= phi12 ++[msg dv1] in
                  let fphi03 := f (toListm phi03) in
-                 let l00 := (If (bnlcheck c00 (N 0) fphi03) then (enc ((label c00 fphi03), (k0, THREE)) (pke 11) (er 9)) else O) in
-                 let l11 := (If (bnlcheck c11 (N 1) fphi03) then (enc ((label c11 fphi03), (k1, THREE)) (pke 11) (er 10)) else O) in
+                 let l00 := (If (bnlcheck c00 (nonce 0) fphi03) then (enc ((label c00 fphi03), (k0, THREE)) (pke 11) (er 9)) else O) in
+                 let l11 := (If (bnlcheck c11 (nonce 1) fphi03) then (enc ((label c11 fphi03), (k1, THREE)) (pke 11) (er 10)) else O) in
                  let fphi13 := f (toListm phi13) in
-                 let l10 := (If (bnlcheck c10 (N 0) fphi13) then (enc ((label c10 fphi13), (k0, THREE)) (pke 11) (er 9)) else O) in
-                 let l01 := (If (bnlcheck c01 (N 1) fphi13) then (enc ((label c01 fphi13), (k1, THREE)) (pke 11) (er 10)) else O) in
+                 let l10 := (If (bnlcheck c10 (nonce 0) fphi13) then (enc ((label c10 fphi13), (k0, THREE)) (pke 11) (er 9)) else O) in
+                 let l01 := (If (bnlcheck c01 (nonce 1) fphi13) then (enc ((label c01 fphi13), (k1, THREE)) (pke 11) (er 10)) else O) in
                  let phi05:= phi03++[msg l00, msg l11] in   
                  let phi15:= phi13++[msg l10, msg l01] in
                  let fphi05 := f (toListm phi05) in
@@ -158,7 +158,7 @@ Proof.            intros.
                       unfold t0s0, t1s1, l00, l10, bnlcheck.
                       (** x ~ y **)
                       (**x~ x' and y~y', x' ~ y' **)
-                      (** replace the first voters' nonce (N 0) with a fresh nonce (N 20) **)
+                      (** replace the first voters' nonce (nonce 0) with a fresh nonce (nonce 20) **)
 
                       unfold do0, dv0.
                       unfold s0. unfold e00.
@@ -179,22 +179,22 @@ pose proof(dummy  [msg b00, msg b11,
                  (pochecks fphi05) & ((isin k0 fphi05) & (isin k1 fphi05)) or ! ((isin k0 fphi05) or (isin k1 fphi05))
                  then sotrm fphi05 
                  else |_))) 
-         else |_)] (let phi02' := [msg b00, msg b11, msg {(c00, (ub c00 t r0 t2, N 20), TWO) }_ 11 ^^ 7 , msg e11] in
+         else |_)] (let phi02' := [msg b00, msg b11, msg {(c00, (ub c00 t r0 t2, nonce 20), TWO) }_ 11 ^^ 7 , msg e11] in
                                           let fphi02':= f (toListm phi02') in
                                           let s0' := (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02')))))) then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O) in
                                           let dv0' :=  (If (dist fphi02') & (pvchecks fphi02') then s0' else |_) in
                                           let phi03':= phi02' ++ [msg (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02')))] in
                                           let fphi03':= f (toListm phi03') in
-                                          let l00' := (If (bnlcheck c00 (N 0) fphi03') then (enc ((label c00 fphi03'), (k0, THREE)) (pke 11) (er 9)) else O) in
-                                          let l11' := (If (bnlcheck c11 (N 1) fphi03') then (enc ((label c11 fphi03'), (k1, THREE)) (pke 11) (er 10)) else O) in
+                                          let l00' := (If (bnlcheck c00 (nonce 0) fphi03') then (enc ((label c00 fphi03'), (k0, THREE)) (pke 11) (er 9)) else O) in
+                                          let l11' := (If (bnlcheck c11 (nonce 1) fphi03') then (enc ((label c11 fphi03'), (k1, THREE)) (pke 11) (er 10)) else O) in
                                           let phi05':= phi03' ++ [msg l00', msg l11'] in
                                           let fphi05':= f (toListm phi05') in
                                           let do0' := (If (dist fphi05')& (pochecks fphi05')& (((isink k0 fphi05')&(isink k1 fphi05')) or (! ((isink k0 fphi05')or (isink k1 fphi05')))) then (sotrm fphi05') else |_) in
-                                          [msg b00, msg b11, msg (If (acc00) & acc11 then ( (enc (c00, (ub c00 t r0 t2, N 20), TWO) (pke 11) (er 9)) , (e11, dv0'), (l00', (l11', do0'))) else |_)])).
+                                          [msg b00, msg b11, msg (If (acc00) & acc11 then ( (enc (c00, (ub c00 t r0 t2, nonce 20), TWO) (pke 11) (er 9)) , (e11, dv0'), (l00', (l11', do0'))) else |_)])).
  unfold e10.
 assert( (let phi02' :=
           [msg b00, msg b11,
-          msg {(c00, (ub c00 t r0 t2, N 20), TWO) }_ 11 ^^ 7, 
+          msg {(c00, (ub c00 t r0 t2, nonce 20), TWO) }_ 11 ^^ 7, 
           msg e11] in
          let fphi02' := f (toListm phi02') in
         let s0' :=
@@ -213,11 +213,11 @@ assert( (let phi02' :=
                 (pi1 (d 3 fphi02')))] in
         let fphi03' := f (toListm phi03') in
         let l00' :=
-          If bnlcheck c00 (N 0) fphi03'
+          If bnlcheck c00 (nonce 0) fphi03'
              then (enc (label c00 fphi03', (k0, THREE)) (pke 11) (er 9)) 
              else O in
         let l11' :=
-          If bnlcheck c11 (N 1) fphi03'
+          If bnlcheck c11 (nonce 1) fphi03'
              then (enc (label c11 fphi03', (k1, THREE)) (pke 11) (er 10)) 
              else O in
         let phi05' := phi03' ++ [msg l00', msg l11'] in
@@ -232,14 +232,14 @@ assert( (let phi02' :=
         [msg b00, msg b11,
         msg
           (If (acc00) & acc11
-              then ((enc (c00, (ub c00 t r0 t2, N 20), TWO) (pke 11) (er 9)),
+              then ((enc (c00, (ub c00 t r0 t2, nonce 20), TWO) (pke 11) (er 9)),
                    (e11, dv0'), (l00', (l11', do0'))) 
            else |_)]) ~
 
 
                       (let phi12' :=
           [msg b10, msg b01,
-          msg {(c10, (ub c10 t r0 t4, N 20), TWO) }_ 11 ^^ 7, 
+          msg {(c10, (ub c10 t r0 t4, nonce 20), TWO) }_ 11 ^^ 7, 
           msg e01] in
         let fphi12' := f (toListm phi12') in
         let s1' :=
@@ -258,11 +258,11 @@ assert( (let phi02' :=
                 (pi1 (d 3 fphi12')))] in
         let fphi13' := f (toListm phi13') in
         let l10' :=
-          If bnlcheck c10 (N 0) fphi13'
+          If bnlcheck c10 (nonce 0) fphi13'
              then (enc (label c10 fphi13', (k0, THREE)) (pke 11) (er 9)) 
              else O in
         let l01' :=
-          If bnlcheck c10 (N 1) fphi13'
+          If bnlcheck c10 (nonce 1) fphi13'
              then (enc (label c10 fphi13', (k1, THREE)) (pke 11) (er 10)) 
              else O in
         let phi15' := phi13' ++ [msg l10', msg l01'] in
@@ -277,15 +277,15 @@ assert( (let phi02' :=
         [msg b10, msg b01,
         msg
           (If (acc10) & acc01
-              then ((enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 9)),
+              then ((enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 9)),
                    (e01, dv1'), (l10', (l01', do1'))) 
            else |_)])).
 simpl.
-assert( (ncheck (N 0) (f
-                                 [b10; b01; (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7)); e01;
-                                 shufl (pi1 (d 1 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7)); e01])))
-                                   (pi1 (d 2 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7)); e01])))
-                                   (pi1 (d 3 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7)); e01])))])) ## FAlse).
+assert( (ncheck (nonce 0) (f
+                                 [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)); e01;
+                                 shufl (pi1 (d 1 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)); e01])))
+                                   (pi1 (d 2 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)); e01])))
+                                   (pi1 (d 3 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)); e01])))])) ## FAlse).
 unfold ncheck. 
 unfold isin. 
 
@@ -301,33 +301,33 @@ Eval compute in FAlse or TRue.
 rewrite tau1, tau2, tau3.
 Axiom freshneq: forall (n : nat) (m : message),
        ^? (m) = true  -> Fresh (cons n nil) [msg m] = true ->
-       ([bol (N n) #? m]) ~ [bol FAlse].
+       ([bol (nonce n) #? m]) ~ [bol FAlse].
 simpl.
 pose proof(freshneq 0 (pi2
       (pi2
          (pi2
             (pi1
                (f
-                  [b10; b01; (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7));
+                  [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
                   e01;
                   shufl
                     (pi1
                        (d 1
                           (f
                              [b10; b01;
-                             (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7));
+                             (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
                              e01])))
                     (pi1
                        (d 2
                           (f
                              [b10; b01;
-                             (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7));
+                             (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
                              e01])))
                     (pi1
                        (d 3
                           (f
                              [b10; b01;
-                             (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7));
+                             (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
                              e01])))])))))). 
 simpl in H8.
 
@@ -368,26 +368,26 @@ pose proof(freshneq 0 (pi2
          (pi2
             (pi1
                (pi2 (f
-                  [b10; b01; (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7));
+                  [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
                   e01;
                   shufl
                     (pi1
                        (d 1
                           (f
                              [b10; b01;
-                             (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7));
+                             (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
                              e01])))
                     (pi1
                        (d 2
                           (f
                              [b10; b01;
-                             (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7));
+                             (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
                              e01])))
                     (pi1
                        (d 3
                           (f
                              [b10; b01;
-                             (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7));
+                             (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
                              e01])))]))))))). 
 simpl in H17.
 
@@ -406,26 +406,26 @@ rewrite H17.
 clear H8 H17.
 
 pose proof(freshneq 0 (pi2 (pi2 (pi2 (pi2 (pi2 (f
-                  [b10; b01; (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7));
+                  [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
                   e01;
                   shufl
                     (pi1
                        (d 1
                           (f
                              [b10; b01;
-                             (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7));
+                             (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
                              e01])))
                     (pi1
                        (d 2
                           (f
                              [b10; b01;
-                             (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7));
+                             (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
                              e01])))
                     (pi1
                        (d 3
                           (f
                              [b10; b01;
-                             (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7));
+                             (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
                              e01])))]))))))).
 simpl in H8.
 unfold t4, t5 in H8.
@@ -447,7 +447,7 @@ unfold orB.
 (left;inversion H4; unfold distMvars; simpl; try rewrite H17; try rewrite H18; try rewrite H19; try rewrite H11; try rewrite H12; try reflexivity).
 
 (*******************************************)
-assert( let x:= (enc (c10, (ub c10 t r0 t4, N 20), TWO) (pke 11) (er 7)) in (bnlcheck c10 (N 0)
+assert( let x:= (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)) in (bnlcheck c10 (nonce 0)
                   (f
                      [b10; b01; x; e01;
                      shufl (pi1 (d 1 (f [b10; b01; x; e01])))
@@ -460,7 +460,7 @@ rewrite IFFALSE_M.
 clear H8 H9.
 (********************************************)
 
-assert( let x:= (enc (c00, (ub c00 t r0 t2, N 20), TWO) (pke 11) (er 7)) in  (bnlcheck c00 (N 0)
+assert( let x:= (enc (c00, (ub c00 t r0 t2, nonce 20), TWO) (pke 11) (er 7)) in  (bnlcheck c00 (nonce 0)
                     (f
                        [b00; b11; x; e11;
                        shufl (pi1 (d 1 (f [b00; b11; x; e11])))
@@ -469,7 +469,7 @@ assert( let x:= (enc (c00, (ub c00 t r0 t2, N 20), TWO) (pke 11) (er 7)) in  (bn
  unfold bnlcheck.
 unfold ncheck. unfold isin.
 rewrite tau1, tau2, tau3.
-pose proof( freshneq 0 (let x:= (enc (c00, (ub c00 t r0 t2, N 20), TWO) (pke 11) (er 7)) in (tau 3 (pi2 (tau 1 (f
+pose proof( freshneq 0 (let x:= (enc (c00, (ub c00 t r0 t2, nonce 20), TWO) (pke 11) (er 7)) in (tau 3 (pi2 (tau 1 (f
                        [b00; b11; x; e11;
                        shufl (pi1 (d 1 (f [b00; b11; x; e11])))
                          (pi1 (d 2 (f [b00; b11; x; e11])))
@@ -497,7 +497,7 @@ rewrite H11, H12, H13 in H8. simpl in H8.
 apply consteql in H8; auto; try  (left;inversion H4; unfold distMvars; simpl; try rewrite H16; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity).
 Axiom extcomphid: forall {n} (z z': mylist n), z ~ z'.
 (******)
-pose proof( freshneq 0 (let x:= (enc (c00, (ub c00 t r0 t2, N 20), TWO) (pke 11) (er 7)) in (tau 3 (pi2 (tau 2 (f
+pose proof( freshneq 0 (let x:= (enc (c00, (ub c00 t r0 t2, nonce 20), TWO) (pke 11) (er 7)) in (tau 3 (pi2 (tau 2 (f
                        [b00; b11; x; e11;
                        shufl (pi1 (d 1 (f [b00; b11; x; e11])))
                              (pi1 (d 2 (f [b00; b11; x; e11])))
@@ -512,7 +512,7 @@ fold t2 in H14.
 rewrite H11, H12, H13 in H14. simpl in H14.
 apply consteql in H14; auto; try (left;inversion H4; unfold distMvars; simpl; try rewrite H16; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity).
 (*******************************)
-pose proof(freshneq 0 (let x:= (enc (c00, (ub c00 t r0 t2, N 20), TWO) (pke 11) (er 7)) in (tau 3 (pi2 (tau 3 (f
+pose proof(freshneq 0 (let x:= (enc (c00, (ub c00 t r0 t2, nonce 20), TWO) (pke 11) (er 7)) in (tau 3 (pi2 (tau 3 (f
                        [b00; b11; x; e11;
                        shufl (pi1 (d 1 (f [b00; b11; x; e11])))
                              (pi1 (d 2 (f [b00; b11; x; e11])))
@@ -540,11 +540,11 @@ unfold k0.
 (** we need to prove that the attacker cannot compute the commitment key **)
 pose proof (ENCCCA2).
 Axiom infeasible_comp_ck: forall n t g, (closMsg t) = true ->
-                                          (** (distMvars [msg t']) = (cons m nil) ->  I can prove this:Fresh (cons n nil) [msg t, msg t'] = true **) ((g t) #? (kc (N n)))  ## FAlse.
+                                          (** (distMvars [msg t']) = (cons m nil) ->  I can prove this:Fresh (cons n nil) [msg t, msg t'] = true **) ((g t) #? (kc (nonce n)))  ## FAlse.
 (*** I will prove this later **) unfold b00.
 Eval compute in b00.
 Axiom eqm_sym: forall m1 m2, (m1 #? m2) ## (m2 #? m1).
- repeat rewrite eqm_sym with (m1:= (kc (N 3))).
+ repeat rewrite eqm_sym with (m1:= (kc (nonce 3))).
 repeat rewrite infeasible_comp_ck with (n:= 3); auto.
 unfold orB. 
 repeat rewrite IFFALSE_B.

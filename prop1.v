@@ -11,7 +11,7 @@ Eval compute in message_beq O O.
 Open Scope msg_scope.
 
 
-(** Eval compute in message_beq (N 1) (N 2) **)
+(** Eval compute in message_beq (nonce 1) (nonce 2) **)
 (** * Proposition 1 *)
  Section prop. 
 
@@ -133,10 +133,10 @@ Hint Resolve message_beq.
 Notation "'[' x '<-' s ']' l" :=  (submsg_mylist x s l).
 Axiom extFreshInd: forall {n} n1 n2 n3 (l:mylist n), (Fresh (cons n1 (cons n2 nil)) l) = true -> ((length (distMvars l))<=? 1)%nat = true ->
                                                   (distMvars l) = (cons n3 nil) ->
-                                                  ([ n3 <- (N n1)] l) ~ ([n3 <- (N n2)] l).
+                                                  (submsg_mylist n3 (nonce n1) l) ~ (submsg_mylist n3 (nonce n2) l). (** ([ n3 <- (nonce n1)] l)%msg_scope ~ ([n3 <- (nonce n2)] l)%msg_scope.*)
 Fixpoint check_n_occur (n:nat)(nl: Nlist): bool :=
   match nl with
-  | [ ] => false
+  | nil => false
   | h::t => if (beq_nat h n) then true else (check_n_occur n t)
   end.
 
@@ -393,21 +393,21 @@ Axiom aply_f_sub: forall n1 s1 n2 s2 t (f:message-> Nlist), let mvl:= (mVarMsg t
 
 
 Axiom sub_in_sub: forall n1 s1  n2 s2 t, {{ n1:= s1}} ({{n2:= s2}} t) # ({{n2:= ({{n1:=s1}} s2)}} ({{n1:=s1}} t)).
-Axiom clos_mvars_nil: forall t, (closMsg t = true) -> ((mVarMsg t) = [ ]).
+Axiom clos_mvars_nil: forall t, (closMsg t = true) -> ((mVarMsg t) = nil).
 Axiom ext_trans: forall {n} (l1 l2 l3 l4 l5:mylist n), l1 ~l2 /\ l2~ l3 /\ l3~l4 /\ l4~l5 -> l1~l5.
 Axiom check_in_sub: forall n s t (f:message->bool), f({{n:=s}} t) = ((f s) && (f t))%bool.
 (** nb0:= 1, nb1 = 2, nc0:= 3, nc1:=4 *)
 
 Ltac funappelt n H:= apply FUNCApp_appelt with (p:= n) in H; unfold getelt_at_pos in H; simpl in H.
     
-Theorem prop_esorics:  forall (t t0 t1 : message), let v0 := (V0 (N 0)) in
-                                                                                                      let v1 := (V1 (N 0)) in
-                                                                                                      (|v0|#?|v1|) ## TRue ->  (Fresh [1; 2; 3; 4] ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  -> 
+Theorem prop_esorics:  forall (t t0 t1 : message), let v0 := (V0 (nonce 0)) in
+                                                                                                      let v1 := (V1 (nonce 0)) in
+                                                                                                      (|v0|#?|v1|) ## TRue ->  (Fresh (cons 1 (cons 2 (cons 3 (cons 4 nil)))) ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  -> 
     let mvl:= (cons 5 (cons 6 nil)) in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
                  let r0 := (r 1) in
                  let r1 := (r 2) in
-                 let k0 := (kc (N 3)) in
-                 let k1 := (kc (N 4)) in
+                 let k0 := (kc (nonce 3)) in
+                 let k1 := (kc (nonce 4)) in
                  let c00 := (comm v0 k0) in
                  let c01 := (comm v0 k1) in
                  let c10 := (comm v1 k0) in
@@ -472,7 +472,7 @@ assert (BH:   (([msg c00, msg c11, msg k0, msg k1]) ++
               else (|_, |_))])).
 apply H5.     
 repeat (apply fresh_split; split). auto.
-apply split_fresh with (l1:= [1;2])(l2:=[3;4]) in H0.
+apply split_fresh with (l1:= cons 1 (cons 2 nil))(l2:= cons 3 (cons 4 nil)) in H0.
 inversion H0. 
 apply fresh_split with (z1:= [msg t]).
 split.
@@ -534,7 +534,7 @@ rewrite ubNotUndefined2 in BH; auto.
 Focus 2.
  
 apply fresh_split with (z1:= [msg t, msg v0, msg v1, msg t0]) in H0. inversion H0.
-apply split_fresh with (l1:= [1;2]) in H5.
+apply split_fresh with (l1:= cons 1 (cons 2 nil)) in H5.
 inversion H5. simpl.
 unfold Fresh in H7.
 unfold Fresh.
@@ -621,35 +621,35 @@ unfold lt1, rt1.
 (** swap the keys on the right side *)
 (** replace N4 with N100 *)
 unfold c00, c11, k0, k1 in H5. 
-pose proof(extFreshInd 4 100 0 [msg (bl (comm v1 (kc (Mvar 0))) t (r 1)), msg (bl (comm v0 (kc (N 3))) t (r 2)),
+pose proof(extFreshInd 4 100 0 [msg (bl (comm v1 (kc (Mvar 0))) t (r 1)), msg (bl (comm v0 (kc (nonce 3))) t (r 2)),
        bol
          (acc (comm v1 (kc (Mvar 0))) t (r 1)
-            {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t0))) &
-         (acc (comm v0 (kc (N 3))) t (r 2)
-            {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t1))),
+            {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t0))) &
+         (acc (comm v0 (kc (nonce 3))) t (r 2)
+            {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t1))),
        msg
          (If (acc (comm v1 (kc (Mvar 0))) t (r 1)
-                {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t0))) &
-             (acc (comm v0 (kc (N 3))) t (r 2)
-                {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t1)))
-             then (ub (comm v0 (kc (N 3))) t (r 2)
-                     {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t1)),
-                  (comm v0 (kc (N 3)), kc (N 3)),
+                {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t0))) &
+             (acc (comm v0 (kc (nonce 3))) t (r 2)
+                {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t1)))
+             then (ub (comm v0 (kc (nonce 3))) t (r 2)
+                     {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t1)),
+                  (comm v0 (kc (nonce 3)), kc (nonce 3)),
                   (ub (comm v1 (kc (Mvar 0))) t (r 1)
-                     {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t0)),
+                     {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t0)),
                   (comm v1 (kc (Mvar 0)), kc (Mvar 0)))) 
-             else (|_, (comm v0 (kc (N 3)), kc (N 3)), (|_, (comm v1 (kc (Mvar 0)), kc (Mvar 0)))))]).
+             else (|_, (comm v0 (kc (nonce 3)), kc (nonce 3)), (|_, (comm v1 (kc (Mvar 0)), kc (Mvar 0)))))]).
 simpl in H6.  
   
 
-repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t1))) in H6.
+repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t1))) in H6.
 repeat  rewrite sub_in_sub with (n1:=0) (t:= t1) in H6.
 simpl in H6.
 do 2 rewrite sub_clos with (n:=0)(t:=t) in H6; simpl in H1; try rewrite Bool.andb_true_r in H1; eauto.
 inversion H4.
 do 2 rewrite sub_ident with (n:=0) (t:= t1) in H6;  try rewrite H7; try rewrite H8;auto.
                                                                                                
-repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t0))) in H6.
+repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t0))) in H6.
 repeat  rewrite sub_in_sub with (n1:=0) (t:= t0) in H6.  simpl in H6.
 do 2 rewrite sub_ident with (n:=0) (t:= t0) in H6;  try rewrite H7; try rewrite H8;auto.
 
@@ -659,54 +659,54 @@ do 2 rewrite sub_clos with (n:=0)(t:=t) in H6; simpl in H1; try rewrite Bool.and
 (** then replace n3 with n4 *)
 
 pose proof (extFreshInd 3 4 0 
-[msg (bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))), msg (bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))),
+[msg (bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))), msg (bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))),
        bol
-         (IF acc (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+         (IF acc (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                {{5
-               := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                    := bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))}} 
+               := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                    := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))}} 
                                                                     (t0))
-          then acc (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))
+          then acc (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))
                  {{5
-                 := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                      := bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))}} 
+                 := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                      := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))}} 
                                                                       (t1)) else FAlse),
        msg
-         (If IF acc (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+         (If IF acc (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                   {{5
-                  := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                       := bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))}} 
+                  := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                       := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))}} 
                                                                        (t0))
-             then acc (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))
+             then acc (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))
                     {{5
-                    := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                         := bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))}} 
+                    := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                         := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))}} 
                                                                          (t1)) else FAlse
-             then (ub (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))
+             then (ub (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (Mvar 0))) t
-                                                                               (rb (N 2))}} 
-                                                                          (t1)), (comm (V0 (N 0)) (kc (Mvar 0)), kc (Mvar 0)),
-                  (ub (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+                     := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t
+                                                                               (rb (nonce 2))}} 
+                                                                          (t1)), (comm (V0 (nonce 0)) (kc (Mvar 0)), kc (Mvar 0)),
+                  (ub (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (Mvar 0))) t
-                                                                               (rb (N 2))}} 
+                     := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t
+                                                                               (rb (nonce 2))}} 
                                                                           (t0)),
-                  (comm (V1 (N 0)) (kc (N 100)), kc (N 100)))) 
-             else (|_, (comm (V0 (N 0)) (kc (Mvar 0)), kc (Mvar 0)), (|_, (comm (V1 (N 0)) (kc (N 100)), kc (N 100)))))]).
+                  (comm (V1 (nonce 0)) (kc (nonce 100)), kc (nonce 100)))) 
+             else (|_, (comm (V0 (nonce 0)) (kc (Mvar 0)), kc (Mvar 0)), (|_, (comm (V1 (nonce 0)) (kc (nonce 100)), kc (nonce 100)))))]).
 simpl in H9.
   
 
-repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6:= bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))}} t1)) in H9.
+repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6:= bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))}} t1)) in H9.
 repeat  rewrite sub_in_sub with (n1:=0) (t:= t1) in H9.
 simpl in H9.
 do 2 rewrite sub_clos with (n:=0)(t:=t) in H9; simpl in H1; try rewrite Bool.andb_true_r in H1; eauto.
 inversion H4.
 do 2 rewrite sub_ident with (n:=0) (t:= t1) in H9;  try rewrite H7; try rewrite H8;auto.
                                                                                                 
-repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))}} t0))  in H9.
+repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))}} t0))  in H9.
 repeat  rewrite sub_in_sub with (n1:=0) (t:= t0) in H9.  simpl in H9.
 do 2 rewrite sub_ident with (n:=0) (t:= t0) in H9;  try rewrite H7; try rewrite H8;auto.
 
@@ -716,54 +716,54 @@ do 2 rewrite sub_clos with (n:=0)(t:=t) in H9; simpl in H1; try rewrite Bool.and
 
 (** Finally, replace n100 with n3 *)
 
-pose proof ( extFreshInd 100 3 0 [msg (bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))), msg (bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))),
+pose proof ( extFreshInd 100 3 0 [msg (bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))), msg (bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))),
        bol
-         (IF acc (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))
+         (IF acc (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))
                {{5
-               := bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))}} ({{6
-                                                                    := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+               := bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))}} ({{6
+                                                                    := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                     (t0))
-          then acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))
+          then acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))
                  {{5
-                 := bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))}} ({{6
-                                                                      := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+                 := bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))}} ({{6
+                                                                      := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                       (t1)) else FAlse),
        msg
-         (If IF acc (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))
+         (If IF acc (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))
                   {{5
-                  := bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))}} ({{6
-                                                                       := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+                  := bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))}} ({{6
+                                                                       := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                        (t0))
-             then acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))
+             then acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))
                     {{5
-                    := bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))}} ({{6
-                                                                         := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+                    := bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))}} ({{6
+                                                                         := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                          (t1)) else FAlse
-             then (ub (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))
+             then (ub (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (N 4))) t
-                                                                               (rb (N 2))}} 
-                                                                          (t1)), (comm (V0 (N 0)) (kc (N 4)), kc (N 4)),
-                  (ub (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))
+                     := bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t
+                                                                               (rb (nonce 2))}} 
+                                                                          (t1)), (comm (V0 (nonce 0)) (kc (nonce 4)), kc (nonce 4)),
+                  (ub (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (N 4))) t
-                                                                               (rb (N 2))}} 
+                     := bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t
+                                                                               (rb (nonce 2))}} 
                                                                           (t0)),
-                  (comm (V1 (N 0)) (kc (Mvar 0)), kc (Mvar 0)))) 
-             else (|_, (comm (V0 (N 0)) (kc (N 4)), kc (N 4)), (|_, (comm (V1 (N 0)) (kc (Mvar 0)), kc (Mvar 0)))))]).
+                  (comm (V1 (nonce 0)) (kc (Mvar 0)), kc (Mvar 0)))) 
+             else (|_, (comm (V0 (nonce 0)) (kc (nonce 4)), kc (nonce 4)), (|_, (comm (V1 (nonce 0)) (kc (Mvar 0)), kc (Mvar 0)))))]).
 simpl in H12.
 
 
-repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6:= bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} t1)) in H12.
+repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6:= bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} t1)) in H12.
 repeat  rewrite sub_in_sub with (n1:=0) (t:= t1) in H12.
 simpl in H12.
 do 2 rewrite sub_clos with (n:=0)(t:=t) in H12; simpl in H1; try rewrite Bool.andb_true_r in H1; eauto.
 
 do 2 rewrite sub_ident with (n:=0) (t:= t1) in H12;  try rewrite H7; try rewrite H8;auto.
                                                                                                 
-repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} t0))  in H12.
+repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} t0))  in H12.
 repeat  rewrite sub_in_sub with (n1:=0) (t:= t0) in H12.  simpl in H12.
 do 2 rewrite sub_ident with (n:=0) (t:= t0) in H12;  try rewrite H7; try rewrite H8;auto.
 
@@ -781,79 +781,79 @@ apply ext_trans with (l2:= [msg (bl c11 t r0), msg (bl c00 t r1),
              (acc c00 t r1 {{5 := bl c11 t r0}} ({{6 := bl c00 t r1}} (t1)))
              then (ub c00 t r1 {{5 := bl c11 t r0}} ({{6 := bl c00 t r1}} (t1)), (c00, k0),
                   (ub c11 t r0 {{5 := bl c11 t r0}} ({{6 := bl c00 t r1}} (t0)), (c11, k1))) 
-             else (|_, (c00, k0), (|_, (c11, k1))))]) (l3:= [msg (bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))), msg (bl (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))),
+             else (|_, (c00, k0), (|_, (c11, k1))))]) (l3:= [msg (bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))), msg (bl (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))),
        bol
-         (IF acc (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+         (IF acc (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                {{5
-               := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                    := bl (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))}} 
+               := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                    := bl (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))}} 
                                                                     (t0))
-          then acc (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))
+          then acc (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))
                  {{5
-                 := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                      := bl (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))}} 
+                 := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                      := bl (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))}} 
                                                                       (t1)) else FAlse),
        msg
-         (If IF acc (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+         (If IF acc (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                   {{5
-                  := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                       := bl (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))}} 
+                  := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                       := bl (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))}} 
                                                                        (t0))
-             then acc (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))
+             then acc (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))
                     {{5
-                    := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                         := bl (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))}} 
+                    := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                         := bl (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))}} 
                                                                          (t1)) else FAlse
-             then (ub (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))
+             then (ub (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (N 3))) t
-                                                                               (rb (N 2))}} 
-                                                                          (t1)), (comm (V0 (N 0)) (kc (N 3)), kc (N 3)),
-                  (ub (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+                     := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (nonce 3))) t
+                                                                               (rb (nonce 2))}} 
+                                                                          (t1)), (comm (V0 (nonce 0)) (kc (nonce 3)), kc (nonce 3)),
+                  (ub (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (N 3))) t
-                                                                               (rb (N 2))}} 
+                     := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (nonce 3))) t
+                                                                               (rb (nonce 2))}} 
                                                                           (t0)),
-                  (comm (V1 (N 0)) (kc (N 100)), kc (N 100)))) 
-             else (|_, (comm (V0 (N 0)) (kc (N 3)), kc (N 3)), (|_, (comm (V1 (N 0)) (kc (N 100)), kc (N 100)))))]) (l4:= [msg (bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))), msg (bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))),
+                  (comm (V1 (nonce 0)) (kc (nonce 100)), kc (nonce 100)))) 
+             else (|_, (comm (V0 (nonce 0)) (kc (nonce 3)), kc (nonce 3)), (|_, (comm (V1 (nonce 0)) (kc (nonce 100)), kc (nonce 100)))))]) (l4:= [msg (bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))), msg (bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))),
        bol
-         (IF acc (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+         (IF acc (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                {{5
-               := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                    := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+               := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                    := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                     (t0))
-          then acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))
+          then acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))
                  {{5
-                 := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                      := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+                 := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                      := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                       (t1)) else FAlse),
        msg
-         (If IF acc (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+         (If IF acc (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                   {{5
-                  := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                       := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+                  := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                       := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                        (t0))
-             then acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))
+             then acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))
                     {{5
-                    := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                         := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+                    := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                         := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                          (t1)) else FAlse
-             then (ub (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))
+             then (ub (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (N 4))) t
-                                                                               (rb (N 2))}} 
-                                                                          (t1)), (comm (V0 (N 0)) (kc (N 4)), kc (N 4)),
-                  (ub (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+                     := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t
+                                                                               (rb (nonce 2))}} 
+                                                                          (t1)), (comm (V0 (nonce 0)) (kc (nonce 4)), kc (nonce 4)),
+                  (ub (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (N 4))) t
-                                                                               (rb (N 2))}} 
+                     := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t
+                                                                               (rb (nonce 2))}} 
                                                                           (t0)),
-                  (comm (V1 (N 0)) (kc (N 100)), kc (N 100)))) 
-             else (|_, (comm (V0 (N 0)) (kc (N 4)), kc (N 4)), (|_, (comm (V1 (N 0)) (kc (N 100)), kc (N 100)))))]).
+                  (comm (V1 (nonce 0)) (kc (nonce 100)), kc (nonce 100)))) 
+             else (|_, (comm (V0 (nonce 0)) (kc (nonce 4)), kc (nonce 4)), (|_, (comm (V1 (nonce 0)) (kc (nonce 100)), kc (nonce 100)))))]).
 repeat split. simpl. unfold lt1. 
 apply H5;auto.
 apply H6; simpl. unfold Fresh in H0 |- *; auto. simpl.
@@ -1116,14 +1116,14 @@ apply clos_mvars_nil in H1; simpl;auto.
 rewrite H1; simpl; auto.
 Qed.
 
-Axiom prop_esorics_gen:  forall {n} (t t0 t1 : message) (z:mylist n), let v0 := (V0 (N 0)) in
-                                                                                                      let v1 := (V1 (N 0)) in
-                                                                                                      (|v0|#?|v1|) ## TRue ->  (Fresh [1; 2; 3; 4] ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
+Axiom prop_esorics_gen:  forall {n} (t t0 t1 : message) (z:mylist n), let v0 := (V0 (nonce 0)) in
+                                                                                                      let v1 := (V1 (nonce 0)) in
+                                                                                                      (|v0|#?|v1|) ## TRue ->  (Fresh (cons 1 (cons 2 (cons 3 (cons 4 nil)))) ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
     let mvl:= (cons 5 (cons 6 nil)) in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
                  let r0 := (r 1) in
                  let r1 := (r 2) in
-                 let k0 := (kc (N 3)) in
-                 let k1 := (kc (N 4)) in
+                 let k0 := (kc (nonce 3)) in
+                 let k1 := (kc (nonce 4)) in
                  let c00 := (comm v0 k0) in
                  let c01 := (comm v0 k1) in
                  let c10 := (comm v1 k0) in
@@ -1145,14 +1145,14 @@ Axiom prop_esorics_gen:  forall {n} (t t0 t1 : message) (z:mylist n), let v0 := 
                    
                     (z++[msg (bl c10 t r0), msg (bl c01 t r1),
                            msg (If (acc c10 t r0 t4)& (acc c01 t r1 t5) then rt1 else (If (acc c01 t r1 t5)  then rt2 else (If (acc c10 t r0 t4) then rt3 else (|_, |_))))]).
-Theorem ext_blind:  forall (t t0 t1 : message), let v0 := (V0 (N 0)) in
-                                                                                                      let v1 := (V1 (N 0)) in
-                                                                                                      (|v0|#?|v1|) ## TRue ->  (Fresh [1; 2; 3; 4] ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
+Theorem ext_blind:  forall (t t0 t1 : message), let v0 := (V0 (nonce 0)) in
+                                                                                                      let v1 := (V1 (nonce 0)) in
+                                                                                                      (|v0|#?|v1|) ## TRue ->  (Fresh (cons 1 (cons 2 (cons 3 (cons 4 nil)))) ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
     let mvl:= (cons 5 (cons 6 nil)) in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
                  let r0 := (r 1) in
                  let r1 := (r 2) in
-                 let k0 := (kc (N 3)) in
-                 let k1 := (kc (N 4)) in
+                 let k0 := (kc (nonce 3)) in
+                 let k1 := (kc (nonce 4)) in
                  let c00 := (comm v0 k0) in
                  let c01 := (comm v0 k1) in
                  let c10 := (comm v1 k0) in
@@ -1216,7 +1216,7 @@ assert (BH:   (([msg c00, msg c11, msg k0, msg k1]) ++
               else (|_, |_))])).
 apply H5.     
 repeat (apply fresh_split; split). auto.
-apply split_fresh with (l1:= [1;2])(l2:=[3;4]) in H0.
+apply split_fresh with (l1:= cons 1 (cons 2 nil))(l2:= cons 3 (cons 4 nil)) in H0.
 inversion H0. 
 apply fresh_split with (z1:= [msg t]).
 split.
@@ -1278,7 +1278,7 @@ rewrite ubNotUndefined2 in BH; auto.
 Focus 2.
  
 apply fresh_split with (z1:= [msg t, msg v0, msg v1, msg t0]) in H0. inversion H0.
-apply split_fresh with (l1:= [1;2]) in H5.
+apply split_fresh with (l1:= cons 1 (cons 2 nil)) in H5.
 inversion H5. simpl.
 unfold Fresh in H7.
 unfold Fresh.
@@ -1365,35 +1365,35 @@ unfold lt1, rt1.
 (** swap the keys on the right side *)
 (** replace N4 with N100 *)
 unfold c00, c11, k0, k1 in H5. 
-pose proof(extFreshInd 4 100 0 [msg (bl (comm v1 (kc (Mvar 0))) t (r 1)), msg (bl (comm v0 (kc (N 3))) t (r 2)),
+pose proof(extFreshInd 4 100 0 [msg (bl (comm v1 (kc (Mvar 0))) t (r 1)), msg (bl (comm v0 (kc (nonce 3))) t (r 2)),
        bol
          (acc (comm v1 (kc (Mvar 0))) t (r 1)
-            {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t0))) &
-         (acc (comm v0 (kc (N 3))) t (r 2)
-            {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t1))),
+            {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t0))) &
+         (acc (comm v0 (kc (nonce 3))) t (r 2)
+            {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t1))),
        msg
          (If (acc (comm v1 (kc (Mvar 0))) t (r 1)
-                {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t0))) &
-             (acc (comm v0 (kc (N 3))) t (r 2)
-                {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t1)))
-             then (ub (comm v0 (kc (N 3))) t (r 2)
-                     {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t1)),
-                  (comm v0 (kc (N 3)), kc (N 3)),
+                {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t0))) &
+             (acc (comm v0 (kc (nonce 3))) t (r 2)
+                {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t1)))
+             then (ub (comm v0 (kc (nonce 3))) t (r 2)
+                     {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t1)),
+                  (comm v0 (kc (nonce 3)), kc (nonce 3)),
                   (ub (comm v1 (kc (Mvar 0))) t (r 1)
-                     {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t0)),
+                     {{5 := bl (comm v1 (kc (Mvar 0))) t (r 1)}} ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t0)),
                   (comm v1 (kc (Mvar 0)), kc (Mvar 0)))) 
-             else (|_, (comm v0 (kc (N 3)), kc (N 3)), (|_, (comm v1 (kc (Mvar 0)), kc (Mvar 0)))))]).
+             else (|_, (comm v0 (kc (nonce 3)), kc (nonce 3)), (|_, (comm v1 (kc (Mvar 0)), kc (Mvar 0)))))]).
 simpl in H6.  
   
 
-repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t1))) in H6.
+repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t1))) in H6.
 repeat  rewrite sub_in_sub with (n1:=0) (t:= t1) in H6.
 simpl in H6.
 do 2 rewrite sub_clos with (n:=0)(t:=t) in H6; simpl in H1; try rewrite Bool.andb_true_r in H1; eauto.
 inversion H4.
 do 2 rewrite sub_ident with (n:=0) (t:= t1) in H6;  try rewrite H7; try rewrite H8;auto.
                                                                                                
-repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm v0 (kc (N 3))) t (r 2)}} (t0))) in H6.
+repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm v0 (kc (nonce 3))) t (r 2)}} (t0))) in H6.
 repeat  rewrite sub_in_sub with (n1:=0) (t:= t0) in H6.  simpl in H6.
 do 2 rewrite sub_ident with (n:=0) (t:= t0) in H6;  try rewrite H7; try rewrite H8;auto.
 
@@ -1403,54 +1403,54 @@ do 2 rewrite sub_clos with (n:=0)(t:=t) in H6; simpl in H1; try rewrite Bool.and
 (** then replace n3 with n4 *)
 
 pose proof (extFreshInd 3 4 0 
-[msg (bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))), msg (bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))),
+[msg (bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))), msg (bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))),
        bol
-         (IF acc (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+         (IF acc (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                {{5
-               := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                    := bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))}} 
+               := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                    := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))}} 
                                                                     (t0))
-          then acc (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))
+          then acc (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))
                  {{5
-                 := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                      := bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))}} 
+                 := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                      := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))}} 
                                                                       (t1)) else FAlse),
        msg
-         (If IF acc (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+         (If IF acc (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                   {{5
-                  := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                       := bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))}} 
+                  := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                       := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))}} 
                                                                        (t0))
-             then acc (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))
+             then acc (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))
                     {{5
-                    := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                         := bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))}} 
+                    := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                         := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))}} 
                                                                          (t1)) else FAlse
-             then (ub (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))
+             then (ub (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (Mvar 0))) t
-                                                                               (rb (N 2))}} 
-                                                                          (t1)), (comm (V0 (N 0)) (kc (Mvar 0)), kc (Mvar 0)),
-                  (ub (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+                     := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t
+                                                                               (rb (nonce 2))}} 
+                                                                          (t1)), (comm (V0 (nonce 0)) (kc (Mvar 0)), kc (Mvar 0)),
+                  (ub (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (Mvar 0))) t
-                                                                               (rb (N 2))}} 
+                     := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t
+                                                                               (rb (nonce 2))}} 
                                                                           (t0)),
-                  (comm (V1 (N 0)) (kc (N 100)), kc (N 100)))) 
-             else (|_, (comm (V0 (N 0)) (kc (Mvar 0)), kc (Mvar 0)), (|_, (comm (V1 (N 0)) (kc (N 100)), kc (N 100)))))]).
+                  (comm (V1 (nonce 0)) (kc (nonce 100)), kc (nonce 100)))) 
+             else (|_, (comm (V0 (nonce 0)) (kc (Mvar 0)), kc (Mvar 0)), (|_, (comm (V1 (nonce 0)) (kc (nonce 100)), kc (nonce 100)))))]).
 simpl in H9.
   
 
-repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6:= bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))}} t1)) in H9.
+repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6:= bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))}} t1)) in H9.
 repeat  rewrite sub_in_sub with (n1:=0) (t:= t1) in H9.
 simpl in H9.
 do 2 rewrite sub_clos with (n:=0)(t:=t) in H9; simpl in H1; try rewrite Bool.andb_true_r in H1; eauto.
 inversion H4.
 do 2 rewrite sub_ident with (n:=0) (t:= t1) in H9;  try rewrite H7; try rewrite H8;auto.
                                                                                                 
-repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm (V0 (N 0)) (kc (Mvar 0))) t (rb (N 2))}} t0))  in H9.
+repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm (V0 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 2))}} t0))  in H9.
 repeat  rewrite sub_in_sub with (n1:=0) (t:= t0) in H9.  simpl in H9.
 do 2 rewrite sub_ident with (n:=0) (t:= t0) in H9;  try rewrite H7; try rewrite H8;auto.
 
@@ -1460,54 +1460,54 @@ do 2 rewrite sub_clos with (n:=0)(t:=t) in H9; simpl in H1; try rewrite Bool.and
 
 (** Finally, replace n100 with n3 *)
 
-pose proof ( extFreshInd 100 3 0 [msg (bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))), msg (bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))),
+pose proof ( extFreshInd 100 3 0 [msg (bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))), msg (bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))),
        bol
-         (IF acc (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))
+         (IF acc (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))
                {{5
-               := bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))}} ({{6
-                                                                    := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+               := bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))}} ({{6
+                                                                    := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                     (t0))
-          then acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))
+          then acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))
                  {{5
-                 := bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))}} ({{6
-                                                                      := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+                 := bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))}} ({{6
+                                                                      := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                       (t1)) else FAlse),
        msg
-         (If IF acc (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))
+         (If IF acc (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))
                   {{5
-                  := bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))}} ({{6
-                                                                       := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+                  := bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))}} ({{6
+                                                                       := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                        (t0))
-             then acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))
+             then acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))
                     {{5
-                    := bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))}} ({{6
-                                                                         := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+                    := bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))}} ({{6
+                                                                         := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                          (t1)) else FAlse
-             then (ub (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))
+             then (ub (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (N 4))) t
-                                                                               (rb (N 2))}} 
-                                                                          (t1)), (comm (V0 (N 0)) (kc (N 4)), kc (N 4)),
-                  (ub (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))
+                     := bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t
+                                                                               (rb (nonce 2))}} 
+                                                                          (t1)), (comm (V0 (nonce 0)) (kc (nonce 4)), kc (nonce 4)),
+                  (ub (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (Mvar 0))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (N 4))) t
-                                                                               (rb (N 2))}} 
+                     := bl (comm (V1 (nonce 0)) (kc (Mvar 0))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t
+                                                                               (rb (nonce 2))}} 
                                                                           (t0)),
-                  (comm (V1 (N 0)) (kc (Mvar 0)), kc (Mvar 0)))) 
-             else (|_, (comm (V0 (N 0)) (kc (N 4)), kc (N 4)), (|_, (comm (V1 (N 0)) (kc (Mvar 0)), kc (Mvar 0)))))]).
+                  (comm (V1 (nonce 0)) (kc (Mvar 0)), kc (Mvar 0)))) 
+             else (|_, (comm (V0 (nonce 0)) (kc (nonce 4)), kc (nonce 4)), (|_, (comm (V1 (nonce 0)) (kc (Mvar 0)), kc (Mvar 0)))))]).
 simpl in H12.
 
 
-repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6:= bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} t1)) in H12.
+repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6:= bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} t1)) in H12.
 repeat  rewrite sub_in_sub with (n1:=0) (t:= t1) in H12.
 simpl in H12.
 do 2 rewrite sub_clos with (n:=0)(t:=t) in H12; simpl in H1; try rewrite Bool.andb_true_r in H1; eauto.
 
 do 2 rewrite sub_ident with (n:=0) (t:= t1) in H12;  try rewrite H7; try rewrite H8;auto.
                                                                                                 
-repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} t0))  in H12.
+repeat  rewrite sub_in_sub with (n1:=0) (t:= ({{6 := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} t0))  in H12.
 repeat  rewrite sub_in_sub with (n1:=0) (t:= t0) in H12.  simpl in H12.
 do 2 rewrite sub_ident with (n:=0) (t:= t0) in H12;  try rewrite H7; try rewrite H8;auto.
 
@@ -1536,79 +1536,79 @@ apply ext_trans with (l2:= [msg (bl c11 t r0), msg (bl c00 t r1),
              (acc c00 t r1 {{5 := bl c11 t r0}} ({{6 := bl c00 t r1}} (t1)))
              then (ub c00 t r1 {{5 := bl c11 t r0}} ({{6 := bl c00 t r1}} (t1)), (c00, k0),
                   (ub c11 t r0 {{5 := bl c11 t r0}} ({{6 := bl c00 t r1}} (t0)), (c11, k1))) 
-             else (|_, (c00, k0), (|_, (c11, k1))))]) (l3:= [msg (bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))), msg (bl (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))),
+             else (|_, (c00, k0), (|_, (c11, k1))))]) (l3:= [msg (bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))), msg (bl (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))),
        bol
-         (IF acc (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+         (IF acc (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                {{5
-               := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                    := bl (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))}} 
+               := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                    := bl (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))}} 
                                                                     (t0))
-          then acc (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))
+          then acc (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))
                  {{5
-                 := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                      := bl (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))}} 
+                 := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                      := bl (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))}} 
                                                                       (t1)) else FAlse),
        msg
-         (If IF acc (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+         (If IF acc (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                   {{5
-                  := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                       := bl (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))}} 
+                  := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                       := bl (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))}} 
                                                                        (t0))
-             then acc (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))
+             then acc (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))
                     {{5
-                    := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                         := bl (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))}} 
+                    := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                         := bl (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))}} 
                                                                          (t1)) else FAlse
-             then (ub (comm (V0 (N 0)) (kc (N 3))) t (rb (N 2))
+             then (ub (comm (V0 (nonce 0)) (kc (nonce 3))) t (rb (nonce 2))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (N 3))) t
-                                                                               (rb (N 2))}} 
-                                                                          (t1)), (comm (V0 (N 0)) (kc (N 3)), kc (N 3)),
-                  (ub (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+                     := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (nonce 3))) t
+                                                                               (rb (nonce 2))}} 
+                                                                          (t1)), (comm (V0 (nonce 0)) (kc (nonce 3)), kc (nonce 3)),
+                  (ub (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (N 3))) t
-                                                                               (rb (N 2))}} 
+                     := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (nonce 3))) t
+                                                                               (rb (nonce 2))}} 
                                                                           (t0)),
-                  (comm (V1 (N 0)) (kc (N 100)), kc (N 100)))) 
-             else (|_, (comm (V0 (N 0)) (kc (N 3)), kc (N 3)), (|_, (comm (V1 (N 0)) (kc (N 100)), kc (N 100)))))]) (l4:= [msg (bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))), msg (bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))),
+                  (comm (V1 (nonce 0)) (kc (nonce 100)), kc (nonce 100)))) 
+             else (|_, (comm (V0 (nonce 0)) (kc (nonce 3)), kc (nonce 3)), (|_, (comm (V1 (nonce 0)) (kc (nonce 100)), kc (nonce 100)))))]) (l4:= [msg (bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))), msg (bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))),
        bol
-         (IF acc (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+         (IF acc (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                {{5
-               := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                    := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+               := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                    := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                     (t0))
-          then acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))
+          then acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))
                  {{5
-                 := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                      := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+                 := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                      := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                       (t1)) else FAlse),
        msg
-         (If IF acc (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+         (If IF acc (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                   {{5
-                  := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                       := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+                  := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                       := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                        (t0))
-             then acc (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))
+             then acc (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))
                     {{5
-                    := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                         := bl (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))}} 
+                    := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                         := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))}} 
                                                                          (t1)) else FAlse
-             then (ub (comm (V0 (N 0)) (kc (N 4))) t (rb (N 2))
+             then (ub (comm (V0 (nonce 0)) (kc (nonce 4))) t (rb (nonce 2))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (N 4))) t
-                                                                               (rb (N 2))}} 
-                                                                          (t1)), (comm (V0 (N 0)) (kc (N 4)), kc (N 4)),
-                  (ub (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))
+                     := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t
+                                                                               (rb (nonce 2))}} 
+                                                                          (t1)), (comm (V0 (nonce 0)) (kc (nonce 4)), kc (nonce 4)),
+                  (ub (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))
                      {{5
-                     := bl (comm (V1 (N 0)) (kc (N 100))) t (rb (N 1))}} ({{6
-                                                                          := bl (comm (V0 (N 0)) (kc (N 4))) t
-                                                                               (rb (N 2))}} 
+                     := bl (comm (V1 (nonce 0)) (kc (nonce 100))) t (rb (nonce 1))}} ({{6
+                                                                          := bl (comm (V0 (nonce 0)) (kc (nonce 4))) t
+                                                                               (rb (nonce 2))}} 
                                                                           (t0)),
-                  (comm (V1 (N 0)) (kc (N 100)), kc (N 100)))) 
-             else (|_, (comm (V0 (N 0)) (kc (N 4)), kc (N 4)), (|_, (comm (V1 (N 0)) (kc (N 100)), kc (N 100)))))]).
+                  (comm (V1 (nonce 0)) (kc (nonce 100)), kc (nonce 100)))) 
+             else (|_, (comm (V0 (nonce 0)) (kc (nonce 4)), kc (nonce 4)), (|_, (comm (V1 (nonce 0)) (kc (nonce 100)), kc (nonce 100)))))]).
 repeat split. simpl. unfold lt1. 
 apply H5;auto.
 apply H6; simpl. unfold Fresh in H0 |- *; auto. simpl.
@@ -1766,14 +1766,14 @@ apply clos_mvars_nil in H1; simpl;auto.
 rewrite H1; simpl; auto.
 Qed.
 
-Axiom ext_blind_gen:  forall {n} (t t0 t1 : message) (z:mylist n), let v0 := (V0 (N 0)) in
-                                                                                                      let v1 := (V1 (N 0)) in
-                                                                                                      (|v0|#?|v1|) ## TRue ->  (Fresh [1; 2; 3; 4] ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
+Axiom ext_blind_gen:  forall {n} (t t0 t1 : message) (z:mylist n), let v0 := (V0 (nonce 0)) in
+                                                                                                      let v1 := (V1 (nonce 0)) in
+                                                                                                      (|v0|#?|v1|) ## TRue ->  (Fresh (cons 1 (cons 2 (cons 3 (cons 4 nil)))) ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
     let mvl:= (cons 5 (cons 6 nil)) in  (mVarMsg t0) = mvl /\ (mVarMsg t1) = mvl ->
                  let r0 := (r 1) in
                  let r1 := (r 2) in
-                 let k0 := (kc (N 3)) in
-                 let k1 := (kc (N 4)) in
+                 let k0 := (kc (nonce 3)) in
+                 let k1 := (kc (nonce 4)) in
                  let c00 := (comm v0 k0) in
                  let c01 := (comm v0 k1) in
                  let c10 := (comm v1 k0) in

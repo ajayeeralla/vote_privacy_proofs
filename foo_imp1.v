@@ -21,7 +21,7 @@ Load "foo_axioms".
 
 (** Even though different symbols used to distinuish the key generations, for convenience, we use same symbols here in Coq *)
  
-Definition vt (n:nat) := (v (N n)).
+Definition vt (n:nat) := (v (nonce n)).
 
 (** attacker symbols *)
 
@@ -37,7 +37,7 @@ Definition phi0:= [msg (pk 1); msg (pk 2); msg (pk 5); msg pkat; msg (vt 0); msg
 
 (** commitments *)  
  
-Definition b (n' n'':nat) := (commit (v (N n')) (r n'')).
+Definition b (n' n'':nat) := (commit (v (nonce n')) (r n'')).
 Definition e (t:message) (n':nat) := (blind t pkat (r n')).
 
 
@@ -341,7 +341,7 @@ Ltac rew_mupbver  :=
   end. 
  (*Ltac aply_bver := 
   match goal with
-    |[|- context[bver (pk ?N) ?T  (unblind ?T (pk ?N) ?T' ?U) ] ] => pose proof (SHU_UFCMA N T T' U) 
+    |[|- context[bver (pk ?N) ?T  (unblind ?T (pk ?N) ?T' ?U) ] ] => pose proof (SHU_UFCMA nonce T T' U) 
   end.
    *)          
 (** replacing the random commit keys with fresh values *)
@@ -437,7 +437,7 @@ Axiom len_f3 : forall t1 t2 t3  t1' t2' t3' f, (L t1) # (L t1') -> (L t2) # (L t
 Axiom len_f4 : forall t1 t2 t3 t4 t1' t2' t3' t4' f, (L t1) # (L t1') -> (L t2) # (L t2') -> (L t3) # (L t3') -> (L t4) # (L t4') -> (L (f t1 t2 t3 t4)) # (L (f t1' t2' t3' t4')).
 
 
-Axiom ENCCPA': forall (u u' u'': message) (n n1 n2 n3 :nat) {m} (l:mylist m),  (eqm (L u) (L u')) ## TRue ->   (leb (length (distmvars l)) 1) = true -> (clos_listm [u; u'; u''] = true) -> ((Fresh [n2] l) = true) -> ((Fresh [n3] l) = true) -> ((checkmtmylis (sk n1) l) = false)  -> (l++ [msg (enc u (pk n1) (rr (N n2)))]) ~ (l++ [msg (enc u' (pk n1) (rr (N n3)))]).
+Axiom ENCCPA': forall (u u' u'': message) (n n1 n2 n3 :nat) {m} (l:mylist m),  (eqm (L u) (L u')) ## TRue ->   (leb (length (distmvars l)) 1) = true -> (clos_listm [u; u'; u''] = true) -> ((Fresh [n2] l) = true) -> ((Fresh [n3] l) = true) -> ((checkmtmylis (sk n1) l) = false)  -> (l++ [msg (enc u (pk n1) (rr (nonce n2)))]) ~ (l++ [msg (enc u' (pk n1) (rr (nonce n3)))]).
 (** include cor_ex7_2.v *) 
 Axiom EQmsg': forall(x y: message),   x # y <->   (eqm x y) ## (TRue) .
   Ltac bterm v1 v2 ck H :=

@@ -368,12 +368,12 @@ end.
 (******************tactics to make (to x) = j is false if (to x) = i is true where i <> j *********)
 Ltac false_to_sesns n  := 
 match goal with 
-| [|- (ifm_then_else_ (eqm ?X (i ?N)) ?X1 ?Y1) #  (ifm_then_else_ (eqm ?X (i ?N)) ?X2 ?Y2) ] => assert (beq_nat N n =false) ; try reflexivity ;
+| [|- (ifm_then_else_ (eqm ?X (i ?N)) ?X1 ?Y1) #  (ifm_then_else_ (eqm ?X (i ?N)) ?X2 ?Y2) ] => assert (beq_nat nonce n =false) ; try reflexivity ;
 match goal with 
-| [H: beq_nat ?N ?N2 = false |- _ ] => 
-  apply IFEVAL_M''' with (x:= X ) (n1:= N) (n2:= N2) (t1 := X1) (t2:= Y1) in H; rewrite H; clear H end; assert (beq_nat N n =false) ; try reflexivity ;
+| [H: beq_nat ?nonce ?N2 = false |- _ ] => 
+  apply IFEVAL_M''' with (x:= X ) (n1:= N) (n2:= N2) (t1 := X1) (t2:= Y1) in H; rewrite H; clear H end; assert (beq_nat nonce n =false) ; try reflexivity ;
 match goal with 
-| [H: beq_nat ?N ?N2 = false |- _ ] => 
+| [H: beq_nat ?nonce ?N2 = false |- _ ] => 
   apply IFEVAL_M''' with (x:= X ) (n1:= N) (n2:= N2) (t1 := X2) (t2:= Y2) in H; rewrite H; clear H end
 end.
 
@@ -493,8 +493,8 @@ Definition topsymsg_beq (t t': message ) : bool :=
 match t, t' with
 | Mvar _, Mvar _  => true
 | Mvar _, _  => false
-| N _ , N _  => true
-| N _ , _  => false                 
+| nonce _ , nonce _  => true
+| nonce _ , _  => false                 
 | ifm_then_else_ _ _ _,  ifm_then_else_ _ _ _ => true
 | ifm_then_else_ _ _ _,  _ => false
 | pair _ _ ,  pair _ _ => true
@@ -648,7 +648,7 @@ with subtrmls_msg'' (t:message) : list oursum :=
          | ifm_then_else_ b3 t1 t2 => (app (subtrmls_bol'' b3) (app (subtrmls_msg'' t1) (subtrmls_msg'' t2))) 
          | (Mvar n') => (cons (msg (Mvar n')) nil)
          | O => (cons (msg O) nil)
-         | N n'=> (cons (msg (N n')) nil)
+         | nonce n'=> (cons (msg (nonce n')) nil)
          | pair t1 t2 =>  (app (subtrmls_msg''  t1) (subtrmls_msg'' t2) )
          | pi1 t1 => match t1 with
                      | ke _ => (cons (msg (pi1 t1)) nil)
@@ -742,7 +742,7 @@ with subtrmlsbl_msg (t:message) : list oursum :=
          | ifm_then_else_ b3 t1 t2 => (app (subtrmlsbl_bol b3) (app (subtrmlsbl_msg t1) (subtrmlsbl_msg t2))) 
          | (Mvar n') => (cons (msg (Mvar n')) nil)
          | O => (cons (msg O) nil)
-         | N n'=> (cons (msg (N n')) nil)
+         | nonce n'=> (cons (msg (nonce n')) nil)
          | pair t1 t2 =>  (app (subtrmlsbl_msg  t1) (subtrmlsbl_msg t2) )
          | pi1 t1 => match t1 with
                      | ke _ => (cons (msg (pi1 t1)) nil)
