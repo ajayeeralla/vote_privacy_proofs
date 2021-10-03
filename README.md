@@ -38,7 +38,7 @@ This work can be seen as an extension of the stuff presented in the following pa
   ```
 * The directory webpages/coqdoc contains all the html files of the corresponding .v files
 
-### Note
+### `Note`
 I have compiled the proofs using the Coq version [8.12.2](https://github.com/coq/coq/releases/tag/V8.12.2) on MacOS with memory 32 GB.
 
 ## Author

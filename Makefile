@@ -15,4 +15,4 @@ _CoqProject:
 clean:
 	$(MAKE) -f Makefile.coq clean || true
 	rm -f Makefile.coq || true
-	rm -f **/*.glob **/*.vo **/*.vok **/*.vos **/.*.aux
+	rm -f **/*.glob **/*.vo **/*.vok **/*.vos **/**/.*.aux
