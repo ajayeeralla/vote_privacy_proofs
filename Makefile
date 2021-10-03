@@ -11,10 +11,8 @@ SORT_COQPROJECT = sed 's,[^/]*/,~&,g' | env LC_COLLATE=C sort | sed 's,~,,g'
 _CoqProject:
 	(echo '-R src ""'; (find src -name *.v | $(SORT_COQPROJECT))) > $@
 
-
-
 .PHONY: clean
 clean:
 	$(MAKE) -f Makefile.coq clean || true
 	rm -f Makefile.coq || true
-	rm -f src/**/*.glob src/**/*.vo src/**/*.vok src/**/*.vos src/**/.[^.]*.aux
+	rm -f **/*.glob **/*.vo **/*.vok **/*.vos **/.*.aux
