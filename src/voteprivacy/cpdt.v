@@ -1,4 +1,4 @@
- 
+
 (*** tactics *)
 
 Require Import Eqdep List.
@@ -139,7 +139,7 @@ Ltac crush' lemmas invOne :=
           | false => idtac
           | _ => repeat ((app ltac:(fun L => inster L L) lemmas || appHyps ltac:(fun L => inster L L));
             repeat (simplHyp invOne; intuition)); un_done
-        end; sintuition; rewriter; sintuition; try omega; try (elimtype False; omega)).
+        end; sintuition; rewriter; sintuition; try lia; try (elimtype False; lia)).
 
 Ltac crush := crush' false fail.
 

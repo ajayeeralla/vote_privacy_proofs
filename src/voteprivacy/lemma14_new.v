@@ -155,14 +155,14 @@ Definition pk:= (pubkey x1).
 Axiom vote_len_reg : forall t, (|V0 t| #? |V1 t|) ## TRue.
 (** * Phase 1:Authentication *)
 (** nA = 0, nB = 1, nM = 2 *)
-Eval compute in ssk.
+(*Eval compute in ssk. *)
 Definition v (n:nat) := match n with
                         | 0 => V0 (x1)
                         | 1 => V1 (x1)
                         | _ => O
                         end.
 
-Eval compute in kc.
+(*Eval compute in kc. *)
 
 Definition ssk (n:nat) := pi2 (ks (nonce n)).
 Definition k0 := (kc (nonce 3)) .
@@ -298,7 +298,7 @@ Qed.
 
 Definition x2t (n:nat) := f (toListm (phi0 ++ [msg (tr 0 n 3  5 9)])).
 
-Eval compute in x2t 0.
+(*Eval compute in x2t 0. *)
 Definition x2ft (n':nat) := f (toListm (phi0 ++ [msg (tr 1 n' 4 6 10)])).
 
 Definition t2 (n n': nat) := If (theta x1 A) then (If (theta (x2t n) B) then (tr 1 n' 4 6 10) else O) else (If (theta x1 B) then (If (theta (x2ft n') A) then (tr 0 n 3 5 9) else O) else O). 
@@ -313,7 +313,7 @@ match goal with
 | [|-  context [IF (?X #? ?Y) then ?B1 else ?B2] ] => pose proof (eqbrmsg_msg'' X X Y B1 B2)
 end.
 (** Using ext_comp_hid **)
-Eval compute in (v 0).
+(*Eval compute in (v 0). *)
 Theorem vote_len_eql: (IF (vcheck (v 0)) & (vcheck (v 1)) then |(v 0)|#? |(v 1)| else TRue) ## TRue.
 Proof. unfold vcheck.
 
@@ -553,7 +553,7 @@ repeat rewrite proj1, proj2 in H.
 funappf1 pubkey 15 H.
 clear H0.
 (** construct bool condition *)
-Eval compute in (x2ft 1).
+(*Eval compute in (x2ft 1). *)
 funapptrmhyp (msg (b 1 4 6)) (msg (b 0 4 6)) H; simpl; try reflexivity.
 funapptrmhyp (msg (s 1 4 6 1 10)) (msg (s 0 4 6 1 10)) H; simpl; try reflexivity.
 funapptrmhyp (msg (tr 1 1 4 6 10)) (msg (tr 1 0 4 6 10)) H; simpl; try reflexivity.

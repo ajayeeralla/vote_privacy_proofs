@@ -1,5 +1,5 @@
 (************************************************************************)
-(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)     
+(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
 (************************************************************************)
 Require Export eqNonce.
 
@@ -11,7 +11,7 @@ Ltac restr_proj p1  := apply RESTR_proj with (p:= p1) ; unfold proj_at_pos  ;  s
 
 Ltac restr_proj_in p1 H  := apply RESTR_proj with (p:= p1) in H ; unfold proj_at_pos in H ;  simpl in H.
 Ltac dropone_in H:= restr_proj_in 1 H.
- 
+
 Ltac dropLast_in H1 :=
   match goal with
   | [H: ?L1~?L2 |- _] => match H with
@@ -36,13 +36,13 @@ Ltac funapp_acc_in  H1  := apply FUNCApp_acc  in H1;  simpl in H1.
  *)
 (*
 Ltac funapp_elt_in n1 n2 :=
- match goal with 
+ match goal with
 | [H:  ?L1 ~ ?L2 |- _] => apply FUNCApp_elt with (p:=n1) (p1:= n2)  (ml1:= L1) (ml2:= L2) in H; unfold getelt_at_pos in H; simpl in H
  end .
 
 Ltac funapp_exp_in  p4 p5 p6 H := apply FUNCApp_expatpos with  (p1:= p4) (p2:=p5) (p3:=p6) in H; unfold exp_at_pos in H; simpl in H .
 *)
-Ltac restr_swap p3 p4 L1 L2 := 
+Ltac restr_swap p3 p4 L1 L2 :=
    apply RESTR_swap with (p1:= p3) (p2 := p4) (ml1:= L1) (ml2:= L2) ; unfold swap_mylist ; simpl.
 
 Ltac restr_swap_in p3 p4 H := apply RESTR_swap with (p1:= p3) (p2 := p4) in H; unfold swap_mylist in H;  simpl in H.
@@ -50,29 +50,29 @@ Ltac restr_swap_in p3 p4 H := apply RESTR_swap with (p1:= p3) (p2 := p4) in H; u
 (** To apply a tactic [tac] for [n] times. *)
 
 Ltac aply n tac :=
-match n with 
+match n with
 | 0 =>  idtac
 | S ?n' => tac ; aply n' tac
 end.
 
 (** To apply a tactic [tac] for [n] times in hypothesis [H]. *)
 
-Ltac aply_in n tac H := 
+Ltac aply_in n tac H :=
 match n with
 | 0 =>  idtac
 | S ?n' => tac H; aply_in n' tac H
 end.
- 
+
 Ltac funapp_dropls H := apply RESTR_dropls  in H; unfold droplastsec in H; unfold proj_two in H; simpl in H.
 
-Ltac Fr_pf := 
-repeat match goal with 
+Ltac Fr_pf :=
+repeat match goal with
 | [ |- beq_nat ?X ?Y = ?Z] => destruct (beq_nat X Y) ;  match goal with | [H1: context [ if beq_nat ?X' ?Y' then ?Z' else ?Z''] |- _ ] =>  simpl in H1; repeat rewrite <- beq_nat_refl in H1 ; simpl in H1;  symmetry  end end; try assumption ; try reflexivity;
-   repeat match goal with 
+   repeat match goal with
             | [ H : beq_nat ?X ?Y = _ |- _ ] =>  match goal with | [H1: context [ if beq_nat ?X ?Y then _ else _ ] |- _ ] =>  rewrite H in H1;  simpl in H1 end end; try assumption ; try reflexivity.
 
-Ltac rew_all_hyps := simpl ; 
-repeat match goal with 
+Ltac rew_all_hyps := simpl ;
+repeat match goal with
 | [H: beq_nat ?X ?Y = ?Z |- _] =>  match goal with | [ |- context [ if beq_nat ?X ?Y then _ else _ ] ] =>  rewrite H end;  repeat rewrite <- beq_nat_refl;  simpl; try reflexivity end.
 
 Fixpoint beqnat  (n1:nat) (l: list nat) : list bool :=
@@ -102,7 +102,7 @@ Ltac length ls :=
       let ls'' := length ls' in
         constr:(S ls'')
   end.
- 
+
 Ltac Fr_prf := match goal with
                  |[|- Fresh ?X  ?Y = ?Z ] => length X
 end.
@@ -118,7 +118,7 @@ Ltac ifbr_t1  ml1 ml2 b b' x x' y y' := pose proof (IFBRANCH_M1 _ ml1 ml2 b b' x
  match goal with
     | [ |-  (Cons _ _ (msg (ifm_then_else_ ?B ?X ?Y)) ?L1 )    ~  (Cons _ _ (msg (ifm_then_else_ ?B' ?X' ?Y')) ?L2 )  ] => ifbr_t1 L1 L2 B B' X X' Y Y'
  end.
- 
+
 Ltac ifbr_t2  ml1 ml2 b b' x1 x1' x2 x2' y1 y1' y2 y2' := pose proof (IFBRANCH_M2 _ ml1 ml2 b b' x1 x1' x2 x2' y1 y1' y2 y2');
  match goal with
 | [H : _ |-  (Cons _ _ (msg (ifm_then_else_ b x1 y1)) (Cons _ _ (msg (ifm_then_else_ b x2 y2)) ml1 )) ~ (Cons _ _ (msg (ifm_then_else_ b' x1' y1')) (Cons _ _ (msg (ifm_then_else_ b' x2' y2')) ml2 )) ] =>   apply H; clear H; try reflexivity
@@ -151,17 +151,17 @@ Ltac ifb := try ifbr1 ; try simpl; try reflexivity; try unf_qb; try unf_qd.
 *)
 
 Ltac simpl_Hyps :=
-repeat match goal with 
+repeat match goal with
   | [H: _ |- _ ] => simpl in H
     end.
 
 Definition len_mylist {n} (l:mylist n) := n.
-(*Ltac funapp_os p1 t1  := match goal with 
+(*Ltac funapp_os p1 t1  := match goal with
 | [H:  ?L1 ~ ?L2 |- _] => apply FUNCApp_os with (p:= p1) (n:= len_mylist L1) (t:= t1) (ml1:= L1) (ml2:= L2) in H; simpl in H
 end .
 
 Ltac funos p H1 :=
-repeat match goal with  
+repeat match goal with
     | [ |-  (Cons _ _ (msg ?B1 ) _ ) ~ (Cons _ _ (msg ?B2) _) ] => funapp_os p (msg B1) H1
   end. *)
 (*
@@ -171,7 +171,7 @@ Axiom RESTR_rev: forall {m} (ml1 ml2: mylist m), ml1 ~ ml2 -> (reverse ml1) ~ (r
 
 (** To apply [FRESHIND] *)
 
-Ltac fr_ind n1 n2 H1 := 
+Ltac fr_ind n1 n2 H1 :=
 match goal with
 |[ H1: ?L1 ~ ?L2 |- _ ] => assert(  ((closMylist (L1++L2)) = true) /\ ( (Fresh [ n1] (L1++L2)) = true) /\ ( (Fresh [ n2] ( L1 ++ L2)) = true) /\  (L1 ~ L2))
 end.
@@ -183,7 +183,7 @@ end.
 Ltac fresh_ind n1 n2 H := fr_ind n1 n2 H; repeat ( try split;  simpl;  try reflexivity ; try assumption); aply_fr_ind.
 
 (** To apply FUNCApp *)
-  
+
 Ltac funapp_fm_in  g H :=  apply FUNCApp_mconst with (m:= g) in H ; simpl in H.
 Ltac funapp_f1_in g n1 H := apply FUNCApp_f1 with (f1:= g) (p:= n1) in H ; simpl in H.
 Ltac funapp_f2b_in g n1 n2 H:= apply FUNCApp_f2b with (f2b:= g) (p1:= n1) (p2:= n2) in H ; simpl in H.
@@ -223,21 +223,21 @@ Ltac fall_elm n1 b1  :=  try apply Forall_ELM_EVAL_B with (n:= n1) (b:= b1) ;  t
 (*Ltac andB_elm_msg n1 t1 t2  := pose proof( mor_eval_andB n1 t1 t2) ;
 match goal with
 | [H : ?X # ?Y |- _ ] =>    simpl in H ; match goal with | [H : ?X # ?Y |- _ ] =>   rewrite H; clear H end
-         
+
  end.
 
 Ltac andB_elm_msg_in n1 t1 t2 H1 := pose proof( mor_eval_andB n1 t1 t2) ;
 match goal with
-| [H : ?X # ?Y |- _ ] =>    simpl in H ; rewrite H in H1; clear H 
-         
+| [H : ?X # ?Y |- _ ] =>    simpl in H ; rewrite H in H1; clear H
+
  end.
 
 Ltac rew_andB_elm_msg :=
-repeat match goal with 
-|[H: _ |-  context [(ifm_then_else_  ((Bvar ?n2) & ?P) ?X ?Y )] ] => andB_elm_msg n2 X Y 
+repeat match goal with
+|[H: _ |-  context [(ifm_then_else_  ((Bvar ?n2) & ?P) ?X ?Y )] ] => andB_elm_msg n2 X Y
 end.
 
-Ltac rew_andB_elm_in_msg H1 := 
+Ltac rew_andB_elm_in_msg H1 :=
 repeat match goal with
  |[H: context [(ifm_then_else_ ((Bvar ?n2) & ?P) ?X ?Y )] |- _ ] =>  andB_elm_msg_in n2 X Y H1 end.
 
@@ -250,22 +250,22 @@ match goal with
 
 Ltac  andB_elm_bol_in n1 t1 t2 H1  := pose proof( mor_eval_andB n1 t1 t2) ;
 match goal with
-| [H : ?X # ?Y |- _ ] =>    simpl in H ;    rewrite H in H1; clear H 
-        
+| [H : ?X # ?Y |- _ ] =>    simpl in H ;    rewrite H in H1; clear H
+
  end.
 
 Ltac rew_andB_elm_bol :=
-repeat match goal with 
-|[H: _ |-  context [(ifb ((Bvar ?n2) & ?P) ?X ?Y )] ] => andB_elm_bol  n2 X Y 
+repeat match goal with
+|[H: _ |-  context [(ifb ((Bvar ?n2) & ?P) ?X ?Y )] ] => andB_elm_bol  n2 X Y
 end.
 
-Ltac rew_andB_elm_in_bol H1 := 
+Ltac rew_andB_elm_in_bol H1 :=
 repeat match goal with
  |[H: context [(ifb ((Bvar ?n2) & ?P) ?X ?Y )] |- _ ] =>  andB_elm_bol_in n2 X Y H1 end.
 
 (******************************************IFTF***********************************)
 
-Ltac rew_IFTF b  := pose proof(IFTFb b); 
+Ltac rew_IFTF b  := pose proof(IFTFb b);
 match goal with
 | [H : _ |- ?X ## ?Y ] =>  rewrite H ; clear H; simpl
 end.
@@ -275,15 +275,15 @@ match goal with
   | [H : ?X ## ?Y |- _ ] =>   rewrite H in H1 ; clear H; simpl in H1
 end.
 
-Ltac rew_IFTF_all_in H1  := 
-repeat match goal with 
-|[ H : context [  (ifb ?X TRue FAlse)]   |- _ ] => rew_IFTF_in X H1 
-end. 
+Ltac rew_IFTF_all_in H1  :=
+repeat match goal with
+|[ H : context [  (ifb ?X TRue FAlse)]   |- _ ] => rew_IFTF_in X H1
+end.
 
-Ltac rew_IFTF_all  := 
-repeat match goal with 
-|[ H : _ |-  context [ ifb ?X TRue FAlse ]  ] => rew_IFTF X 
-end. 
+Ltac rew_IFTF_all  :=
+repeat match goal with
+|[ H : _ |-  context [ ifb ?X TRue FAlse ]  ] => rew_IFTF X
+end.
 
 (*************IFM_THEN_ELSE_ORPH*****message_bool*******)
 
@@ -298,14 +298,14 @@ match goal with
        end.
 
 Ltac rew_ifm_then_else_or_msg_bol :=
-repeat match goal with 
+repeat match goal with
 |[ H : _ |-  context [ ifm_then_else_ (ifb (Bvar ?n1) ?Y ?Z) ?P ?Q]  ] => ifm_then_else_or_msg_bol n1 Y Z P Q
-end. 
+end.
 
 Ltac rew_ifm_then_else_or_msg_bol_in H1 :=
-repeat match goal with 
+repeat match goal with
 |[ H : context [ ifm_then_else_ (ifb (Bvar ?n1) ?Y ?Z) ?P ?Q]   |- _ ] => ifm_then_else_or_msg_bol_in n1 Y Z P Q H1
-end. 
+end.
 
 (********************IFM_THEN_ELSE_RPH***********Bool_Bool_fst*****************)
 
@@ -320,14 +320,14 @@ match goal with
   end.
 
 Ltac rew_ifm_then_else_or_bol_bol_fst :=
-repeat match goal with 
+repeat match goal with
 |[ H : _ |-  context [ ifb (ifb (Bvar ?n1) ?Y ?Z) ?P ?Q]  ] =>  ifm_then_else_or_bol_bol_fst n1 Y Z P Q
-end. 
+end.
 
 Ltac rew_ifm_then_else_or_bol_bol_in_fst H1 :=
-repeat match goal with 
+repeat match goal with
 |[ H : context [ ifb (ifb (Bvar ?n1) ?Y ?Z) ?P ?Q]   |- _ ] =>  ifm_then_else_or_bol_bol_fst_in n1 Y Z P Q H1
-end. 
+end.
 
 (********************IFM_THEN_ELSE_RPH***********Bool_Bool_snd*****************)
 
@@ -342,14 +342,14 @@ match goal with
    end.
 
 Ltac rew_ifm_then_else_or_bol_bol_snd :=
-repeat match goal with 
+repeat match goal with
 |[ H : _ |-  context [ ifb (Bvar ?n1) (ifb (Bvar ?n2) ?B1 ?B2) ?B3 ]  ] =>  ifm_then_else_or_bol_bol_snd n1 n2 B1 B2 B3
-end. 
+end.
 
 Ltac rew_ifm_then_else_or_bol_bol_in_snd H1 :=
-repeat match goal with 
+repeat match goal with
 |[ H : context [ (ifb (Bvar ?n1) (ifb (Bvar ?n2) ?B1 ?B2) ?B3)]   |- _ ] =>  ifm_then_else_or_bol_bol_snd_in n1 n2 B1 B2 B3 H1
-end. 
+end.
 
 (**************************************recent***************Testing************)
 (**********************************tactics to apply if b is same on both sides**********)
@@ -366,14 +366,14 @@ end.
 
 (********************************three sessions 1 2 3 *************************)
 (******************tactics to make (to x) = j is false if (to x) = i is true where i <> j *********)
-Ltac false_to_sesns n  := 
-match goal with 
+Ltac false_to_sesns n  :=
+match goal with
 | [|- (ifm_then_else_ (eqm ?X (i ?N)) ?X1 ?Y1) #  (ifm_then_else_ (eqm ?X (i ?N)) ?X2 ?Y2) ] => assert (beq_nat nonce n =false) ; try reflexivity ;
-match goal with 
-| [H: beq_nat ?nonce ?N2 = false |- _ ] => 
+match goal with
+| [H: beq_nat ?nonce ?N2 = false |- _ ] =>
   apply IFEVAL_M''' with (x:= X ) (n1:= N) (n2:= N2) (t1 := X1) (t2:= Y1) in H; rewrite H; clear H end; assert (beq_nat nonce n =false) ; try reflexivity ;
-match goal with 
-| [H: beq_nat ?nonce ?N2 = false |- _ ] => 
+match goal with
+| [H: beq_nat ?nonce ?N2 = false |- _ ] =>
   apply IFEVAL_M''' with (x:= X ) (n1:= N) (n2:= N2) (t1 := X2) (t2:= Y2) in H; rewrite H; clear H end
 end.
 
@@ -382,8 +382,8 @@ Ltac  false_to_sesns_all := try false_to_sesns 1; try false_to_sesns 2; try fals
 (******************************************************************************)
 (*************apply andB elm ****************)
 
-Ltac aply_andB_elm := 
-match goal with 
+Ltac aply_andB_elm :=
+match goal with
 |[|- context[ifm_then_else_ (ifb ?B1 ?B2 FAlse) ?T1 ?T2 ] ] => rewrite andB_elm' with (b1:= B1) (b2:= B2) (x:= T1) (y:= T2)
 end.
 
@@ -426,11 +426,11 @@ Ltac retmylis H :=
 Ltac funappeltPos2 tac f x y l H :=  retmylis H; tac f (eltPos x l) (eltPos y l) H; clear l.
 
 Ltac funappeltPos3 tac x y z l H :=  tac  (eltPos x l) (eltPos y l) (eltPos z l) H; clear l.
-  
+
 Ltac aplyProjList l H1 :=
   match l with
     | [] => idtac
-    | ?h :: ?t =>  simpl in H1; apply RESTR_proj with (p:= h) in H1; try reflexivity; unfold proj_at_pos in H1; simpl in H1; 
+    | ?h :: ?t =>  simpl in H1; apply RESTR_proj with (p:= h) in H1; try reflexivity; unfold proj_at_pos in H1; simpl in H1;
                     aplyProjList t H1; try reflexivity
   end.
 (** Projection n times *)
@@ -454,7 +454,7 @@ match (leb m n) , l with
   | _ , _ => false
 end.
 
-                    
+
  Fixpoint sublisIndcs {m} {n} (l :mylist m) (l': mylist n) : ilist nat m :=
   match  l with
     | [] => []
@@ -471,14 +471,14 @@ match (leb m n) , l with
   | _ , _ => false
 end.
 
-                    
+
 Fixpoint sublisIndcs {m} {n} (l :mylist m) (l': mylist n) : ilist nat m :=
   match  l with
     | [] => []
     | h : t => (eltPos h l') : (sublisIndcs t l')
 end.
 
- 
+
  Axiom restr_sublis : forall {m} {n} (l1 l2 : mylist m) (l1' l2': mylist n) ,  l1 ~ l2 -> (andb (checksublis l1' l1) (checksublis l2' l2)  = true ) -> (sublisIndcs l1' l1) = (sublisIndcs l2' l2)-> l1' ~ l2'.
 
  Ltac restrsublis H :=
@@ -494,7 +494,7 @@ match t, t' with
 | Mvar _, Mvar _  => true
 | Mvar _, _  => false
 | nonce _ , nonce _  => true
-| nonce _ , _  => false                 
+| nonce _ , _  => false
 | ifm_then_else_ _ _ _,  ifm_then_else_ _ _ _ => true
 | ifm_then_else_ _ _ _,  _ => false
 | pair _ _ ,  pair _ _ => true
@@ -508,18 +508,18 @@ match t, t' with
 | z _ , z _ => true
 | z _ ,  _ => false
 | L _ , L _  => true
-| L _ , _  => false                
+| L _ , _  => false
 | f _ , f _ => true
 | f _ , _ => false
 (* | f _ , _ => false *)
 (** Attacker's computation *)
-(** FOO symbols *)                   
+(** FOO symbols *)
 (** Vote values *)
 | V0 _ , V0 _ => true
 | V0 _ ,  _ => false
 | V1 _ , V1 _ => true
 | V1 _ ,  _ => false
-(** Public Key *)                    
+(** Public Key *)
 | pubkey _, pubkey _ => true
 | pubkey _, _ => false
 (** Commitments *)
@@ -561,7 +561,7 @@ match t, t' with
 | sign _ _ _ ,  _ => false
 | _ , _ => message_beq t t'
 end.
-                       
+
 
  Definition topsybol_beq (b b' : Bool):bool :=
    match b, b' with
@@ -590,8 +590,8 @@ Definition topsyos_beq (t1 t2 : oursum): bool :=
       | _ , _ => false
   end.
 
- 
-Fixpoint eltPos' (x:oursum) {n} (l:mylist n) :nat :=
+
+Fixpoint eltPos (x:oursum) {n} (l:mylist n) :nat :=
   match l with
     | [] => 0
     | h:t =>  if  (oursum_beq x h)  then 1 else S (eltPos x t)
@@ -610,7 +610,7 @@ match (leb n n) , l with
   | _ , _ => false
 end.
 
-                    
+
  Fixpoint  sublisIndcs'  {n} (l :list oursum) (l': mylist n) : list nat :=
   match  l with
     | nil => nil
@@ -618,8 +618,8 @@ end.
   end.
 
 
-Check subtrmls.
- Section subtrm'.
+(* Check subtrmls. *)
+Section subtrm'.
 Variable f: message -> list oursum.
 Fixpoint mapsubtrmls (l: list message) : list oursum :=
   match l with
@@ -632,9 +632,9 @@ Fixpoint listm_listos (l: Mlist): oslist :=
   | cons h t => (cons (msg h) (listm_listos t))
   end.
  End subtrm'.
- Eval compute in rb.
+ (* Eval compute in rb. *)
 Fixpoint subtrmls_bol''(t: Bool) : list oursum :=
-  match t with 
+  match t with
     | eqb  b1 b2 =>  (app (subtrmls_bol'' b1) (subtrmls_bol'' b2) )
     | eqm t1 t2 => (app (subtrmls_msg'' t1) (subtrmls_msg'' t2) )
     | ifb_then_else_ t1 t2 t3 => (app (subtrmls_bol'' t1) (app (subtrmls_bol'' t2) (subtrmls_bol'' t3)))
@@ -644,8 +644,8 @@ Fixpoint subtrmls_bol''(t: Bool) : list oursum :=
     | _ => nil
  end
 with subtrmls_msg'' (t:message) : list oursum :=
-       match t with 
-         | ifm_then_else_ b3 t1 t2 => (app (subtrmls_bol'' b3) (app (subtrmls_msg'' t1) (subtrmls_msg'' t2))) 
+       match t with
+         | ifm_then_else_ b3 t1 t2 => (app (subtrmls_bol'' b3) (app (subtrmls_msg'' t1) (subtrmls_msg'' t2)))
          | (Mvar n') => (cons (msg (Mvar n')) nil)
          | O => (cons (msg O) nil)
          | nonce n'=> (cons (msg (nonce n')) nil)
@@ -680,7 +680,7 @@ with subtrmls_msg'' (t:message) : list oursum :=
          | kc t1 => nil
          | comm t1 t2 => (cons (msg (comm t1 t2)) nil)
          | open t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))
-         | shufl t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))     
+         | shufl t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))
          | re t1 =>  (cons (msg (re t1)) nil)
          | ke t1 =>  nil
          | enc t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))
@@ -701,7 +701,7 @@ with subtrmls_msg'' (t:message) : list oursum :=
 (** Subterms of [oursum] term. *)
 
 Definition subtrmls_os'' (t:oursum) : list oursum :=
-  match t with 
+  match t with
     | msg t1 => subtrmls_msg'' t1
     | bol b1 =>  subtrmls_bol'' b1
   end.
@@ -709,26 +709,26 @@ Definition subtrmls_os'' (t:oursum) : list oursum :=
 (** Subterms of terms of type [mylist n] for some [n].*)
 
 Fixpoint subtrmls_mylis'' {n} (l:mylist n) : list oursum :=
-  match l with 
+  match l with
     | [] => nil
     | h: t => (app (subtrmls_os'' h) (subtrmls_mylis'' t))
   end.
-  
- 
+
+
 (** Tactics *)
- 
+
 
 Axiom funapptrm : forall {m} (m1 m2 : oursum) (l1 l2 : mylist m),  l1 ~ l2 -> (topsyos_beq m1 m2 = true ) -> (andb (checksublis' (subtrmls_os'' m1)  l1) (checksublis' (subtrmls_os'' m2) l2) = true) ->  (sublisIndcs' (subtrmls_os'' m1) l1) = (sublisIndcs' (subtrmls_os'' m2) l2) -> (l1 ++ [m1]) ~ (l2 ++ [m2]).
 
 
 Ltac funapptrmhyp s1 s2 H :=
   apply funapptrm with (m1 := s1) (m2 := s2) in H; simpl in H.
- 
+
 
 (** keep the blind term as it is **)
 
 Fixpoint subtrmlsbl_bol(t: Bool) : list oursum :=
-  match t with 
+  match t with
     | eqb  b1 b2 =>  (app (subtrmlsbl_bol b1) (subtrmlsbl_bol b2) )
     | eqm t1 t2 => (app (subtrmlsbl_msg t1) (subtrmlsbl_msg t2) )
     | ifb_then_else_ t1 t2 t3 => (app (subtrmlsbl_bol t1) (app (subtrmlsbl_bol t2) (subtrmlsbl_bol t3)))
@@ -738,8 +738,8 @@ Fixpoint subtrmlsbl_bol(t: Bool) : list oursum :=
     | _ => nil
  end
 with subtrmlsbl_msg (t:message) : list oursum :=
-       match t with 
-         | ifm_then_else_ b3 t1 t2 => (app (subtrmlsbl_bol b3) (app (subtrmlsbl_msg t1) (subtrmlsbl_msg t2))) 
+       match t with
+         | ifm_then_else_ b3 t1 t2 => (app (subtrmlsbl_bol b3) (app (subtrmlsbl_msg t1) (subtrmlsbl_msg t2)))
          | (Mvar n') => (cons (msg (Mvar n')) nil)
          | O => (cons (msg O) nil)
          | nonce n'=> (cons (msg (nonce n')) nil)
@@ -774,7 +774,7 @@ with subtrmlsbl_msg (t:message) : list oursum :=
          | kc t1 => nil
          | comm t1 t2 => (cons (msg (comm t1 t2)) nil)
          | open t1 t2 t3 => (app (subtrmlsbl_msg t1) (app (subtrmlsbl_msg t2) (subtrmlsbl_msg t3)))
-         | shufl t1 t2 t3 => (app (subtrmlsbl_msg t1) (app (subtrmlsbl_msg t2) (subtrmlsbl_msg t3)))     
+         | shufl t1 t2 t3 => (app (subtrmlsbl_msg t1) (app (subtrmlsbl_msg t2) (subtrmlsbl_msg t3)))
          | re t1 =>  (cons (msg (re t1)) nil)
          | ke t1 =>  nil
          | enc t1 t2 t3 => (app (subtrmlsbl_msg t1) (app (subtrmlsbl_msg t2) (subtrmlsbl_msg t3)))
@@ -783,7 +783,7 @@ with subtrmlsbl_msg (t:message) : list oursum :=
          | kb t1 =>  nil
          | rb t1 =>  (cons (msg (rb t1)) nil)
          | bsign t1 t2 t3 => (app (subtrmlsbl_msg t1) (app (subtrmlsbl_msg t2) (subtrmlsbl_msg t3)))
-         | bl t1 t2 t3 => (cons (msg (bl t1 t2 t3)) nil) 
+         | bl t1 t2 t3 => (cons (msg (bl t1 t2 t3)) nil)
          | ub t1 t2 t3 t4 =>  (app (subtrmlsbl_msg t1) (app (subtrmlsbl_msg t2) (app (subtrmlsbl_msg t3) (subtrmlsbl_msg t4))))
          | ks t1 =>  nil
          | rs t1 =>  (cons (msg (rs t1)) nil)
@@ -795,7 +795,7 @@ with subtrmlsbl_msg (t:message) : list oursum :=
 (** Subterms of [oursum] term. *)
 
 Definition subtrmlsbl_os (t:oursum) : list oursum :=
-  match t with 
+  match t with
     | msg t1 => subtrmlsbl_msg t1
     | bol b1 =>  subtrmlsbl_bol b1
   end.

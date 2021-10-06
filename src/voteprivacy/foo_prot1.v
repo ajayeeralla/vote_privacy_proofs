@@ -656,7 +656,7 @@ with subtrmls_msg' (t:message) : list message :=
  Eval compute in subtrmls_msg' (f [k (nonce 0) ; O]).
  Eval compute in subtrmls_msg' (sk 1).
  
-Eval compute in (subtrmls_msg' (sign (if_then_else_M TRue (dec O (sk 1)) O) new)).
+(*Eval compute in (subtrmls_msg' (sign (if_then_else_M TRue (dec O (sk 1)) O) new)). *)
 
 (** Subterms of [oursum] term. *)
 
@@ -875,7 +875,7 @@ with subtrmls_msg'' (t:message) : list oursum :=
  Eval compute in subtrmls_msg'' (f [k (nonce 0) ; O]).
  Eval compute in subtrmls_msg'' (sk 1).
  
-Eval compute in (subtrmls_msg'' (sign (if_then_else_M TRue (dec O (sk 1)) O) new)).
+(*Eval compute in (subtrmls_msg'' (sign (if_then_else_M TRue (dec O (sk 1)) O) new)). *)
 
 (** Subterms of [oursum] term. *)
 

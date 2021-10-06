@@ -19,7 +19,7 @@ Definition acc1 n n' k r   := (acpt n k r (x3tt n n')). (**or (acpt n k r (x4ttt
 Definition acc2 n n' k r   := (acpt n' k r (x3tt n n')). (** or (acpt n' k r (x4ttt n n'))*)
 
 Definition e1 n k x (n':nat) n3 := (enc ((label (c n k) (x n n')), ((kc (nonce k)) , THREE)) (pke 2) (se n3)).
-Eval compute in bcheck.
+(*Eval compute in bcheck. *)
 
 (** previous terms *)
 
@@ -78,7 +78,7 @@ Definition phi7 n n' := (phi6 n n') ++ [msg (t47 n n')].
 
  Definition x8t (n n':nat) := f (toListm (phi0 ++ [msg (tr 0 n 3  5 9), msg (tr 1 n' 4 6 10), msg (e n 3 5 (x3tt 0 1) TWO 11), msg (e n' 4 6 (x4ttt n n') TWO  12), msg (strm (x5t n n')), msg (e1 n 3 x6t n' 13), msg (e1 n 4 x7t n' 14) ])).
 Definition x8ft (n n':nat) := f (toListm (phi0 ++ [msg (tr 1 n' 4 6 10), msg (tr 0 n 3 5 9), msg (e n' 4 6 (x3tt 0 1) TWO 11), msg (e n 3 5 (x4fttt n n') TWO 12), msg (strm (x5ft n n')), msg (e1 n' 4 x6ft n' 13), msg (e1 n' 3 x6ft n' 14)])).
-Eval compute in mchecks.
+(*Eval compute in mchecks. *)
 
 Definition theta23 x (n n':nat) := let D := ( (d 1 (x n n')), ((d 2 (x n n')), (d 3 (x n n')))) in
                              let kOcc := (isin (bk 3) D) & (isin (bk 4) D) in
@@ -349,7 +349,7 @@ simpl.
  
 
 
-Eval compute in (submsg_msg 1 {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12 (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 x5tex)).
+(*Eval compute in (submsg_msg 1 {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12 (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 x5tex)). *)
  
 assert( (x5t 0 1) # (submsg_msg 1 {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12 (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 x5tex))).
 simpl. reflexivity. 

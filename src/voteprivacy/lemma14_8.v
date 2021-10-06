@@ -297,7 +297,7 @@ Proof. intros. unfold tau; rewrite proj2, proj1;auto. reflexivity. Qed.
 Lemma tau3: forall x y z, (tau 3 (x, (y, z))) # z.
 Proof. intros. unfold tau. repeat rewrite proj2; try reflexivity.
 Qed.
-Eval compute in FAlse or TRue.
+(*Eval compute in FAlse or TRue. *)
 rewrite tau1, tau2, tau3.
 Axiom freshneq: forall (n : nat) (m : message),
        ^? (m) = true  -> Fresh (cons n nil) [msg m] = true ->
@@ -542,7 +542,7 @@ pose proof (ENCCCA2).
 Axiom infeasible_comp_ck: forall n t g, (closMsg t) = true ->
                                           (** (distMvars [msg t']) = (cons m nil) ->  I can prove this:Fresh (cons n nil) [msg t, msg t'] = true **) ((g t) #? (kc (nonce n)))  ## FAlse.
 (*** I will prove this later **) unfold b00.
-Eval compute in b00.
+(*Eval compute in b00. *)
 Axiom eqm_sym: forall m1 m2, (m1 #? m2) ## (m2 #? m1).
  repeat rewrite eqm_sym with (m1:= (kc (nonce 3))).
 repeat rewrite infeasible_comp_ck with (n:= 3); auto.

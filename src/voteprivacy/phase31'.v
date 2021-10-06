@@ -647,7 +647,7 @@ assert( [msg (pk 1); msg (pk 2); msg (pk 3); msg (nonce 4);
         (unblind (b 0 19) (pk 3) (r 20) (pi2 (x4ttt 1 0))))]).
  
 funapptrmhyp (msg (x87t 0 1)) (msg (x87t 1 0)) tmp.  
-Eval compute in (subtrms_os' (msg (x87t 0 1))).
+(*Eval compute in (subtrms_os' (msg (x87t 0 1))). *)
 
        Goal  (shuf
             (unblind (commit (v (nonce 0)) (rr (nonce 7))) 

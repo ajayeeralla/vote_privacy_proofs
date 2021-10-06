@@ -4,13 +4,13 @@
 (* This work is licensed under the MIT license. The license is          *)
 (* described in the file "LICENSE" available at the root of the source  *)
 (* or at https://opensource.org/licenses/MIT                            *)
-(************************************************************************)    
+(************************************************************************)
 
 Require Export eqCom.
 Require Import Coq.Bool.Bool.
 Require Export Coq.Init.Peano.
 (** This library defines a theorem that states,
-<< 
+<<
 n1<> n2 => EQ ( (nonce n1) , <(nonce n1),(nonce n2)>)= false.
 >>
  *)
@@ -31,7 +31,7 @@ assert( J: (IF (eqm (Mvar 1) (Mvar 2)) then [[3:= Mvar 1]](eqm (nonce 2) (pi2  (
 apply eqbrmsg_bol with (n1:=1)(n2:=2) (n3:= 3)(b1 :=  (eqm (nonce 2)( pi2 (Mvar 3)))) (b2 := FAlse).
 simpl in J.
 apply Forall_ELM_EVAL_B1 with (n:=1)(b:=(nonce 1)) in J.
-simpl in J. 
+simpl in J.
 apply Forall_ELM_EVAL_B1 with (n:=2)(b:=(pair (nonce 1) (nonce 2))) in J.
 simpl in J.
 apply Forall_ELM_EVAL_B1 with (n:=3)(b:=(nonce 2)) in J.
@@ -51,7 +51,7 @@ Qed.
 
 Theorem dist_notocc : forall (n1 n2 :nat), (beq_nat n1 n2 ) = false ->  (occur_name_msg n2 ((pi2 (nonce n1)))) = false.
 Proof. intros.
--induction n1. 
+-induction n1.
   + induction n2. simpl. inversion H.  simpl. reflexivity.
  + induction n2. simpl. reflexivity. simpl. simpl in H. rewrite H. reflexivity.
 
@@ -75,7 +75,7 @@ assert( J: (IF (eqm (Mvar 1) (Mvar 2)) then [[3:= Mvar 1]](eqm (nonce n2) (pi2  
 apply eqbrmsg_bol with (n1:=1)(n2:=2) (n3:= 3)(b1 :=  ( eqm (nonce n2)( pi2 (Mvar 3)))) (b2 := FAlse).
 simpl in J.
 apply Forall_ELM_EVAL_B1 with (n:=1)(b:=(nonce n1)) in J.
-simpl in J. 
+simpl in J.
 apply Forall_ELM_EVAL_B1 with (n:=2)(b:=(pair (nonce n1) (nonce n2))) in J.
 simpl in J.
 apply Forall_ELM_EVAL_B1 with (n:=3)(b:=(nonce n2)) in J.
@@ -83,10 +83,14 @@ simpl in J.
 rewrite <- J.
 assert (Fr: (closMsg (pi2 (nonce n1)) = true)/\ Fresh (cons n2 nil) [msg (pi2 (nonce n1))] = true).
 split. reflexivity.
-unfold Fresh. 
+unfold Fresh.
 apply andb_true_iff.
 split.
-Focus 2. simpl. rewrite distinct. reflexivity. unfold noDupNlist. simpl. rewrite <- beq_nat_refl. reflexivity.
+2: { simpl.
+    rewrite distinct.
+    reflexivity.
+}
+unfold noDupNlist. simpl. rewrite <- beq_nat_refl. reflexivity.
 apply FRESHNEQ in Fr.
 apply Example10_B with (x := (eqm (nonce n2)(pi2 (nonce n1)))) (F:=  FAlse)(z:= TRue) in Fr.
 unfold const in Fr.

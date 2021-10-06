@@ -4,17 +4,17 @@
 (* This work is licensed under the MIT license. The license is          *)
 (* described in the file "LICENSE" available at the root of the source  *)
 (* or at https://opensource.org/licenses/MIT                            *)
-(************************************************************************)    
+(************************************************************************)
 
 Require Export eqBranch.
-Require Import Omega.
-(** This library defines a theorem that states, 
+Require Import Lia.
+(** This library defines a theorem that states,
 
 [forall x y, (eqm x y) = (eqm y x)]. *)
 Open Scope nat_scope.
 Theorem Example14_M: forall (n1 m1 : nat),  (eqm (Mvar n1) (Mvar m1) ) ##  (eqm (Mvar m1) (Mvar n1)).
 Proof.
-intros . 
+intros .
 assert(H : (Bvar 1) ## (IF (Bvar 1) then TRue else FAlse)).
 rewrite IFTF with (n:=1). reflexivity.
 apply Forall_ELM_EVAL_B with (n:=1)(b:= (eqm (Mvar n1) (Mvar m1))) in H .
@@ -29,12 +29,12 @@ assert(H2: (IF (eqm (Mvar n1) (Mvar m1)) then [[ (n1+m1+1):= (Mvar n1)]](eqm (Mv
 apply eqbrmsg_bol with (n1:= n1)(n2:= m1)(n3:=(n1+m1+1))(b1:= (eqm (Mvar (n1+m1+1)) (Mvar n1))) (b2:= FAlse).
 simpl in H2.
 assert(H4: n1<> n1+m1+1).
-omega.
+lia.
 assert (H3: beq_nat (n1+m1+1) n1  = false).
 apply beq_nat_false_iff  with (x:=n1)(y:=n1+m1+1) in H4; auto.
 rewrite Nat.eqb_sym; auto.
 rewrite H3 in H2.
-simpl. 
+simpl.
 rewrite <- beq_nat_refl in H2.
 rewrite H2 in H.
 assert(H5 :  (Bvar 1) ##  (IF (Bvar 1) then TRue else FAlse)).
@@ -63,7 +63,7 @@ assert(H8:  (IF (eqm (Mvar m1) (Mvar n1)) then [[ (n1+m1+1):= (Mvar m1)]](eqm (M
 apply eqbrmsg_bol with (n1:= m1)(n2:= n1)(n3:=(n1+m1+1))(b1:= (eqm (Mvar (n1+m1+1)) (Mvar m1))) (b2:= FAlse).
 simpl in H8.
 assert(H9: m1<> n1+m1+1).
-omega.
+lia.
 assert (H10: beq_nat (n1+m1+1)  m1 = false).
 apply beq_nat_false_iff  with (x:=m1)(y:=n1+m1+1) in H9. rewrite Nat.eqb_sym; auto.
 rewrite H10 in H8.

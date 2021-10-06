@@ -7,7 +7,7 @@ Require Export foo_axioms.
 Require Export Coq.Logic.JMeq.
 Require Export Coq.Logic.EqdepFacts.
 Require Import Omega.
-Eval compute in message_beq O O.
+(*Eval compute in message_beq O O. *)
 Open Scope msg_scope.
 
 
@@ -119,7 +119,7 @@ Qed.
 Axiom msg_beq_refl: (forall m, message_beq m m = true).
   
 
-Eval compute in message_beq O O.
+(*Eval compute in message_beq O O. *)
 Check message_beq.
 
 Print message_beq.

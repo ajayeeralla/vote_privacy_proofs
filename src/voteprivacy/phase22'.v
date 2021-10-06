@@ -320,7 +320,7 @@ simpl.
      sign (sk 2)
        (TWO,
        enc (unblind (b 0 19) (pk 3) (r 20) (pi2 (x4ttt 1 0))) (pk 5) (r 37)))]).
-Eval compute in (b 1 7). 
+(*Eval compute in (b 1 7).  *)
  Eval compute in Fresh [7] [msg (commit (v (N 1)) (rr (N 7)))].
 pose proof( commit_swap (vt 0) (vt 1)  _  7 7 19 19 [ msg (sk 1); msg (sk 2); msg (r 8);  msg (r 20); msg
            (enc (unblind (b 1 7) (pk 3) (r 8) (pi1 (x2t 1))) 

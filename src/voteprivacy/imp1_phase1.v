@@ -34,7 +34,7 @@ funapptrmhyp (msg (sign (sk 2) (e (b 1 11) 12) (r 32))) (msg (sign (sk 2) (e (b 
 funapptrmhyp (msg (pk 2, (e (b 1 11) 12), (sign (sk 2) (e (b 1 11) 12) (r 32)))) (msg (pk 2, (e (b 0 11) 12), (sign (sk 2) (e (b 0 11) 12) (r 32)))) H.
 (** Reduce goal if hypothesis redundantly contain goal *)
 restrsublis H.
-Eval compute in (conv_mylist_listos
+(*Eval compute in (conv_mylist_listos *)
         [msg (pk 1); msg (pk 2); msg (pk 5); msg pkat; 
         msg (vt 0); msg (vt 1); bol (eqm (to x1) (V 1));
         msg (pk 1, e (b 0 7) 8, sign (sk 1) (e (b 0 7) 8) (r 30));

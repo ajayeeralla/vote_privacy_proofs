@@ -21,7 +21,7 @@ match l with
 | cons h t' => (pii h (pil t' t))
 end.
 
-Eval compute in (pil [1;2;1] O).
+(*Eval compute in (pil [1;2;1] O). *)
 
 Definition boltonum (b:bool): nat :=
 match b with
@@ -38,7 +38,7 @@ match n with
          end
 end.
           
-Eval compute in (insatpos (boltonum false) (nonce 1) [O;O]).
+(*Eval compute in (insatpos (boltonum false) (nonce 1) [O;O]). *)
 
 Variable l: list message.
 Variable b: bool.

@@ -1,8 +1,9 @@
 (************************************************************************)
-(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)      
+(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
 (************************************************************************)
 Require Export definitions.
 
+(*Require Import lib.definitions.*)
 (** This library defines indistinguishability and all morphisms *)
 Open Scope msg_scope.
 
@@ -20,16 +21,18 @@ forall n, relation (mylist n).
 
 Parameter EQI : forall {n }, relation (mylist n).
 
+Declare Scope ind_scope.
+
 Infix "~" := EQI (at level 0, right associativity): ind_scope.
- Open Scope ind_scope. 
+ Open Scope ind_scope.
 Axiom EQI_equiv: forall n, equiv (mylist n) (@EQI n).
 
 Instance EQI_Equiv :forall n, Equivalence  (@EQI n).
 Proof.
 split;
 repeat apply EQI_equiv.
-Qed.  
-   
+Qed.
+
 Theorem EQI_ref: forall {n:nat} (ml: mylist n), ml ~ ml.
 Proof.
 intros m.
@@ -68,7 +71,7 @@ Instance EQm_Equiv : Equivalence  EQm.
 Proof.
 split;
 repeat apply EQm_equiv.
-Qed. 
+Qed.
 
 Theorem EQm_ref: forall m:message, m # m.
 Proof.
@@ -102,7 +105,7 @@ Instance Bol_Equ_Equiv : Equivalence  EQb.
 Proof.
 split;
 repeat apply BolEQ.
-Qed. 
+Qed.
 
 Theorem EQb_sym: forall b1 b2:Bool, b1 ## b2 -> b2 ## b1.
 Proof.
@@ -126,31 +129,31 @@ Qed.
 
 (** Equivalence relation [EQos] on [oursum] type. *)
 
-Inductive EQos :  relation oursum := 
+Inductive EQos :  relation oursum :=
 |  eqm1: forall (m1 m2: message), m1 # m2 ->  EQos (msg m1) (msg m2)
 |  eqb1: forall (b1 b2: Bool), b1 ## b2 ->  EQos (bol b1) (bol b2).
 
 Infix "###" := EQos (at level 0, right associativity):ind_scope.
 
 Instance os_Equ_Equiv : Equivalence  EQos.
-Proof. 
+Proof.
 split.
 unfold Reflexive;
 intros;
 destruct x;
 try apply eqm1; try apply eqb1;
 reflexivity.
-unfold Symmetric; intros; destruct H;  
+unfold Symmetric; intros; destruct H;
     try apply eqm1; try apply eqb1; symmetry; assumption.
 unfold Transitive; intros.
   inversion H; subst;
   inversion H0; subst;
-  try apply  eqm1; try apply eqb1;   
+  try apply  eqm1; try apply eqb1;
   rewrite H1;
-  apply H3.   
+  apply H3.
 
-Qed.  
- 
+Qed.
+
 Theorem EQos_sym: forall b1 b2: oursum, b1 ### b2 -> b2 ### b1.
 Proof.
 intros.
@@ -172,7 +175,7 @@ Delimit Scope msg_scope with mor.
 (** Equivalence relation [EQosl] is defined on [mylist n] for a natural number [n]. *)
 
 Inductive EQosl: forall {n:nat}, relation (mylist n) :=
-| eqnos :  EQosl  (Nil _) (Nil _) 
+| eqnos :  EQosl  (Nil _) (Nil _)
 | eqconos: forall (m:nat)(os1 os2:oursum)(l1 l2: mylist m), os1 ### os2 -> (EQosl  l1  l2) -> EQosl (os1%mor:l1)  (os2%mor:l2).
 
 Infix "####" := EQosl (at level 0, right associativity): ind_scope.
@@ -193,8 +196,8 @@ apply eqnos.
 apply eqconos.
 rewrite H. reflexivity. apply IHEQosl.
 unfold Transitive.
- intros x y z H1 H2. 
- induction H1. assumption. 
+ intros x y z H1 H2.
+ induction H1. assumption.
   + dependent destruction z.
      - apply eqconos;    inversion H2; subst. rewrite H. apply H6.
         dependent destruction H2. apply   IHEQosl . assumption.
@@ -208,7 +211,7 @@ Inductive EQlm:  relation (list message) :=
 | eqconm: forall (m1 m2 : message)(l1 l2: list message),  m1 # m2 -> (EQlm  l1  l2) -> EQlm (cons m1 l1) (cons m2 l2).
 
 Infix "#@" := EQlm (at level 0, right associativity):ind_scope.
-                
+
 Axiom eqlistm_ind: forall  (l1 l2:  list message ), l1 #@ l2 ->  (f l1) # (f l2).
 Axiom EQlm_Equ_Equiv : Equivalence  (EQlm).
 (*Proof.
@@ -224,8 +227,8 @@ apply eqnm.
 apply eqconm.
 rewrite H. reflexivity. apply IHEQlm.
 unfold Transitive.
- intros x y z H1 H2. 
-induction H1; induction H2. apply eqnm. apply eqconm. rewrite H. reflexivity. 
+ intros x y z H1 H2.
+induction H1; induction H2. apply eqnm. apply eqconm. rewrite H. reflexivity.
 apply IHEQlm.
 Admitted.
   *)
@@ -235,7 +238,7 @@ Instance lm_Eqlm_Equiv : Equivalence  (EQlm ).
 Proof.
 split;
 repeat apply EQlm_equiv.
-Qed. 
+Qed.
 
 (** * Morhphisms *)
 
@@ -264,7 +267,7 @@ apply EQCONSm.
 rewrite H. reflexivity. apply IHEQlm.
 
 unfold Transitive.
- intros x y z H1 H2. 
+ intros x y z H1 H2.
  induction H1.
    +  apply H2.
   + dependent destruction z.
@@ -275,7 +278,7 @@ Qed.
 Qed.*)
 
 
- 
+
 (** * [message] *)
 
  (*
@@ -290,7 +293,7 @@ Add Parametric Morphism: (@ exp) with
 Axiom congfm: forall {f} (n n':nat), n = n' -> (f n) # (f n').
 Axiom congfb: forall {f} (n n':nat), n = n' -> (f n) ## (f n').
 Axiom congf2b: forall {f} (b1 b2 b1' b2':Bool), b1 ## b1' -> b2 ## b2' -> (f b1 b2) ## (f b1' b2').
-                                                                         
+
 Axiom congf2mb: forall {f} (m1 m2 m1' m2':message), m1 # m1' -> m2 # m2' -> (f m1 m2) ## (f m1' m2').
 
 
@@ -312,8 +315,8 @@ Axiom congflist: forall (l1 l2:Mlist), l1 = l2 -> (f l1)# (f l2).
 
 Ltac aply_cong := try apply congfm; try apply congfb; try apply congfb; try apply congf2b; try apply congf2mb; try apply congf3b; try apply congf3mb; try apply congf4mb ; try apply congf1m; try apply congf2m; try apply congf3m; try apply congifm; try apply congf4m; try apply congflist; try apply os_cong.
  (** [ifm_mor] *)
- 
- 
+
+
 Add Parametric Morphism: (@ifm_then_else_) with
   signature EQb ==> EQm ==> EQm ==> EQm as ifm_then_else_mor.
  Proof.   intros; aply_cong;assumption. Qed.
@@ -334,7 +337,7 @@ Add Parametric Morphism: (@ pi1) with
 Add Parametric Morphism: (@ pi2) with
   signature EQm ==> EQm as pi2_mor.
  Proof.  intros; aply_cong;assumption. Qed.
- 
+
 (** [to_mor] *)
 
 Axiom to_cong: forall (m1 m1' : message), m1 # m1' -> (to m1) # (to m1' ).
@@ -365,7 +368,7 @@ Proof.    intros. apply eqlistm_ind. assumption.   Qed.
 Add Parametric Morphism: (@ V0) with
   signature EQm ==> EQm as V0_mor.
 Proof.  intros; aply_cong;assumption. Qed.
- 
+
 
 Add Parametric Morphism: (@ V1) with
   signature EQm ==> EQm as V1_mor.
@@ -399,11 +402,11 @@ Proof.  intros; aply_cong;assumption. Qed.
 
 
 (** [shuf_mor] *)
- 
+
 Add Parametric Morphism: (@shufl) with
   signature EQm ==> EQm ==> EQm ==> EQm as shuf_mor.
 Proof. intros; aply_cong;assumption. Qed.
- 
+
 (** [ke_mor] *)
 
 Add Parametric Morphism: (@ ke) with
@@ -417,18 +420,18 @@ Add Parametric Morphism: (@ re) with
 Proof. intros; aply_cong;assumption. Qed.
 
  (** [enc_mor] *)
- 
+
 Add Parametric Morphism: (@ enc) with
   signature EQm ==> EQm ==> EQm ==> EQm as enc_mor.
 Proof. intros; aply_cong;assumption. Qed.
 
- (** [dec_mor] *) 
- 
+ (** [dec_mor] *)
+
 Add Parametric Morphism: (@ dec) with
   signature EQm ==> EQm ==> EQm as dec_mor.
 Proof. intros; aply_cong;assumption. Qed.
 (** Blind Signatures *)
- 
+
 (** [kb_mor] *)
 
 Add Parametric Morphism: (@ kb) with
@@ -445,13 +448,13 @@ Add Parametric Morphism: (@ rb) with
 Add Parametric Morphism: (@bsign) with
   signature EQm ==> EQm ==> EQm ==> EQm as bsign_mor.
 Proof. intros; aply_cong;assumption. Qed.
-  
+
 (** [bl_mor] *)
 
 Add Parametric Morphism: (@ bl) with
   signature EQm ==> EQm ==> EQm ==> EQm as bl_mor.
 Proof. intros; aply_cong;assumption. Qed.
- 
+
 (** [ublind_mor] *)
 
 Add Parametric Morphism: (@ ub) with
@@ -484,7 +487,7 @@ Proof. intros; aply_cong;assumption. Qed.
 
 
 (*
-(** [pk_mor] *) 
+(** [pk_mor] *)
 
 Axiom pk_cong: forall (n n' : nat), n = n' -> (pk n) # (pk n').
 Add Parametric Morphism: (@ pk) with
@@ -500,7 +503,7 @@ Add Parametric Morphism: (@ sk) with
  Proof.   intros. apply sk_cong. reflexivity. Qed.
 *)
  (** [f_mor] *)
- 
+
 Axiom f_cong: forall (l1 l1' : list message), ( l1) #@ ( l1') -> (f  l1) # (f  l1' ).
 Add Parametric Morphism : ( f ) with
   signature EQlm ==> EQm as f_mor.
@@ -515,11 +518,11 @@ Proof.   intros. apply f_cong. auto. Qed.
 Add Parametric Morphism: (@ifb_then_else_) with
   signature EQb ==> EQb ==> EQb ==> EQb as ifb_then_else_mor.
  Proof. intros; aply_cong;assumption. Qed.
- 
+
 
 
  (** [eqb_mor] *)
- 
+
 Add Parametric Morphism: (@eqb) with
 signature EQb ==> EQb ==> EQb as eqb_mor.
 Proof. intros; aply_cong;assumption. Qed.
@@ -576,7 +579,7 @@ Axiom substbl_bl_cong : forall (b1 b2 b1' b2' : Bool) (n: nat), b1 ## b1' -> b2 
 
 Add Parametric Morphism : (@subbol_bol) with
 signature eq ==> EQb ==> EQb ==> EQb as substbl_bl_mor.
-Proof. intros; aply_cong;assumption. Qed. 
+Proof. intros; aply_cong;assumption. Qed.
 
 (** [substbl_msg_mor] *)
 
@@ -601,7 +604,7 @@ Qed.
 
 Add Parametric Morphism : (@submsg_msg) with
 signature eq ==> EQm ==> EQm ==> EQm as substmsg_msg_mor.
-Proof. intros; aply_cong;assumption. Qed. 
+Proof. intros; aply_cong;assumption. Qed.
 
 (** [subbol_msg'_mor] *)
 
@@ -629,7 +632,7 @@ Axiom bol_Cong: forall (b1 b1': Bool), b1 ## b1'  -> (bol b1 ) ### (bol b1').
 
 Add Parametric Morphism : (@bol ) with
 signature EQb ==> EQos as bol_mor.
-Proof.  intros. apply eqb1. apply H. Qed. 
+Proof.  intros. apply eqb1. apply H. Qed.
 
 (** [Cons_mor] *)
 
@@ -675,11 +678,11 @@ Theorem eqlistm_ind': forall (n:nat) (l1 l2: ilist message n), (l1 == l2) ->  (c
 Proof. intros. apply eqlistos_ind. apply H. Qed.
 
 Instance ml_Equ_Equiv: forall {n}, Equivalence  (@EQml n).
-Proof. 
+Proof.
 split.
 unfold EQml.
 unfold Reflexive. reflexivity.
-unfold EQml. unfold Symmetric. intros. rewrite H. reflexivity. 
+unfold EQml. unfold Symmetric. intros. rewrite H. reflexivity.
 unfold EQml. unfold Transitive. intros. rewrite H, H0. reflexivity.
 Qed.
 
@@ -687,12 +690,12 @@ Qed.
 
 
 
-Add Parametric Morphism:(@ andB) with 
+Add Parametric Morphism:(@ andB) with
 signature EQb ==> EQb ==> EQb as andB_mor.
 Proof. intros; aply_cong;assumption. Qed.
 
-(** notb_mor *) 
- 
+(** notb_mor *)
+
 Add Parametric Morphism: (@ notb) with
 signature EQb ==> EQb as notb_mor.
 Proof. intros; aply_cong;auto; try reflexivity. Qed.
@@ -703,7 +706,7 @@ Print Scope ind_scope.
 
 Definition EQI_bol (b1 b2: Bool) := [ bol (eqb b1 b2)] ~ [bol TRue].
 
-Notation "b1 ## b2" := (EQI_bol b1 b2)(at level 5). 
+Notation "b1 ## b2" := (EQI_bol b1 b2)(at level 5).
 
 (** Equality of [message] terms using indistinguishability. *)
 

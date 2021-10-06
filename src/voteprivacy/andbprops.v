@@ -3,7 +3,7 @@
 (************************************************************************)
  
 Require Export axioms.
- Section andb_props. 
+Section andb_props. 
 Axiom IFTF: forall (n: nat), (IF (Bvar n) then TRue else FAlse) ## (Bvar n).
 Theorem IFMORPH_B1: forall ( b b1 b2 : Bool) (n1 n2:nat) ,
  (IF (Bvar n2) then (IF (Bvar n1) then b else b1) else b2)  ## (IF (Bvar n1) then (IF (Bvar n2) then b else b2) else (IF (Bvar n2) then b1 else b2)).

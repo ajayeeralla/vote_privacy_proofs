@@ -25,7 +25,7 @@ Notation "'[' x '<-' s ']' l" :=  (submsg_mylist x s l).
    (** * [COMPHID] *)
 Axiom compHid: forall (n1 n2:nat) (t t1 t2 : message) {n} (z: mylist n), closMylist [msg t, msg t1, msg t2] = true /\ closMylist z = true /\ Fresh (cons n1 (cons n2 nil)) ([msg t, msg t1, msg t2]++z) = true ->
                                                                             (z ++ [msg (If |t1|#?|t2| then ((comm t1 (k n1)), (comm t2 (k n2))) else t)]) ~ (z ++ [msg (If |t1|#?|t2| then ((comm t2 (k n1)), (comm t1 (k n2))) else t)]).
-Eval compute in ([0<- O] [msg O]).
+(*Eval compute in ([0<- O] [msg O]). *)
    
    Axiom compHid_ext: forall (n2 n3 n4 n5:nat) (t2 t3 : message) {n} {m} (z: mylist n) (l:mylist m), closMylist [msg t2, msg t3] = true /\ closMylist z = true /\ Fresh (cons n2 (cons n3 nil)) (z++[msg t2, msg t3]) = true /\ (|t2|#?|t3|) ## TRue ->
                                                                                 ((length (distMvars l))=? 2)%nat = true -> 

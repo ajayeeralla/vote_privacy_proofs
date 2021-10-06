@@ -98,8 +98,8 @@ Proof. simpl. repeat rewrite proj1, proj2.
 Axiom eqmref: forall m, m#?m ## TRue.
 repeat rewrite eqmref.
 repeat rewrite andB_TRue_l.
-Eval compute in x4ttt 0 1.
-Eval compute in (tr 0 0 3  5 9).
+(*Eval compute in x4ttt 0 1. *)
+(*Eval compute in (tr 0 0 3  5 9). *)
 Definition tr03x := ((vk 0), ((Mvar 5), (sign (Mvar 5) (ssk 0) (rs (nonce 9))))).
 Definition tr14x :=  ((vk 1), ((Mvar 6), (sign (Mvar 6) (ssk 1) (rs (nonce 10))))).
 Definition x4tttex := (f (toListm (phi0 ++ [msg (tr 0 0 3  5 9), msg (tr 1 1 4 6 10), msg (Mvar 0) ]))).
@@ -206,7 +206,7 @@ simpl.
  
 
 
-Eval compute in (submsg_msg 1 {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12 (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 x5tex)).
+(*Eval compute in (submsg_msg 1 {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12 (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 x5tex)). *)
  
 assert( (x5t 0 1) # (submsg_msg 1 {(c 1 4, (ub (c 1 4) pk (bk 6) (x3tt 0 1), TWO)) }_ 2 ^^ 12 (submsg_msg 0 {( (comm (V0 (f [A; B; M; C1; C2; C3; ONE; TWO; THREE; pi1 (ks (nonce 0)); pi1 (ks (nonce 1)); pi1 (ke (nonce 2))])) (kc (nonce 3))) , ((ub (c 0 3) pk (bk 5) (x3tt 0 1)), TWO)) }_ 2 ^^ 11 x5tex))).
 simpl. reflexivity. 

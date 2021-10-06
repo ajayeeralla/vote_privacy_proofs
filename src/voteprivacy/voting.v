@@ -250,7 +250,7 @@ simpl.  do 4 rewrite IFTRUE_M in H. simpl.
 
 
  
-Eval compute in (x3tt 0 1). 
+(*Eval compute in (x3tt 0 1).  *)
 Definition x3ttx := f (toListm (phi0 ++ [msg ((vk 0), (Mvar 5, (sign (Mvar 5) (ssk 0) (rs (nonce 9)))))] ++ [msg ((vk 1), (Mvar 6, (sign (Mvar 6) (ssk 1) (rs (nonce 10)))))])).
 
 Definition sr (n:nat) := (rs (nonce n)).
@@ -290,7 +290,7 @@ funapptrmhypbl (bol ((to (x3tt 0 1)) #? A))  (bol ((to (x3tt 1 0)) #? A)) H0; si
 
 do 6 (restr_proj_in 15 H0).
 restr_proj_in 17 H0 . restr_proj_in 18 H0. do 2 restr_proj_in 19 H0.
-Eval compute in (x3tt 0 1). 
+(*Eval compute in (x3tt 0 1).  *)
  repeat unfold tr, acpt, vk, b, c, s. 
 restr_swap_in 13 17 H0.
 restr_swap_in 14 18 H0.

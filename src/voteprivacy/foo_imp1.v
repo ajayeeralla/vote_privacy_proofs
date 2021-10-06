@@ -26,7 +26,7 @@ Definition vt (n:nat) := (v (nonce n)).
 (** attacker symbols *)
 
 (*Variables s s': message.
-Eval compute in pk.
+(*Eval compute in pk. *)
 Notation pk' s := (pi1 (k s)).
 *)
 (** ' indicates attacker symbol *) 

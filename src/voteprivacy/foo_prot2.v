@@ -53,9 +53,9 @@ Definition phi1 n1 n2 := phi0 ++ [msg (q0 n1 n2)].
 Fixpoint traces {n} (l:mylist n) : list (list oursum):= cons (ifmT l) (cons (ifmE l) nil).
 
 
-Eval compute in ifmT (phi1 0 1).
-Eval compute in (ifmT (conv_listos_mylist (ifmE (phi1 0 1)))).
-Eval compute in (ifmE (conv_listos_mylist (ifmE (phi1 0 1)))).
+(*Eval compute in ifmT (phi1 0 1). *)
+(*Eval compute in (ifmT (conv_listos_mylist (ifmE (phi1 0 1)))). *)
+(*Eval compute in (ifmE (conv_listos_mylist (ifmE (phi1 0 1)))). *)
 Definition phi1t n1 := phi0 ++ [msg ((pk 1), ((e (b n1 7) 8) , (sign (sk 1) (ONE, (e (b n1 7) 8)))))]. 
 Definition x2t n1 := (f (conv_mylist_listm (phi1t n1))). 
  
@@ -99,8 +99,8 @@ Definition x3ftt n2 := (f (conv_mylist_listm (phi2ftt n2))).
 Definition phi2ftft n1 n2  := (phi1ft n2) ++ [msg  (pk 1, (e (b n1 13) 14, sign (sk 1) (ONE, (e (b n1 13) 14))))].
 Definition x3ftft n1 n2 := (f (conv_mylist_listm (phi2ftft n1 n2))). 
 
-Eval compute in x3ftft  0 1.
-Eval compute in x3ftft 1 0.
+(*Eval compute in x3ftft  0 1. *)
+(*Eval compute in x3ftft 1 0. *)
 
 (****************************************************************)
 Definition mphi2 n1 n2:= (conv_mylist_listm (phi2 n1 n2)).

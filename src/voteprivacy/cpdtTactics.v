@@ -1,5 +1,5 @@
 (* Copyright (c) 2008-2012, Adam Chlipala
- * 
+ *
  * This work is licensed under a
  * Creative Commons Attribution-Noncommercial-No Derivative Works 3.0
  * Unported License.
@@ -9,6 +9,7 @@
 
 Require Export morphisms.
 Require Import Eqdep List Omega.
+Require Import Lia.
 
 Set Implicit Arguments.
 
@@ -169,7 +170,7 @@ Ltac un_done :=
 Require Import JMeq.
 
 (** A more parameterized version of the famous [crush].  Extra arguments are:
-   * - A tuple-list of lemmas we try [inster]-ing 
+   * - A tuple-list of lemmas we try [inster]-ing
    * - A tuple-list of predicates we try inversion for *)
 Ltac crush' lemmas invOne :=
   (** A useful combination of standard automation *)
@@ -199,8 +200,8 @@ Ltac crush' lemmas invOne :=
           repeat (simplHyp invOne; intuition)); un_done
       end;
       sintuition; rewriter; sintuition;
-      (** End with a last attempt to prove an arithmetic fact with [omega], or prove any sort of fact in a context that is contradictory by reasoning that [omega] can do. *)
-      try omega; try (elimtype False; omega)).
+      (** End with a last attempt to prove an arithmetic fact with [lia], or prove any sort of fact in a context that is contradictory by reasoning that [lia] can do. *)
+      try lia; try (elimtype False; lia)).
 
 (** [crush] instantiates [crush'] with the simplest possible parameters. *)
 Ltac crush := crush' false fail.
