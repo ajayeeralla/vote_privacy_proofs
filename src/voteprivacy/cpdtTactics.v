@@ -17,7 +17,7 @@ Set Implicit Arguments.
 (** A version of [injection] that does some standard simplifications afterward: clear the hypothesis in question, bring the new facts above the double line, and attempt substitution for known variables. *)
 Ltac inject H := injection H; clear H; intros; try subst.
 
-Print  Ltac inject.
+(* Print  Ltac inject. *)
 (** Try calling tactic function [f] on all hypotheses, keeping the first application that doesn't fail. *)
 Ltac appHyps f :=
   match goal with
@@ -32,7 +32,7 @@ Ltac inList x ls :=
     | (?LS, _) => inList x LS
   end.
 
-Print Ltac inList.
+(* Print Ltac inList. *)
 (** Try calling tactic function [f] on every element of tupled list [ls], keeping the first call not to fail. *)
 Ltac app f ls :=
   match ls with

@@ -7,9 +7,9 @@ Makefile.coq: Makefile _CoqProject
 
 SORT_COQPROJECT = sed 's,[^/]*/,~&,g' | env LC_COLLATE=C sort | sed 's,~,,g'
 
-.PHONY: _CoqProject
-_CoqProject:
-	(echo '-R src ""'; (find src -name *.v | $(SORT_COQPROJECT))) > _CoqProject
+# .PHONY: _CoqProject
+# _CoqProject:
+	# (echo '-R src ""'; (find src -name *.v | $(SORT_COQPROJECT))) > _CoqProject
 
 .PHONY: clean
 clean:

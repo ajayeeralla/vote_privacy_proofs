@@ -24,7 +24,10 @@ Parameter EQI : forall {n }, relation (mylist n).
 Declare Scope ind_scope.
 
 Infix "~" := EQI (at level 0, right associativity): ind_scope.
- Open Scope ind_scope.
+
+Open Scope ind_scope.
+Delimit Scope ind_scope with ind.
+
 Axiom EQI_equiv: forall n, equiv (mylist n) (@EQI n).
 
 Instance EQI_Equiv :forall n, Equivalence  (@EQI n).
@@ -700,7 +703,7 @@ Add Parametric Morphism: (@ notb) with
 signature EQb ==> EQb as notb_mor.
 Proof. intros; aply_cong;auto; try reflexivity. Qed.
 
-Print Scope ind_scope.
+(* Print Scope ind_scope. *)
 (*
 (** Equality of [Bool] terms using indistinguishability. *)
 
