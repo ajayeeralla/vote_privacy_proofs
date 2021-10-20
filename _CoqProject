@@ -1,9 +1,11 @@
 -R src ""
+
+src/voteprivacy/jcsAppendix.v
 src/voteprivacy/andbprops.v
 src/voteprivacy/auth.v
 src/voteprivacy/axioms.v
 src/voteprivacy/cpacca.v
-src/voteprivacy/cpdt.v
+src/other/cpdt.v
 src/voteprivacy/cpdtTactics.v
 src/voteprivacy/definitions.v
 src/voteprivacy/eqBranch.v
@@ -32,7 +34,7 @@ src/voteprivacy/ifTf.v
 src/voteprivacy/imp1_phase1.v
 src/voteprivacy/imp1_phase2.v
 src/voteprivacy/indEq.v
-src/voteprivacy/induction.v
+src/other/induction.v
 src/voteprivacy/lemma14.8.v
 src/voteprivacy/lemma14.v
 src/voteprivacy/lemma14_8.v
