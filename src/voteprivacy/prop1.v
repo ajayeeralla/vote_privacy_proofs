@@ -129,8 +129,8 @@ Axiom msg_beq_refl: (forall m, message_beq m m = true).
 
 
 (*Axiom voteEql : forall x, (|(V0 x)| #? |(V1 x)|) ## TRue. *)
-
-Notation "'[' x '<-' s ']' l" :=  (submsg_mylist x s l).
+Open Scope msg_scope.
+Notation "'[' x '<-' s ']' l" :=  (submsg_mylist x s l): msg_scope.
 Axiom extFreshInd: forall {n} n1 n2 n3 (l:mylist n), (Fresh (cons n1 (cons n2 nil)) l) = true -> ((length (distMvars l))<=? 1)%nat = true ->
                                                   (distMvars l) = (cons n3 nil) ->
                                                   (submsg_mylist n3 (nonce n1) l) ~ (submsg_mylist n3 (nonce n2) l). (** ([ n3 <- (nonce n1)] l)%msg_scope ~ ([n3 <- (nonce n2)] l)%msg_scope.*)
@@ -1145,6 +1145,7 @@ Axiom prop_esorics_gen:  forall {n} (t t0 t1 : message) (z:mylist n), let v0 := 
 
                     (z++[msg (bl c10 t r0), msg (bl c01 t r1),
                            msg (If (acc c10 t r0 t4)& (acc c01 t r1 t5) then rt1 else (If (acc c01 t r1 t5)  then rt2 else (If (acc c10 t r0 t4) then rt3 else (|_, |_))))]).
+
 Theorem ext_blind:  forall (t t0 t1 : message), let v0 := (V0 (nonce 0)) in
                                                                                                       let v1 := (V1 (nonce 0)) in
                                                                                                       (|v0|#?|v1|) ## TRue ->  (Fresh (cons 1 (cons 2 (cons 3 (cons 4 nil)))) ([msg t, msg v0, msg v1, msg t0, msg t1])  = true) ->  closMylist ([msg t]) = true -> ((length (distMvars [msg t0, msg t1]))=?  2)%nat = true -> bVarMylist [msg t0, msg t1] = nil  ->
@@ -1789,10 +1790,11 @@ Axiom ext_blind_gen:  forall {n} (t t0 t1 : message) (z:mylist n), let v0 := (V0
                  let rt2 := (|_, ((ub c01 t r1 t5), c01)) in
                  let rt3 := ((ub c10 t r0 t4), (c10, |_)) in
                  (occur_name_mylist 100 [msg t, msg t0, msg t1] = false) ->
-                 (z++[msg (bl c00 t r0), msg (bl c11 t r1), bol (acc c00 t r0 t2)& (acc c11 t r1 t3),
+                  (z++[msg (bl c00 t r0), msg (bl c11 t r1), bol (acc c00 t r0 t2)& (acc c11 t r1 t3),
                         msg (If (acc c00 t r0 t2)& (acc c11 t r1 t3) then lt1 else (|_, |_))])
                     ~
 
                     (z++[msg (bl c10 t r0), msg (bl c01 t r1), bol (acc c10 t r0 t4)& (acc c01 t r1 t5),
                            msg (If (acc c10 t r0 t4)& (acc c01 t r1 t5) then rt1 else (|_, |_))]).
+               
 End prop.
