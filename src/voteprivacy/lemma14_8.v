@@ -1,9 +1,9 @@
- 
+
 (************************************************************************)
-(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)     
+(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
 (************************************************************************)
-     
-Require Export extfuncapp.
+
+Require Export prop_17.
 Require Import Coq.Bool.Bool.
 Set Nested Proofs Allowed.
 Section lemma14_8.
@@ -23,7 +23,7 @@ SearchAbout eqb%bool.
 (** abbreviations *)
 
 Definition tau n (m:message) := match n, m with
-                                | 1, m => (pi1 m) 
+                                | 1, m => (pi1 m)
                                 | 2, m => (pi1 (pi2 m))
                                 | 3, m => (pi2 (pi2 m))
                                 | _, _ => O
@@ -33,11 +33,11 @@ Definition d n x := (dec (tau n x) (ske 11)).
 Definition pvchecks x := ((pi2 (d 1 x)) #? TWO) & ((pi2 (d 2 x)) #? TWO) & ((pi2 (d 3 x)) #? TWO).
 Definition pochecks x := ((tau 3 (d 1 x)) #? THREE) & ((tau 3 (d 2 x)) #? THREE) & ((tau 3 (d 3 x)) #? THREE).
 
-Definition dist x := !((d 1 x) #? (d 2 x)) & !((d 1 x) #? (d 3 x))& ! ((d 2 x) #? (d 3 x)). 
+Definition dist x := !((d 1 x) #? (d 2 x)) & !((d 1 x) #? (d 3 x))& ! ((d 2 x) #? (d 3 x)).
 Definition isin (x y:message):Bool := (x #? (tau 1 y)) or (x #? (tau 2 y)) or (x #? (tau 3 y)).
 Definition bcheck (x y:message):Bool := (isin x ((tau 1 (pi2 (tau 1 y))), ((tau 1 (pi2 (tau 2 y))), (tau 1 (pi2 (tau 3 y)))))).
 Definition ncheck (x y:message):Bool := (isin x ((tau 3 (pi2 (tau 1 y))), ((tau 3 (pi2 (tau 2 y))), (tau 3 (pi2 (tau 3 y)))))).
- 
+
 
 Definition lbl:= |(nonce 100)|.
 Definition label x y := If (x #? (tau 2 (pi2 (tau 1 y)))) then (pi1 (tau 1 y))
@@ -50,7 +50,7 @@ Definition bnlcheck( x y z:message):Bool:= (bcheck x z) & (|(label x z)| #? lbl)
 Definition mvchecks x (n n':nat) := (dist (x n n')) & (pvchecks (x n n')).
 
 Definition p n x := ( (tau 1 (d n x)), (tau 2 (d n x))).
- 
+
 Definition sotrm x := (shufl (p 1 x) (p 2 x) (p 3 x)).
 
 Definition isink (x y:message):Bool := (x #? (tau 2 (d 1 y))) or (x #? (tau 2 (d 2 y))) or (x #? (tau 2 (d 3 y))).
@@ -62,18 +62,18 @@ Axiom ifmor_ifm: forall f b x y, (f (If b then x else y)) # (If b then (f x) els
 
 
                       Proof. intros.
-                             
+
                              funcapp_f1m'_in g 2 H.
-                             
+
                              simpl.
                              repeat rewrite ifmor_ifm in H.
 funcapp_fm_last |_ H; auto.    apply ind_assoc in H; simpl in H.
        apply funcapp_f3bm' with (f:= (ifm_then_else_)) (p1:= 1) (p2:=3) (p3:=4) in H; unfold getelt_at_pos; simpl in H.
        simpl in H.
 (********************)
-     
+
        apply ind_assoc in H; simpl in H.
-       
+
  do 2  apply restr with (p:= droplastsec) in H; unfold droplastsec in H; simpl in H; simpl; try rewrite Nat.eqb_refl; auto.
  repeat rewrite aply_ifeval_gen in H;auto. Qed.
 
@@ -85,7 +85,7 @@ Proof.    intros.  rewrite H, H0. reflexivity.  Qed.
 Axiom orB_cong: forall b1 b2 b3 b4, b1 ## b2 -> b3 ## b4 -> (IF b1 then TRue else b3) ## (IF b2 then TRue else b4).
 Add Parametric Morphism: (@orB) with
       signature EQb ==> EQb ==> EQb as orB_mor.
-Proof. intros. apply orB_cong; auto.  Qed.           
+Proof. intros. apply orB_cong; auto.  Qed.
 Lemma rep_first_ballot: forall t t0 t1 : message,
       let v0 := V0 (nonce 0) in
       let v1 := V1 (nonce 0) in
@@ -96,7 +96,7 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
       bVarMylist [msg t0, msg t1] = nil ->
       let mvl := [5; 6] in
       mVarMsg t0 = mvl /\ mVarMsg t1 = mvl ->
-                
+
                  let r0 := (r 1) in
                  let r1 := (r 2) in
                  let k0 := (kc (nonce 3)) in
@@ -124,9 +124,9 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
                  let phi02:= [msg b00, msg b11, msg e00, msg e11] in
                  let phi12:= [msg b10, msg b01, msg e10, msg e01] in
                  let fphi02:= f (toListm phi02) in
-                
+
                  let s0 := (If (! (isin pv00 ((pi1 (d 1 fphi02)), ((pi1 (d 2 fphi02)), (pi1 (d 3 fphi02)))))) then (shufl (pi1 (d 1 fphi02)) (pi1 (d 2 fphi02)) (pi1 (d 3 fphi02))) else O)in
-                                
+
                  let dv0 := (If (dist fphi02) & (pvchecks fphi02) then s0 else |_) in
                  let fphi12:= f (toListm phi12) in
                  let s1 := (If (! (isin pv10 ((pi1 (d 1 fphi12)), ((pi1 (d 2 fphi12)), (pi1 (d 3 fphi12)))))) then (shufl (pi1 (d 1 fphi12)) (pi1 (d 2 fphi12)) (pi1 (d 3 fphi12))) else O)in
@@ -143,17 +143,17 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
                  let fphi13 := f (toListm phi13) in
                  let l10 := (If (bnlcheck c10 (nonce 0) fphi13) then (enc ((label c10 fphi13), (k0, THREE)) (pke 11) (er 9)) else O) in
                  let l01 := (If (bnlcheck c01 (nonce 1) fphi13) then (enc ((label c01 fphi13), (k1, THREE)) (pke 11) (er 10)) else O) in
-                 let phi05:= phi03++[msg l00, msg l11] in   
+                 let phi05:= phi03++[msg l00, msg l11] in
                  let phi15:= phi13++[msg l10, msg l01] in
                  let fphi05 := f (toListm phi05) in
                  let fphi15 := f (toListm phi15) in
                  let do0 := (If (dist fphi05)& (pochecks fphi05)& (((isink k0 fphi05)&(isink k1 fphi05)) or (! ((isink k0 fphi05)or (isink k1 fphi05)))) then (sotrm fphi05) else |_) in
-   let do1 := (If (dist fphi15)& (pochecks fphi15)& ((isink k0 fphi15)&(isink k1 fphi15)) (* or (! ((isink k0 fphi15)or (isink k1 fphi15)))) *) then (sotrm fphi15) else |_) in             
+   let do1 := (If (dist fphi15)& (pochecks fphi15)& ((isink k0 fphi15)&(isink k1 fphi15)) (* or (! ((isink k0 fphi15)or (isink k1 fphi15)))) *) then (sotrm fphi15) else |_) in
                  let t0s0 := (If acc00 & acc11 then ((e00, (e11, dv0)), (l00, (l11, do0))) else |_) in
                  let t1s1 := (If acc10 & acc01 then ((e10, (e01, dv1)), (l10, (l01, do1))) else |_) in
                  (occur_name_mylist 100 [msg t, msg t0, msg t1] = false) -> (Fresh (cons 0 nil) [msg t, msg t2, msg t3, msg t4, msg t5] = true) ->
                  [msg b00, msg b11, msg t0s0] ~ [msg b10, msg b01, msg t1s1].
-           
+
 Proof.            intros.
                       unfold t0s0, t1s1, l00, l10, bnlcheck.
                       (** x ~ y **)
@@ -170,15 +170,15 @@ pose proof(dummy  [msg b00, msg b11,
               (e11,
               If (dist fphi02) & (pvchecks fphi02)
                  then If ! (isin pv00 (pi1 (d 1 fphi02), (pi1 (d 2 fphi02), pi1 (d 3 fphi02))))
-                         then shufl (pi1 (d 1 fphi02)) (pi1 (d 2 fphi02)) (pi1 (d 3 fphi02)) 
-                         else O 
+                         then shufl (pi1 (d 1 fphi02)) (pi1 (d 2 fphi02)) (pi1 (d 3 fphi02))
+                         else O
                  else |_),
               (l00,
               (l11,
               If (dist fphi05) &
                  (pochecks fphi05) & ((isin k0 fphi05) & (isin k1 fphi05)) or ! ((isin k0 fphi05) or (isin k1 fphi05))
-                 then sotrm fphi05 
-                 else |_))) 
+                 then sotrm fphi05
+                 else |_)))
          else |_)] (let phi02' := [msg b00, msg b11, msg {(c00, (ub c00 t r0 t2, nonce 20), TWO) }_ 11 ^^ 7 , msg e11] in
                                           let fphi02':= f (toListm phi02') in
                                           let s0' := (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02')))))) then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O) in
@@ -194,17 +194,17 @@ pose proof(dummy  [msg b00, msg b11,
  unfold e10.
 assert( (let phi02' :=
           [msg b00, msg b11,
-          msg {(c00, (ub c00 t r0 t2, nonce 20), TWO) }_ 11 ^^ 7, 
+          msg {(c00, (ub c00 t r0 t2, nonce 20), TWO) }_ 11 ^^ 7,
           msg e11] in
          let fphi02' := f (toListm phi02') in
         let s0' :=
           If ! (isin pv00
                   (pi1 (d 1 fphi02'), (pi1 (d 2 fphi02'), pi1 (d 3 fphi02'))))
              then shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02'))
-                    (pi1 (d 3 fphi02')) 
+                    (pi1 (d 3 fphi02'))
              else O in
         let dv0' := If (dist fphi02') & (pvchecks fphi02')
-                       then s0' 
+                       then s0'
                        else |_ in
         let phi03' :=
           phi02' ++
@@ -214,11 +214,11 @@ assert( (let phi02' :=
         let fphi03' := f (toListm phi03') in
         let l00' :=
           If bnlcheck c00 (nonce 0) fphi03'
-             then (enc (label c00 fphi03', (k0, THREE)) (pke 11) (er 9)) 
+             then (enc (label c00 fphi03', (k0, THREE)) (pke 11) (er 9))
              else O in
         let l11' :=
           If bnlcheck c11 (nonce 1) fphi03'
-             then (enc (label c11 fphi03', (k1, THREE)) (pke 11) (er 10)) 
+             then (enc (label c11 fphi03', (k1, THREE)) (pke 11) (er 10))
              else O in
         let phi05' := phi03' ++ [msg l00', msg l11'] in
         let fphi05' := f (toListm phi05') in
@@ -227,29 +227,29 @@ assert( (let phi02' :=
              (pochecks fphi05') &
              ((isink k0 fphi05') & (isink k1 fphi05')) (*or
              ! ((isink k0 fphi05') or (isink k1 fphi05')) *)
-             then sotrm fphi05' 
+             then sotrm fphi05'
              else |_ in
         [msg b00, msg b11,
         msg
           (If (acc00) & acc11
               then ((enc (c00, (ub c00 t r0 t2, nonce 20), TWO) (pke 11) (er 9)),
-                   (e11, dv0'), (l00', (l11', do0'))) 
+                   (e11, dv0'), (l00', (l11', do0')))
            else |_)]) ~
 
 
                       (let phi12' :=
           [msg b10, msg b01,
-          msg {(c10, (ub c10 t r0 t4, nonce 20), TWO) }_ 11 ^^ 7, 
+          msg {(c10, (ub c10 t r0 t4, nonce 20), TWO) }_ 11 ^^ 7,
           msg e01] in
         let fphi12' := f (toListm phi12') in
         let s1' :=
           If ! (isin pv10
                   (pi1 (d 1 fphi12'), (pi1 (d 2 fphi12'), pi1 (d 3 fphi12'))))
              then shufl (pi1 (d 1 fphi12')) (pi1 (d 2 fphi12'))
-                    (pi1 (d 3 fphi12')) 
+                    (pi1 (d 3 fphi12'))
              else O in
         let dv1' := If (dist fphi12') & (pvchecks fphi12')
-                       then s1' 
+                       then s1'
                        else |_ in
         let phi13' :=
           phi12' ++
@@ -259,11 +259,11 @@ assert( (let phi02' :=
         let fphi13' := f (toListm phi13') in
         let l10' :=
           If bnlcheck c10 (nonce 0) fphi13'
-             then (enc (label c10 fphi13', (k0, THREE)) (pke 11) (er 9)) 
+             then (enc (label c10 fphi13', (k0, THREE)) (pke 11) (er 9))
              else O in
         let l01' :=
           If bnlcheck c10 (nonce 1) fphi13'
-             then (enc (label c10 fphi13', (k1, THREE)) (pke 11) (er 10)) 
+             then (enc (label c10 fphi13', (k1, THREE)) (pke 11) (er 10))
              else O in
         let phi15' := phi13' ++ [msg l10', msg l01'] in
         let fphi15' := f (toListm phi15') in
@@ -272,13 +272,13 @@ assert( (let phi02' :=
              (pochecks fphi15') &
              ((isink k0 fphi15') & (isink k1 fphi15')) (* or
              ! ((isink k0 fphi15') or (isink k1 fphi15')) *)
-             then sotrm fphi15' 
+             then sotrm fphi15'
              else |_ in
         [msg b10, msg b01,
         msg
           (If (acc10) & acc01
               then ((enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 9)),
-                   (e01, dv1'), (l10', (l01', do1'))) 
+                   (e01, dv1'), (l10', (l01', do1')))
            else |_)])).
 simpl.
 assert( (ncheck (nonce 0) (f
@@ -286,8 +286,8 @@ assert( (ncheck (nonce 0) (f
                                  shufl (pi1 (d 1 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)); e01])))
                                    (pi1 (d 2 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)); e01])))
                                    (pi1 (d 3 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)); e01])))])) ## FAlse).
-unfold ncheck. 
-unfold isin. 
+unfold ncheck.
+unfold isin.
 
 Lemma tau1: forall x y z, (tau 1 (x, (y, z))) # x.
 Proof. intros. unfold tau. rewrite proj1; auto. reflexivity.
@@ -328,11 +328,11 @@ pose proof(freshneq 0 (pi2
                           (f
                              [b10; b01;
                              (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
-                             e01])))])))))). 
+                             e01])))])))))).
 simpl in H8.
 
 simpl in H1. rewrite andb_true_iff in H1. inversion H1.
-repeat rewrite H9 in H8. 
+repeat rewrite H9 in H8.
 unfold t4, t5 in H8.
  rewrite  clos_sub_vtrm in H8;auto.
  rewrite  clos_sub_vtrm in H8;auto.
@@ -359,7 +359,7 @@ rewrite H11, H14, H15 in H8. simpl in H8.
 Axiom consteql: forall x f, const_bol f = true -> [bol x]~[bol f] -> x ## f.
 assert( (const_bol FAlse) = true). reflexivity.
 apply consteql in H8; auto.
-rewrite H8. 
+rewrite H8.
 (** prove N0 is fresh in tau2 of the decrypted message **)
 
 
@@ -388,10 +388,10 @@ pose proof(freshneq 0 (pi2
                           (f
                              [b10; b01;
                              (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7));
-                             e01])))]))))))). 
+                             e01])))]))))))).
 simpl in H17.
 
-repeat rewrite H9 in H17. 
+repeat rewrite H9 in H17.
 unfold t4, t5 in H17.
  rewrite  clos_sub_vtrm in H17;auto.
  rewrite  clos_sub_vtrm in H17;auto. simpl in H17.
@@ -402,7 +402,7 @@ unfold t4, t5 in H17.
 
 
 apply consteql in H17; auto.
-rewrite H17. 
+rewrite H17.
 clear H8 H17.
 
 pose proof(freshneq 0 (pi2 (pi2 (pi2 (pi2 (pi2 (f
@@ -438,11 +438,11 @@ rewrite H11, H14, H15 in H8. simpl in H8.
 apply consteql in H8; auto.
 rewrite H8; clear H8; auto.
 unfold orB.
- repeat rewrite IFFALSE_B. reflexivity. 
-  (left;inversion H4; unfold distMvars; simpl; try rewrite H17; try rewrite H18; try reflexivity). 
-(left;inversion H4; unfold distMvars; simpl; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity). 
-(left;inversion H4; unfold distMvars; simpl; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity). 
-(left;inversion H4; unfold distMvars; simpl; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity). 
+ repeat rewrite IFFALSE_B. reflexivity.
+  (left;inversion H4; unfold distMvars; simpl; try rewrite H17; try rewrite H18; try reflexivity).
+(left;inversion H4; unfold distMvars; simpl; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity).
+(left;inversion H4; unfold distMvars; simpl; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity).
+(left;inversion H4; unfold distMvars; simpl; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity).
 (left;inversion H4; unfold distMvars; simpl; try rewrite H17; try rewrite H18; try rewrite H19; try rewrite H11; try rewrite H12; try reflexivity).
 (left;inversion H4; unfold distMvars; simpl; try rewrite H17; try rewrite H18; try rewrite H19; try rewrite H11; try rewrite H12; try reflexivity).
 
@@ -483,7 +483,7 @@ simpl in H1. rewrite andb_true_iff in H1. inversion H1.
 repeat rewrite H9 in H8.
 simpl in H8.
 unfold Fresh in H8, H6; simpl in H8, H6.
-assert( occur_name_msg 0 t = false). 
+assert( occur_name_msg 0 t = false).
 destruct (occur_name_msg 0 t). simpl in H6.
 inversion H6. reflexivity.
 assert( occur_name_msg 0 t2 = false).
@@ -493,7 +493,7 @@ assert( occur_name_msg 0 t3 = false).
 destruct (occur_name_msg 0 t3).
 simpl in H6. rewrite H12 in H6. simpl in H6. inversion H6. rewrite H11. reflexivity. reflexivity.
 fold t2 in H8.
-rewrite H11, H12, H13 in H8. simpl in H8. 
+rewrite H11, H12, H13 in H8. simpl in H8.
 apply consteql in H8; auto; try  (left;inversion H4; unfold distMvars; simpl; try rewrite H16; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity).
 Axiom extcomphid: forall {n} (z z': mylist n), z ~ z'.
 (******)
@@ -502,7 +502,7 @@ pose proof( freshneq 0 (let x:= (enc (c00, (ub c00 t r0 t2, nonce 20), TWO) (pke
                        shufl (pi1 (d 1 (f [b00; b11; x; e11])))
                              (pi1 (d 2 (f [b00; b11; x; e11])))
                              (pi1 (d 3 (f [b00; b11; x; e11])))])))))).
-simpl in H14.                         
+simpl in H14.
 rewrite H9 in H14.
 unfold t2, t3 in H14.
  rewrite  clos_sub_vtrm in H14;auto.
@@ -528,9 +528,9 @@ rewrite H11, H12, H13 in H15. simpl in H15.
 apply consteql in H15; auto; try (left; try inversion H4; unfold distMvars; simpl; try rewrite H16; try rewrite H17; try reflexivity).
 rewrite H8, H14, H15. unfold orB. repeat rewrite IFFALSE_B. simpl.
 repeat rewrite andB_FAlse_r; try reflexivity.
-(left;inversion H4; unfold distMvars; simpl; try rewrite H16; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity). 
+(left;inversion H4; unfold distMvars; simpl; try rewrite H16; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity).
 (left;inversion H4; unfold distMvars; simpl; try rewrite H16;  try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity).
-(left;inversion H4; unfold distMvars; simpl; try rewrite H16;  try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity). 
+(left;inversion H4; unfold distMvars; simpl; try rewrite H16;  try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity).
 (left;inversion H4; unfold distMvars; simpl; try rewrite H15;  try rewrite H16; try rewrite H18; try rewrite H19; try reflexivity).
 (left;inversion H4; unfold distMvars; simpl; try rewrite H9;  try rewrite H10; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity).
 (left;inversion H4; unfold distMvars; simpl; try rewrite H9;  try rewrite H10; try rewrite H17; try rewrite H18; try rewrite H19; try reflexivity). rewrite H8.
@@ -546,7 +546,7 @@ Axiom infeasible_comp_ck: forall n t g, (closMsg t) = true ->
 Axiom eqm_sym: forall m1 m2, (m1 #? m2) ## (m2 #? m1).
  repeat rewrite eqm_sym with (m1:= (kc (nonce 3))).
 repeat rewrite infeasible_comp_ck with (n:= 3); auto.
-unfold orB. 
+unfold orB.
 repeat rewrite IFFALSE_B.
 repeat rewrite andB_FAlse_l.  repeat rewrite andB_FAlse_r. repeat rewrite IFFALSE_M. simpl.
 (** we replace the encryption that emits *)
@@ -554,7 +554,7 @@ repeat rewrite andB_FAlse_l.  repeat rewrite andB_FAlse_r. repeat rewrite IFFALS
 
 pose proof(compHid_ext).
 apply extcomphid.
- 
+
  simpl.
 simpl in H1;
 rewrite andb_true_iff in H1;
@@ -574,7 +574,7 @@ inversion H1;
 rewrite H10; unfold t4, t5; repeat rewrite clos_sub_vtrm;try left; inversion H4; unfold distMvars; simpl; try rewrite H12; try rewrite H13; try reflexivity.
 
 
-simpl. 
+simpl.
 simpl in H1;
 rewrite andb_true_iff in H1;
 inversion H1;
