@@ -1,3 +1,47 @@
+# What is where
+| Proofs | Coq file| Status |
+|--------|----------|-------|
+|core axioms|axioms| completed|
+|axioms of FOO protocol |foo_axioms| completed but need to reflect latest changes|
+|extended FuncApp| prop_17| completed|
+|extend Fresh Ind| prop_16| needs to complete the proof|
+| corrected version of prop from ESORICS paper| prop_13| completed|
+| extended blindness| prop_21| completed|
+| andb properties | prop_15| completed all except 15.2 (swapping branches)|
+| cpa cca axioms| cpacca|
+
+
+
+
+
+
+
+
+
+# Order of dependency
+|File name|
+|-----------|
+|definitions.v|
+|morphisms.v|
+|cpdtTactics.v|
+|induction.v|
+|axioms.v|
+|andbprops.v|
+|ifTf.v|
+|ifIdemp.v|
+|ifMorph.v|
+|indEq.v|
+|ex71.v|
+|eqm.v|
+|ex11.v|
+|ex74.v|
+|eqBranch.v|
+|eqCom.v|
+|eqNonce.v|
+|tactics.v|
+|foo_axioms.v|
+|prop1.v|
+
 # Machine-checked Proofs of Vote Privacy using Computationally Complete Symbolic Attacker (CCSA)
 
 We have formalized the proofs of vote privacy of the [FOO](https://link.springer.com/chapter/10.1007/3-540-57220-1_66) voting protocol presented in the paper using the [CCSA technique](https://dl.acm.org/doi/10.1145/2660267.2660276) in the [Coq proof assistant](https://coq.inria.fr/).
