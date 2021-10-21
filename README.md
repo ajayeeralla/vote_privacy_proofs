@@ -1,6 +1,8 @@
 # What is where
 | Proofs | Coq file| Status |
 |--------|----------|-------|
+| Inductive types, message, Bool, oursum and some auxiliary functions of them| defininitions| completed|
+| ~, #, ##, morphisms| morphisms| completed|
 |core axioms|axioms| completed|
 |axioms of FOO protocol |foo_axioms| completed but need to reflect latest changes|
 |extended FuncApp| prop_17| completed|
