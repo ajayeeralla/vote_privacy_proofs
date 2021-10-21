@@ -1,4 +1,4 @@
-Require Export prop1.
+Require Export prop_21.
 (*Eval compute in eqb FAlse FAlse. *)
 (*Eval compute in eqm O O. *)
 (************************************************************************)

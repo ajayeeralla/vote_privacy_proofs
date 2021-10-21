@@ -3,7 +3,7 @@
 
 Require Import Eqdep List.
 
-Require Omega.
+Require Import Lia Omega.
 
 Set Implicit Arguments.
 

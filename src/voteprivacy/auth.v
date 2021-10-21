@@ -40,7 +40,7 @@ Definition theta (x a: message) :=  ((to x) #? a) & (vcheck (v 0))&(vcheck (v  1
 
 Definition t1 (n n':nat)  := If (theta x1 A) then (tr 0 n 3 5 9) else (If (theta x1 B) then (tr 1 n' 4 6 10) else O). 
 
-Definition phi1 (n n':nat) := phi0 ++ [msg (t1 n n')]. 
+Definition phi1 (n n':nat) := phi0 ++ [msg (t1 n n')].
 
 
 
@@ -248,16 +248,17 @@ repeat red_in H. rewrite H.
 reflexivity.
 Qed.
 (** Go back apply ext_comphid in this way in prop1 and voting_prop*)
+
 Axiom compHid_ext': forall (n2 n3 n4 n5:nat) (t2 t3 : message) {n} {m} (z: mylist n) (l:mylist m), closMylist [msg t2, msg t3] = true /\ closMylist z = true /\ Fresh (cons n2 (cons n3 nil)) (z++[msg t2, msg t3]) = true  ->
                                                                                 ((length (distMvars l))=? 2)%nat = true -> 
-                                                                                let mvl:= (cons n4 (cons n5 nil)) in ((distMvars l) = mvl \/ (distMvars l) = (cons n5 (cons n4 nil))  ->
+                                                                                let mvl:= (cons n4 (cons n5 nil)) in ((distMvars l) = mvl \/ (distMvars l) = (cons n5 (cons n4 nil)))  ->
                                                                                                         
                                                                                                          let m0 := (comm t2 (k n2)) in
                                                                                                          let m1 := (comm t3 (k n3)) in
                                                                                                          let m0':= (comm t3 (k n2)) in
                                                                                                          let m1':= (comm t2 (k n3)) in 
                                                                                                                                                           
-(z ++ (n4 (If |t2|#?|t3| then m0 else O)]([n5 <- (If |t2|#?|t3| then m1 else O)]l))) ~ (z ++ ([n4 <- (If |t2|#?|t3| then m0' else O)]([n5 <- (If |t2|#?|t3| then m1' else O)]l))).
+(z ++ ([n4 <- (If |t2|#?|t3| then m0 else O)] ([n5 <- (If |t2|#?|t3| then m1 else O)]l))) ~ (z ++ ([n4 <- (If |t2|#?|t3| then m0' else O)]([n5 <- (If |t2|#?|t3| then m1' else O)]l))).
 
 
 Axiom ifmr_gen1_msg: forall f b t1 t2, (f (If b then t1 else t2)) # (If b then (f t1) else (f t2)).

@@ -6,7 +6,7 @@
 (* or at https://opensource.org/licenses/MIT                            *)
 (************************************************************************)    
 
-Require Export eqbranch.
+Require Export eqBranch.
 
 (** This library defines a theorem, [(eqb TRue FAlse)] = FAlse *)
 
