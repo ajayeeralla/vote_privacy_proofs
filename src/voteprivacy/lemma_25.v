@@ -6,7 +6,7 @@
 Require Export prop_17.
 Require Import Coq.Bool.Bool.
 Set Nested Proofs Allowed.
-Section lemma14_8.
+Section lemma_25.
 
   Definition V (b:bool) :=
     match b with
@@ -19,7 +19,7 @@ Section lemma14_8.
     | false => 0
     | true => 1
     end.
-SearchAbout eqb%bool.
+(* SearchAbout eqb%bool. *)
 (** abbreviations *)
 
 Definition tau n (m:message) := match n, m with
@@ -58,7 +58,8 @@ Definition isink (x y:message):Bool := (x #? (tau 2 (d 1 y))) or (x #? (tau 2 (d
 Axiom funcapp_f1m': forall {n n'} f p1 (z z':mylist n) (z1 z1':mylist n'), (z ++ z1) ~ (z' ++ z1') -> ((z ++ z1) ++ [msg (f (ostomsg (getelt_at_pos p1 z1)))]) ~ ((z' ++ z1') ++ [msg (f (ostomsg (getelt_at_pos p1 z1')))]).
 Ltac funcapp_f1m'_in g n H:= apply funcapp_f1m' with (f:=g) (p1:=n) in H; unfold getelt_at_pos in H; simpl in H.
 Axiom ifmor_ifm: forall f b x y, (f (If b then x else y)) # (If b then (f x) else (f y)).
- Lemma extFuncapp1: forall n b b' x x' y y' (z z': mylist n) g, (z ++ [bol b, msg (If b then x else y)]) ~ (z' ++ [bol b', msg (If b' then x' else y')]) -> (z ++ [bol b, msg (If b then x else y), msg (If b then (g x) else |_)])~ (z' ++ [bol b', msg (If b' then x' else y'), msg (If b' then (g x') else |_)]).
+
+Lemma extFuncapp1: forall n b b' x x' y y' (z z': mylist n) g, (z ++ [bol b, msg (If b then x else y)]) ~ (z' ++ [bol b', msg (If b' then x' else y')]) -> (z ++ [bol b, msg (If b then x else y), msg (If b then (g x) else |_)])~ (z' ++ [bol b', msg (If b' then x' else y'), msg (If b' then (g x') else |_)]).
 
 
                       Proof. intros.
@@ -77,24 +78,30 @@ funcapp_fm_last |_ H; auto.    apply ind_assoc in H; simpl in H.
  do 2  apply restr with (p:= droplastsec) in H; unfold droplastsec in H; simpl in H; simpl; try rewrite Nat.eqb_refl; auto.
  repeat rewrite aply_ifeval_gen in H;auto. Qed.
 
-                      Axiom eqm_cong: forall m1 m2 m3 m4, m1 # m2 -> m3 # m4 -> (eqm m1 m3) ## (eqm m2 m4).
+ Axiom eqm_cong: forall m1 m2 m3 m4, m1 # m2 -> m3 # m4 -> (eqm m1 m3) ## (eqm m2 m4).
+
 Set Nested Proofs Allowed.
+
 Add Parametric Morphism: (@ eqm) with
     signature EQm ==> EQm ==> EQb as eqm_mor.
-Proof.    intros.  rewrite H, H0. reflexivity.  Qed.
+Proof. intros. rewrite H, H0. reflexivity. Qed.
+
 Axiom orB_cong: forall b1 b2 b3 b4, b1 ## b2 -> b3 ## b4 -> (IF b1 then TRue else b3) ## (IF b2 then TRue else b4).
+  
 Add Parametric Morphism: (@orB) with
       signature EQb ==> EQb ==> EQb as orB_mor.
-Proof. intros. apply orB_cong; auto.  Qed.
+Proof. intros. apply orB_cong; auto. Qed.
+
+(* Require Import Coq.Lists.List. *)
 Lemma rep_first_ballot: forall t t0 t1 : message,
       let v0 := V0 (nonce 0) in
       let v1 := V1 (nonce 0) in
       (| v0 |) #? (| v1 |) ## TRue ->
-      Fresh [1; 2; 3; 4] [msg t, msg v0, msg v1, msg t0, msg t1] = true ->
+      Fresh (cons 1 (cons 2 (cons 3 (cons 4 nil)))) [msg t, msg v0, msg v1, msg t0, msg t1] = true ->
       closMylist [msg t] = true ->
       (Datatypes.length (distMvars [msg t0, msg t1]) =? 2)%nat = true ->
       bVarMylist [msg t0, msg t1] = nil ->
-      let mvl := [5; 6] in
+      let mvl := (cons 5 (cons 6 nil)) in
       mVarMsg t0 = mvl /\ mVarMsg t1 = mvl ->
 
                  let r0 := (r 1) in
@@ -280,12 +287,14 @@ assert( (let phi02' :=
               then ((enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 9)),
                    (e01, dv1'), (l10', (l01', do1')))
            else |_)])).
-simpl.
+                  simpl.
+ Import ListNotations.
+                                        
 assert( (ncheck (nonce 0) (f
                                  [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)); e01;
                                  shufl (pi1 (d 1 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)); e01])))
                                    (pi1 (d 2 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)); e01])))
-                                   (pi1 (d 3 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)); e01])))])) ## FAlse).
+                                   (pi1 (d 3 (f [b10; b01; (enc (c10, (ub c10 t r0 t4, nonce 20), TWO) (pke 11) (er 7)); e01])))]))%list ## FAlse).
 unfold ncheck.
 unfold isin.
 
@@ -596,4 +605,4 @@ rewrite H10; unfold t2, t3; repeat rewrite clos_sub_vtrm;try left; inversion H4;
 apply extcomphid.
 Qed.
 
-End lemma14_8.
+End lemma_25.

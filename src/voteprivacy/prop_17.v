@@ -1,8 +1,9 @@
- 
+
 (************************************************************************)
-(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)     
+(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
 (************************************************************************)
-     
+
+(* Require Export voting_prop. *)
 Require Export voting_prop.
 Require Import Coq.Bool.Bool.
 Set Nested Proofs Allowed.
@@ -16,7 +17,7 @@ Definition length : list A -> nat :=
    | nil => 0
    | _ :: l' => S (length l')
   end.
-Check Cons.
+(* Check Cons. *)
 Fixpoint inject (ls : list A) : ilist A (length ls) :=
     match ls with
       | nil => (Nil A)
@@ -33,8 +34,8 @@ Fixpoint unject n (ls : ilist A n) : list A :=
     induction ls. reflexivity. simpl. rewrite IHls; reflexivity.
   Qed.
 Lemma ind_mylist: forall n (z : mylist n), (reverse (reverse z)) = z.
-Proof. intros. induction z. simpl. reflexivity. 
-simpl. 
+Proof. intros. induction z. simpl. reflexivity.
+simpl.
 unfold app_elt_last.  Abort.
 
 Axiom restr_in_list: forall n m m' (z z':mylist n) (z1 z1':mylist m), m <= m' -> (z ++ z1) ~ (z ++ z1') ->  forall (p: mylist m -> mylist m'), (z ++ (p z1)) ~ (z ++ (p z1')).
@@ -63,9 +64,9 @@ Lemma extFuncapp: forall n b b' x x' y y' (z z': mylist n) (f : (mylist n) -> Bo
 
 Proof. intros.
        apply funcapp_fn2 with (f:= f) in H.
-       apply restr with (p:= droplastsec) in H. unfold droplastsec in H. simpl in H. 
+       apply restr with (p:= droplastsec) in H. unfold droplastsec in H. simpl in H.
        repeat rewrite ifmf_listnbm in  H.
-       funcapp_fm_last |_ H.    
+       funcapp_fm_last |_ H.
        apply funcapp_f3bm' with (f0:= (ifm_then_else_)) (p1:= 1) (p2:=2) (p3:=3) in H; unfold getelt_at_pos; simpl in H.
        simpl in H.
 (********************)
@@ -74,7 +75,7 @@ Proof. intros.
        apply restr with (p:= droplastsec) in H; unfold droplastsec in H; simpl in H.
        apply restr with (p:= droplastsec) in H; unfold droplastsec in H; simpl in H; auto.
        simpl.
-       SearchAbout nat. apply le_S. reflexivity.
+       (* SearchAbout nat.*) apply le_S. reflexivity.
        reflexivity.
        simpl.
        apply le_S; reflexivity.

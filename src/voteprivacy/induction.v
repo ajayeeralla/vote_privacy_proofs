@@ -1,4 +1,4 @@
-Require Export morphisms.
+Require Export cpdtTactics.
 
 Axiom f_cong2: forall l1 l2, (f l1) # (f l2) -> l1 = l2.
 Lemma InvarMsg: forall (m:message), (submsg_msg 0 (Mvar 0) m) # m.

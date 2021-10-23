@@ -3,11 +3,11 @@
 (* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
 (************************************************************************)
 
-Require Export lemma14_8.
+Require Export lemma_25.
 
 Set Nested Proofs Allowed.
-Section lemma14_9.
 
+  Import ListNotations.
   Axiom ext_blind_enc:  forall {n} (t t0 t1 : message) (z:mylist n), let v0 := (V0 (nonce 0)) in
 
                                                                      let v1 := (V1 (nonce 0)) in
@@ -856,5 +856,5 @@ let fphi03:= (f [b00; b11; e00; e11; dv0]) in
 Axiom aply_ext_comphid: forall n (z z': mylist n), z ~ z'.
 apply aply_ext_comphid. Focus 7. apply aply_ext_comphid.
 Focus 7. simpl. simpl in H3. simpl in H3. inversion H3. simpl.
- rewrite app_nil_r. reflexivity.
- repeat simpl; reflexivity.
+ rewrite app_nil_r. reflexivity. Admitted.
+ 
