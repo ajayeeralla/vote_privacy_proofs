@@ -815,13 +815,9 @@ Fixpoint appMylist {n1} {n2}  (ml1 : mylist n1) (ml2 : mylist n2) : mylist (plus
     | Cons _ n1 x ml3 => Cons _ _ x (appMylist ml3  ml2 )
   end.
 
-Infix " ++ " := appMylist : msg_scope.
-
-
+Infix " ++ " := appMylist: msg_scope.
 
 (** (l1 ++ l2) ++ l3 = l1 ++ (l2 ++ l3) *)
-
-
 
 (**Theorem app_assoc: forall (n n' n'' : nat) (l1 :mylist n) (l2: mylist n') (l3: mylist n'') (fr: (n + n')+ n'' = n + (n' + n'')),
                      l1 ++ (l2 ++ l3) = match fr in (_ = n''') return  mylist n''' with
@@ -1000,7 +996,7 @@ Fixpoint count_occur  (x : nat)(l : Nlist) : nat :=
 
 
 (** Check if no redundancies in [ilist] *)
-Check beq_nat.
+(* Check beq_nat. *)
 
 
 Fixpoint dupNlist (l:Nlist): bool :=
@@ -1053,7 +1049,7 @@ end.
 
 Definition Fresh {m:nat} (nl : Nlist)(ml : mylist m): bool := (noDupNlist nl) && (negb (occurNlistMylist nl ml)).
 (*Eval compute in noDupNlist (cons 1 nil). *)
-  Eval compute in Fresh (cons 1 nil) [msg (comm (V0 (nonce 1)) (kc (nonce 7)))].
+  (* Eval compute in Fresh (cons 1 nil) [msg (comm (V0 (nonce 1)) (kc (nonce 7)))]. *)
 (** Check if an [exp term (exp (G n) (g n) (r n1))] occurs in a term *)
 (** Check if a term t of type msg occurs in a term of either [msg] or [Bool] type *)
 
