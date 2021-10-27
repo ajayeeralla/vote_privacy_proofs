@@ -1,7 +1,7 @@
 -R src ""
 src/voteprivacy/andbprops.v
 src/voteprivacy/auth.v
-src/voteprivacy/axioms.v
+src/voteprivacy/coreAxioms.v
 src/voteprivacy/cpacca.v
 src/voteprivacy/cpdtTactics.v
 src/voteprivacy/definitions.v
@@ -13,7 +13,7 @@ src/voteprivacy/eqm.v
 src/voteprivacy/ex11.v
 src/voteprivacy/ex71.v
 src/voteprivacy/ex74.v
-src/voteprivacy/foo_axioms.v
+src/voteprivacy/fooAxioms.v
 src/voteprivacy/ifIdemp.v
 src/voteprivacy/ifMorph.v
 src/voteprivacy/ifTf.v

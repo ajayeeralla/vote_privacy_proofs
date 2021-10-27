@@ -1,16 +1,18 @@
 # What is where
-| Proofs | Coq file| Status |
-|--------|----------|-------|
-| Inductive types, message, Bool, oursum and some auxiliary functions of them| defininitions| completed|
-| ~, #, ##, morphisms| morphisms| completed|
-|core axioms|axioms| completed|
-|axioms of FOO protocol |foo_axioms| completed but need to reflect latest changes|
-|extended FuncApp| prop_17| completed|
-|extend Fresh Ind| prop_16| needs to complete the proof|
-| corrected version of prop from ESORICS paper| prop_13| completed|
-| extended blindness| prop_21| completed|
-| andb properties | prop_15| completed all except 15.2 (swapping branches)|
-| cpa cca axioms| cpacca|
+| Proofs | Coq file| Used in | Status |
+|--------|----------|-------|---------|
+| Inductive types, message, Bool, oursum and some auxiliary functions of them| defininitions| |completed|
+| ~, #, ##, morphisms| morphisms| | completed|
+|Core axioms|coreAxioms| | completed|
+|Axioms of FOO protocol |fooAxioms| | completed|
+|Commitment Key unforgeability | prop_11 | Lemma 25 and 26| completed
+|Extended `Blindness`| prop_21| prop_22 | completed|
+|Extended `FuncApp`| prop_17| prop_21 |completed|
+|Extended `FreshInd`| prop_16| prop_11, prop_21 | Axiom, needs to complete the proof|
+|Extended `CompHid` | prop_20 | prop_24, 22, Lemma 25|
+| Corrected version of Prop from ESORICS paper| prop_13 (proof sketch), full proof in Appendix prop_22| prop_23|completed|
+| `&` properties | prop_15| |completed all except 15.2 (swapping branches)|
+| CPA, CCA1, CCA2 axioms| cpacca| | completed |
 
 
 

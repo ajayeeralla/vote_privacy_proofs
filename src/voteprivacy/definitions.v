@@ -110,7 +110,6 @@ with Bool : Type :=
 (** Signatures *)
 | ver : message-> message-> message-> Bool.
 
-
 (** induction using using Schemes *)
 Scheme message_Bool_ind := Induction for message Sort Prop
   with Bool_message_ind := Induction for Bool Sort Prop.
@@ -122,7 +121,6 @@ Scheme message_Bool_ind := Induction for message Sort Prop
 Combined Scheme message_Bool_mutind from message_Bool_ind, Bool_message_ind.
 
 (* Print message_Bool_mutind. *)
-
 (** Decide type equality *)
 Lemma message_eq_dec : forall x y: message, { x = y} + {x <> y}
 with Bool_eq_dec: forall b1 b2 : Bool, {b1 = b2} + {b1 <> b2}.
@@ -210,7 +208,6 @@ Section ind.
  Hypothesis f46 : forall m : message, P m -> forall m0 : message, P m0 -> forall m1 : message, P m1 -> P0 (bver m m0 m1).
  Hypothesis f47 : forall m : message, P m -> forall m0 : message, P m0 -> forall m1 : message, P m1 -> P0 (ver m m0 m1).
 
-
 Fixpoint message_Bool_ind' (t:message) : P t :=
    match t with
    | Mvar n => f0 n
@@ -257,8 +254,6 @@ Fixpoint message_Bool_ind' (t:message) : P t :=
    | rs t1 =>  (f36 t1 (message_Bool_ind' t1))
    | sign t1 t2 t3 =>  (f37 t1 (message_Bool_ind' t1) t2 (message_Bool_ind' t2) t3 (message_Bool_ind' t3))
    | z t1 =>  (f38 t1 (message_Bool_ind' t1))
-
-
    end
    with Bool_message_ind' (b:Bool) : P0 b :=
           match b with
@@ -272,34 +267,30 @@ Fixpoint message_Bool_ind' (t:message) : P t :=
           | bver t1 t2 t3 =>  (f46 t1 (message_Bool_ind' t1) t2 (message_Bool_ind' t2) t3 (message_Bool_ind' t3))
           | ver t1 t2 t3 =>  (f47 t1 (message_Bool_ind' t1) t2 (message_Bool_ind' t2) t3 (message_Bool_ind' t3))
    end.
-
-
 End ind.
 
 Combined Scheme message_Bool_mut' from message_Bool_ind', Bool_message_ind'.
 
 Declare Scope msg_scope.
+Delimit Scope msg_scope with msg.
 
 (** Notaions for [pair] *)
-Notation "( x , y , .. , z )" := (pair .. (pair x y) .. z):msg_scope.
+Notation "( x , y , .. , z )" := (pair .. (pair x y) .. z): msg_scope.
 
 (* Eval compute in ( O, O ). *)
-
 (* Eval compute in (O, O, O). *)
 (* Check pair. *)
-
-Definition triple {A:Type} (x y z:A) := (x, (y, z)).
+Definition triple {A:Type} (x y z: A) := (x, (y, z)).
 
 (* Print Visibility. *)
 (** Notation for [bot] *)
-Notation "|_" := bot:msg_scope.
+Notation "|_" := bot: msg_scope.
 
 (* Eval compute in message_beq O O. *)
 
 (** Eval compute in message_beq (f [(nonce 1); O]) (f [(nonce 1); (nonce 2)]) *)
 
 (** [oursum] *)
-
 Inductive oursum : Type :=
 | msg :  message -> oursum
 | bol:  Bool  -> oursum.
@@ -315,7 +306,7 @@ Lemma oursum_eq_dec: forall x y : oursum, {x = y} + {x<> y}.
 Proof. decide equality. apply message_eq_dec. apply Bool_eq_dec. Qed.
 
 (** End tactics *)
-
+(* Require Import List. *)
 
 (** Notations *)
 Notation "x : l" := (Cons _ _ x l) (at level 70) : msg_scope.
@@ -330,7 +321,8 @@ Infix "=?=" := oursum_beq (at level 72) : msg_scope.
 
 (** Decidable [ilist] equality *)
 
-Open Scope msg_scope. 
+Open Scope msg_scope.
+Delimit Scope msg_scope with msg.
 Fixpoint ilist_beq {m1 m2} (l1 : ilist oursum m1)( l2: ilist oursum m2) :bool:=
 match l1, l2 with
     | [], []  => true
@@ -344,11 +336,11 @@ end.
 
 Notation "'If' c1 'then' c2 'else' c3" := (ifm_then_else_ c1 c2 c3)
 (at level 200, right associativity, format
-                                      "'[v   ' 'If'  c1 '/' '[' 'then'  c2  ']' '/' '[' 'else'  c3 ']' ']'") : msg_scope.
+                                      "'[v   ' 'If'  c1 '/' '[' 'then'  c2  ']' '/' '[' 'else'  c3 ']' ']'"): msg_scope.
 
 Notation "'IF' c1 'then' c2 'else' c3" := (ifb_then_else_ c1 c2 c3)
 (at level 200, right associativity, format
-"'[v   ' 'IF'  c1 '/' '[' 'then'  c2  ']' '/' '[' 'else'  c3 ']' ']'") : msg_scope.
+"'[v   ' 'IF'  c1 '/' '[' 'then'  c2  ']' '/' '[' 'else'  c3 ']' ']'"): msg_scope.
 
 
 (** [mylist]: an [ilist] with type [oursum] *)
@@ -365,11 +357,12 @@ Fixpoint mylist_beq {m1 m2} (l1: mylist m1) ( l2:mylist m2) :bool:=
 
 
 Infix "=?" := mylist_beq (at level 70): msg_scope.
+
 (** Eval compute in ( [msg O , msg O] =? [msg O, msg (f (cons O nil)) ]) **)
 (** Abbrevations *)
 (** [notb] *)
 Definition  notb (b: Bool) := (IF b then (FAlse) else (TRue)).
-Notation "! x" := (notb x) (at level 0) : msg_scope.
+Notation "! x" := (notb x) (at level 0): msg_scope.
 
 (** [andB] *)
 Definition andB (b1 b2 :Bool) := IF b1 then b2 else FAlse.
@@ -377,13 +370,13 @@ Infix " & " := andB (at level 0, right associativity): msg_scope.
 
 (** [orB] *)
 Definition orB (b1 b2 : Bool) := IF b1 then TRue else b2.
-Infix " 'or' " := orB (at level 0, right associativity) : msg_scope.
+Infix " 'or' " := orB (at level 0, right associativity): msg_scope.
 
 Notation " '|' x '|' " := (L x) (at level 10, right associativity): msg_scope.
 (* Eval compute in (enc O O O). *)
 
 (** eqm *)
-Infix " '#?' " := eqm (at level 0, right associativity) : msg_scope.
+Infix " '#?' " := eqm (at level 0, right associativity): msg_scope.
 
 (** [eql] *)
 
@@ -1014,6 +1007,7 @@ Fixpoint dupNlist (l:Nlist): bool :=
 
 Definition noDupNlist l := negb (dupNlist l).
 
+(* Compute [1]%list. *)
 (** Check if each element in [ilist nat n] occurs in [ilist msg m] *)
 (*
 Fixpoint occNlistMlist {n:nat} (nl:ilist nat n){m}(ml:ilist message m): bool :=

@@ -1,4 +1,4 @@
-Require Export foo_axioms.
+Require Export fooAxioms.
 (** * Extending FreshInd *)
 Open Scope msg_scope.
 Notation "'[' x '<-' s ']' l" :=  (submsg_mylist x s l): msg_scope.

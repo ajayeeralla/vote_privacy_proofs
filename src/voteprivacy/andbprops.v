@@ -1,11 +1,11 @@
 (************************************************************************)
-(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)     
+(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
 (************************************************************************)
- 
-Require Export axioms.
+
+Require Export coreAxioms.
 (** * Some of the properties of [andB] are presented in Proposition 15 of the paper *)
 
-Section andb_props. 
+Section andb_props.
 Axiom IFTF: forall (n: nat), (IF (Bvar n) then TRue else FAlse) ## (Bvar n).
 Theorem IFMORPH_B1: forall ( b b1 b2 : Bool) (n1 n2:nat) ,
  (IF (Bvar n2) then (IF (Bvar n1) then b else b1) else b2)  ## (IF (Bvar n1) then (IF (Bvar n2) then b else b2) else (IF (Bvar n2) then b1 else b2)).
@@ -23,7 +23,7 @@ reflexivity.
 Qed.
 
 
-Theorem IFMORPH_B2: forall (n:nat)(b1 b2 b3 b4 : Bool) , 
+Theorem IFMORPH_B2: forall (n:nat)(b1 b2 b3 b4 : Bool) ,
 (IF (IF (Bvar n) then b1 else b2) then b3 else b4) ## (IF (Bvar n) then (IF b1 then b3 else b4) else (IF b2 then b3 else b4)).
 Proof.
 intros.
@@ -49,7 +49,7 @@ rewrite <-beq_nat_refl.
 rewrite IFTRUE_B.
 rewrite IFFALSE_B.
 rewrite IFEVAL_B with(b2:=b4).
-reflexivity.               
+reflexivity.
 Qed.
 (** * [andB] properties *)
 
@@ -61,7 +61,7 @@ Proof.
 intros.
 unfold andB .
 rewrite H.
-apply IFFALSE_B. 
+apply IFFALSE_B.
 Qed.
 
 Lemma andB_FAlse_intro2 : forall b1 b2:Bool, b2 ## FAlse -> b1 & b2  ## FAlse.
@@ -74,9 +74,9 @@ Lemma andB_FAlse_l : forall b: Bool, (FAlse & b) ## FAlse.
 Proof. intros. unfold andB. apply IFFALSE_B. Qed.
 
 Lemma andB_diag : forall n, ((Bvar n) & (Bvar n) ) ## (Bvar n).
-Proof.  intros. unfold andB. rewrite IFEVAL_B. simpl. 
+Proof.  intros. unfold andB. rewrite IFEVAL_B. simpl.
         rewrite <- beq_nat_refl.
-        
+
  rewrite IFTF.
 reflexivity.
 Qed.
@@ -85,28 +85,28 @@ Qed.
 
 Lemma andB_TRue_r : forall b:Bool, b & TRue ## b.
 
-Proof.  intros. unfold andB. 
+Proof.  intros. unfold andB.
 pose proof (IFTF 1).
 apply Forall_ELM_EVAL_B with (n :=1)(b:=b) in H.
 simpl in H.
-apply H.  Qed.  
+apply H.  Qed.
 
 Lemma andB_TRue_l : forall b:Bool,  TRue & b ## b.
 
 Proof.  intros. unfold andB.
 apply IFTRUE_B.
-   Qed.           
+   Qed.
 
 Lemma andB_notb_r : forall n, (Bvar n) & (notb (Bvar n)) ## FAlse.
 
-Proof. intros. unfold andB .  unfold notb.  rewrite IFEVAL_B. simpl. rewrite <- beq_nat_refl. 
+Proof. intros. unfold andB .  unfold notb.  rewrite IFEVAL_B. simpl. rewrite <- beq_nat_refl.
 rewrite IFTRUE_B. rewrite IFSAME_B. reflexivity. Qed.
 
 (** [andB] is commutative. *)
 
 Lemma andB_comm1: forall n1 n2 , ( (Bvar n1) & (Bvar n2))  ## ( (Bvar n2) & (Bvar n1)).
 
-Proof. intros. unfold andB.  rewrite <- IFTF with (n:= n2) at 1 . 
+Proof. intros. unfold andB.  rewrite <- IFTF with (n:= n2) at 1 .
 
 rewrite IFMORPH_B1 with (n1:= n2) (n2:=n1). rewrite IFTF with (n:= n1). rewrite IFSAME_B. reflexivity. Qed.
 
@@ -127,7 +127,7 @@ rewrite IFSAME_B.
 rewrite IFFALSE_B.
 reflexivity.
 Qed.
- 
+
 Axiom andB_assoc: forall (b1 b2 b3: Bool), (b1 & b2) & b3 ## b1 & (b2 & b3).
 Axiom andB_prop : forall a b:Bool, (andB a b) ## TRue -> (a ## TRue) /\ (b ## TRue).
 
@@ -150,7 +150,7 @@ Qed.
 
 Lemma notB_involutive : forall n, ! (! (Bvar n)) ## (Bvar n).
 
-Proof.  intros. unfold notb. 
+Proof.  intros. unfold notb.
 
  rewrite IFMORPH_B2. rewrite IFFALSE_B. rewrite IFTRUE_B.
  rewrite IFTF. reflexivity. Qed.
@@ -198,12 +198,12 @@ rewrite IFTRUE_B. reflexivity. Qed.
 
 Lemma and_notB_r : forall n, (Bvar n) & (notb (Bvar n)) ## FAlse.
 Proof. intros. unfold  andB.
-unfold notb. rewrite IFMORPH_B1. 
+unfold notb. rewrite IFMORPH_B1.
 rewrite IFIDEMP_B. rewrite IFSAME_B. reflexivity. Qed.
 
 Lemma and_notB_l : forall n, (notb (Bvar n)) & (Bvar n) ## FAlse.
 Proof. intros. unfold  andB.
-unfold notb. rewrite IFMORPH_B2. 
+unfold notb. rewrite IFMORPH_B2.
 rewrite IFFALSE_B, IFTRUE_B.
 rewrite IFEVAL_B.
 simpl.
@@ -227,7 +227,7 @@ rewrite IFSAME_B.
 (*************)
 assert(H: beq_nat n1 (n1 + 1) = false).
 induction n1.
-reflexivity. 
+reflexivity.
 simpl.
 assumption.
 (************)

@@ -3,6 +3,7 @@
 (************************************************************************)
 
 Require Export cpdtTactics.
+
 (** This library defines equational theory and axioms. The axioms are written for [message] and [Bool] types. *)
 
 (** * Equational theory for DH Protocol *)
