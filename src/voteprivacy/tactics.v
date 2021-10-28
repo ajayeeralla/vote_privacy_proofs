@@ -187,6 +187,7 @@ Ltac fresh_ind n1 n2 H := fr_ind n1 n2 H; repeat ( try split;  simpl;  try refle
 Ltac funapp_fm_in  g H :=  apply FUNCApp_mconst with (m:= g) in H ; simpl in H.
 Ltac funapp_f1_in g n1 H := apply FUNCApp_f1 with (f1:= g) (p:= n1) in H ; simpl in H.
 Ltac funapp_f2b_in g n1 n2 H:= apply FUNCApp_f2b with (f2b:= g) (p1:= n1) (p2:= n2) in H ; simpl in H.
+(** TODO: XXX to fix f2m to f*)
 Ltac funapp_f2m_in g n1 n2 H:= apply FUNCApp_f2m with (f2m:= g) (p1:= n1) (p2:= n2) in H ; simpl in H.
 Ltac funapp_f3b_in g n1 n2 n3 H:= apply FUNCApp_f3b with (f3b:= g) (p1:= n1) (p2:= n2) (p3:= n3) in H; simpl in H.
 Ltac funapp_f3bm_in g n1 n2 n3 H:= apply FUNCApp_f3bm with (f3bm:= g) (p1:= n1) (p2:= n2) (p3:= n3) in H; simpl in H.
@@ -487,8 +488,6 @@ end.
    end.
 
  (** Tactics *)
-
-
 Definition topsymsg_beq (t t': message ) : bool :=
 match t, t' with
 | Mvar _, Mvar _  => true
@@ -507,6 +506,8 @@ match t, t' with
 | to _ ,  _ => false
 | z _ , z _ => true
 | z _ ,  _ => false
+| compl _, compl _ => true
+| compl _, _ => false
 | L _ , L _  => true
 | L _ , _  => false
 | f _ , f _ => true
@@ -694,6 +695,7 @@ with subtrmls_msg'' (t:message) : list oursum :=
          | ks t1 =>  nil
          | rs t1 =>  (cons (msg (rs t1)) nil)
          | z t1 => (cons (msg (z t1)) nil)
+         | compl t1 => (cons (msg (compl t1)) nil)
          | sign t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))
        end.
 
@@ -788,6 +790,7 @@ with subtrmlsbl_msg (t:message) : list oursum :=
          | ks t1 =>  nil
          | rs t1 =>  (cons (msg (rs t1)) nil)
          | z t1 => (cons (msg (z t1)) nil)
+         | compl t1 => (cons (msg (compl t1)) nil)
          | sign t1 t2 t3 => (app (subtrmlsbl_msg t1) (app (subtrmlsbl_msg t2) (subtrmlsbl_msg t3)))
        end.
 

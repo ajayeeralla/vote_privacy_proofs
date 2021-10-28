@@ -95,14 +95,16 @@ Inductive message: Type :=
 | sign: message-> message-> message-> message
 (** Zero symbol *)
 | z: message -> message
+(** Complement of a message *)
+| compl: message -> message
 with Bool : Type :=
 (** Core symbols *)
 | Bvar: nat -> Bool
 | TRue: Bool
 | FAlse: Bool
-| eqb : Bool -> Bool -> Bool
-| eqm : message-> message-> Bool
-| ifb_then_else_ :  Bool -> Bool -> Bool -> Bool
+| eqb: Bool -> Bool -> Bool
+| eqm: message-> message-> Bool
+| ifb_then_else_:  Bool -> Bool -> Bool -> Bool
 (** FOO symbols *)
 (** Blind signatures *)
 | acc : message-> message-> message-> message-> Bool
@@ -113,7 +115,7 @@ with Bool : Type :=
 (** induction using using Schemes *)
 Scheme message_Bool_ind := Induction for message Sort Prop
   with Bool_message_ind := Induction for Bool Sort Prop.
- 
+
 (* Print Bool_message_ind.
 (*Eval compute in message_Bool_ind.*) *)
 
@@ -207,6 +209,7 @@ Section ind.
          P m0 -> forall m1 : message, P m1 -> forall m2 : message, P m2 -> P0 (acc m m0 m1 m2).
  Hypothesis f46 : forall m : message, P m -> forall m0 : message, P m0 -> forall m1 : message, P m1 -> P0 (bver m m0 m1).
  Hypothesis f47 : forall m : message, P m -> forall m0 : message, P m0 -> forall m1 : message, P m1 -> P0 (ver m m0 m1).
+ Hypothesis f48: forall m: message, P m -> P (compl m).
 
 Fixpoint message_Bool_ind' (t:message) : P t :=
    match t with
@@ -254,6 +257,7 @@ Fixpoint message_Bool_ind' (t:message) : P t :=
    | rs t1 =>  (f36 t1 (message_Bool_ind' t1))
    | sign t1 t2 t3 =>  (f37 t1 (message_Bool_ind' t1) t2 (message_Bool_ind' t2) t3 (message_Bool_ind' t3))
    | z t1 =>  (f38 t1 (message_Bool_ind' t1))
+   | compl t1 => (f48 t1 (message_Bool_ind' t1))
    end
    with Bool_message_ind' (b:Bool) : P0 b :=
           match b with
@@ -543,6 +547,7 @@ with submsg_msg (n : nat )(s:message) (t:message) : message :=
   | sign t1 t2 t3 => sign ({{n:= s}} t1) ({{ n:=s}} t2) ({{n:=s}} t3)
   (** zero symbol *)
   | z t1 => z ({{n:= s }} t1)
+  | compl t1 => compl ({{n:=s}} t1)
   (** all other constrs *)
   | _ => t
   end
@@ -619,6 +624,7 @@ with subbol_msg (n : nat )(s:Bool) (t:message) : message :=
   | sign t1 t2 t3 => sign ((n:= s) t1) (( n:=s) t2) ((n:=s) t3)
   (** Zero symbol *)
   | z t1 => z t1
+  | compl t1 => compl ((n:= s) t1)            
   (** all other constrs *)
   | _ => t
   end
@@ -694,6 +700,7 @@ with closMsg (t:message) : bool:=
   | sign t1 t2 t3 => (^? t1) && (^? t2)&& (^? t3)
   (** zero symbol *)
   | z t1 => ^? t1
+  | compl t1 => ^? t1 
   (** all other constrs *)
   | _ => true
  end
@@ -940,13 +947,13 @@ with occur_name_msg (n : nat )(t:message) : bool :=
   | sign t1 t2 t3 =>  (occur_name_msg n t1) || (occur_name_msg n t2) || (occur_name_msg n t3)
   (** zero symbol *)
   | z t1 => false
+  | compl t1 => occur_name_msg n t1
   (** all other constrs *)
   | _ => false
   end.
 
 
 (** Check if absence of a variable in a term of [oursum] *)
-
 Definition  occurOs (n:nat)(t:oursum): bool :=
   match t with
   | bol b1 => occur_name_bol n b1
@@ -954,7 +961,6 @@ Definition  occurOs (n:nat)(t:oursum): bool :=
   end.
 
 (** Check if absence of a variable in [ilist] *)
-
 Fixpoint occurMlist (n:nat) (ml : Mlist):bool :=
   match ml with
     | nil => false
@@ -962,7 +968,6 @@ Fixpoint occurMlist (n:nat) (ml : Mlist):bool :=
   end.
 
 (** Check if absence of a variable in [ilist] *)
-
 Fixpoint occurBlist (x:nat) (ml : Blist):bool :=
   match ml with
     | nil => false
@@ -970,7 +975,6 @@ Fixpoint occurBlist (x:nat) (ml : Blist):bool :=
   end.
 
 (** Check if absence of a variable in [mylist] *)
-
 Fixpoint occur_name_mylist {m:nat}(x:nat) (ml :  mylist m):bool :=
   match ml with
     | [] => false
@@ -978,20 +982,14 @@ Fixpoint occur_name_mylist {m:nat}(x:nat) (ml :  mylist m):bool :=
   end.
 
 (** Number of occurences of an element in [ilist] *)
-
-
 Fixpoint count_occur  (x : nat)(l : Nlist) : nat :=
   match l with
     | nil => 0
     | y::t =>  if (beq_nat y x) then S (count_occur x t) else (count_occur x t)
   end.
 
-
-
 (** Check if no redundancies in [ilist] *)
 (* Check beq_nat. *)
-
-
 Fixpoint dupNlist (l:Nlist): bool :=
   match l with
     | nil => false
@@ -1020,7 +1018,6 @@ Fixpoint occNlistMlist {n:nat} (nl:ilist nat n){m}(ml:ilist message m): bool :=
 (*Eval compute in True \/ False. *)
 *)
 (** Check if each element in (ilist nat n) occurs in (mylist m) *)
-
 Fixpoint occurNlistMylist {m:nat}(nl:Nlist)(ml: mylist m): bool :=
 match nl with
 |nil => false
@@ -1040,13 +1037,11 @@ end.
 (*Eval compute in (S (pred 1)).*) *)
 
 (** Function [Fresh] to check if the list of numbers are freshly generated numbers *)
-
 Definition Fresh {m:nat} (nl : Nlist)(ml : mylist m): bool := (noDupNlist nl) && (negb (occurNlistMylist nl ml)).
 (*Eval compute in noDupNlist (cons 1 nil). *)
   (* Eval compute in Fresh (cons 1 nil) [msg (comm (V0 (nonce 1)) (kc (nonce 7)))]. *)
 (** Check if an [exp term (exp (G n) (g n) (r n1))] occurs in a term *)
 (** Check if a term t of type msg occurs in a term of either [msg] or [Bool] type *)
-
 Fixpoint checkmtbol (t:message) (b:Bool) : bool :=
   match b with
     | eqb  b1 b2 => orb (checkmtbol t b1)  (checkmtbol t b2)
@@ -1096,24 +1091,19 @@ with checkmtmsg (t:message) (t':message) : bool :=
            | sign t1 t2 t3 => orb (orb (checkmtmsg t t1) (checkmtmsg t t2)) (checkmtmsg t t3)
            (** all other constrs *)
            | z t1 => false
+           | compl t1 => checkmtmsg t t1   
            | _ => true
          end.
 
-
-
-
 (** Check for given term [(exp (G n) (g n) (r n1))] occurs in [oursum] *)
 (** Check if a msg term occurs in a term of [oursum] *)
-
 Definition checkmtos (t:message) (t':oursum): bool :=
   match t' with
     |bol b1 => checkmtbol t b1
     |msg t'' => checkmtmsg t t''
   end.
 
-
 (** Check for [exp] term in a term of type [list msg] *)
-
 Fixpoint checkmtlism (t:message) (l: Mlist):bool :=
   match l with
     | nil => false
@@ -1121,7 +1111,6 @@ Fixpoint checkmtlism (t:message) (l: Mlist):bool :=
   end.
 
 (** Check for [exp] term in a term of type [mylist] *)
-
 Fixpoint checkmtmylis (t:message) {m} (l: mylist m):bool :=
   match l with
     | [] => false
@@ -1129,7 +1118,6 @@ Fixpoint checkmtmylis (t:message) {m} (l: mylist m):bool :=
   end.
 
 (** Get an element at a [pos] in [mylist] *)
-
 Fixpoint getelt_at_pos (p :nat) {m}   (ml : mylist m ) : oursum :=
   match (leb p m), p with
     | false, _  => msg O
@@ -1144,9 +1132,7 @@ Fixpoint getelt_at_pos (p :nat) {m}   (ml : mylist m ) : oursum :=
                        end
   end.
 
-
 (** Get an element at a [pos] in [ilist] *)
-
 Fixpoint getelt_ml {m}  (p :nat) (ml : ilist message m) : message :=
   match p with
     | 0 => O
@@ -1161,7 +1147,6 @@ Fixpoint getelt_ml {m}  (p :nat) (ml : ilist message m) : message :=
   end.
 
 (** Appending an element to [mylist] at front *)
-
 Definition app_elt_front (x:oursum) {n} (ml: mylist n) : mylist ( S n):=
   match ml with
     | [] => [x]
@@ -1172,7 +1157,6 @@ Notation " x +++ m1 " := (app_elt_front x m1)(at level 0, right associativity).
 
 
 (** Appending an element of [mylist] at rear *)
-
 Fixpoint app_elt_last (x:oursum) {n} (ml: mylist n) : mylist ( S n):=
   match ml with
     | [] => [x]
@@ -1180,7 +1164,6 @@ Fixpoint app_elt_last (x:oursum) {n} (ml: mylist n) : mylist ( S n):=
   end.
 
 (** Reversing [mylist] *)
-
 Fixpoint reverse {n}(ml: mylist n) : mylist n :=
   match ml with
     | [] => []
@@ -1188,7 +1171,6 @@ Fixpoint reverse {n}(ml: mylist n) : mylist n :=
   end.
 
 (** Insert an element at given position *)
-
 Fixpoint insert_at_pos (p:nat) (x:oursum) {n} (l:mylist n) : mylist (S n) :=
   match (leb p n) , p with
     | false, _ => (app_elt_last (msg O) l)
@@ -1203,16 +1185,12 @@ Fixpoint insert_at_pos (p:nat) (x:oursum) {n} (l:mylist n) : mylist (S n) :=
 (*Eval compute in (insert_at_pos 5 (msg O) [msg O,  msg O]). *)
 
 (** Check if the term at [pos] is [Bool] *)
-
 Definition chkbol_at_pos  {m} (n :nat) (ml :mylist m) : bool := (chkbol_os (getelt_at_pos  n ml)).
 
 (** Check if the term at [pos] is [msg] *)
-
 Definition chkmsg_at_pos {m} (n :nat) (ml :mylist m) : bool := (chkmsg_os (getelt_at_pos n ml)).
 
-
 (** Negating an element at given [pos] in [mylist] *)
-
 Definition neg_at_pos {m}   (p:nat ) (ml : mylist m) : mylist 1 :=
 match  (chkbol_os (getelt_at_pos p ml)) with
 | true => [bol (notb (ostobol (getelt_at_pos p ml)))]
@@ -1222,7 +1200,6 @@ end .
 (*Eval compute in neg_at_pos  2  [bol (Bvar 1) , bol (Bvar 2), msg (nonce 1), msg (nonce 2), msg (nonce 3)]. *)
 
 (** Pairing two elements from [mylist] *)
-
 Definition pair_at_pos {m}  (p1 p2 : nat) (ml : mylist m) : message :=
   match (chkmsg_os (getelt_at_pos  p1 ml)) with
     | true => match (chkmsg_os (getelt_at_pos  p2 ml)) with
@@ -1235,10 +1212,7 @@ Definition pair_at_pos {m}  (p1 p2 : nat) (ml : mylist m) : message :=
                end
   end.
 
-
-
 (** Constructing a [eqm] term in with the elements in [mylist] *)
-
 Definition eqm_at_pos {m}  (p1 p2 : nat) (ml : mylist m) : Bool :=
   match (chkmsg_os (getelt_at_pos  p1 ml)) with
     | true => match (chkmsg_os (getelt_at_pos  p2 ml)) with
@@ -1252,7 +1226,6 @@ Definition eqm_at_pos {m}  (p1 p2 : nat) (ml : mylist m) : Bool :=
   end.
 
 (** Constructing a [eqb] term in with the elements in [mylist] *)
-
 Definition eqb_at_pos {m}(p1 p2 : nat) (ml : mylist m) : Bool :=
   match (chkbol_os (getelt_at_pos  p1 ml)) with
     | true => match (chkbol_os (getelt_at_pos  p2 ml)) with
@@ -1266,7 +1239,6 @@ Definition eqb_at_pos {m}(p1 p2 : nat) (ml : mylist m) : Bool :=
   end.
 
 (** Constructing a [andB] term in with the elements in [mylist] *)
-
 Definition andB_at_pos {m} (p1 p2 : nat) (ml : mylist m) : Bool :=
   match (chkbol_os (getelt_at_pos  p1 ml)) with
     | true => match (chkbol_os (getelt_at_pos  p2 ml)) with
@@ -1280,7 +1252,6 @@ Definition andB_at_pos {m} (p1 p2 : nat) (ml : mylist m) : Bool :=
   end.
 
 (** Negating an element at [pos] in [mylist] *)
-
 Definition notB_at_pos {m} (p : nat) (ml : mylist m) : Bool :=
   match (chkbol_os (getelt_at_pos  p ml)) with
     | true =>  notb (ostobol (getelt_at_pos  p ml))
@@ -1289,7 +1260,6 @@ Definition notB_at_pos {m} (p : nat) (ml : mylist m) : Bool :=
 
 
 (** Construction [ifm_then_else_] term from [mylist] *)
-
 Definition IfM_at_pos {m}  (p1 p2 p3 p4 :nat)(ml : mylist m) : message :=
   match (chkbol_os (getelt_at_pos  p1 ml)) with
     | true => match (chkmsg_os (getelt_at_pos  p2 ml)) with
@@ -1316,7 +1286,6 @@ Definition IfM_at_pos {m}  (p1 p2 p3 p4 :nat)(ml : mylist m) : message :=
   end.
 
 (** Construction [ifb] with terms in [mylist] *)
-
 Definition IfB_at_pos {m}  (p1 p2 p3 p4 :nat)(ml : mylist m) : Bool :=
   match (chkbol_os (getelt_at_pos  p1 ml)) with
     | true => match (chkbol_os (getelt_at_pos  p2 ml)) with
@@ -1365,7 +1334,6 @@ Definition ifm_nespair {m}  (p1 p2 p3 p4 :nat)(ml : mylist m) : message :=
 
 
 (** [If_then_else_M] b1 m1 (m2, m3) : b1 at n1, m1 at n2, m2 at n3, m3 at n4 *)
-
 Definition ifm_pair {m}  (p1 p2 p3 p4 :nat)(ml : mylist m) : message :=
   match (chkbol_os (getelt_at_pos  p1 ml)) with
     | true => match (chkmsg_os (getelt_at_pos  p2 ml)) with
@@ -1381,7 +1349,6 @@ Definition ifm_pair {m}  (p1 p2 p3 p4 :nat)(ml : mylist m) : message :=
 (*Eval compute in ifm_pair 1 2 3 4  [bol (Bvar 1) , bol (Bvar 2), msg (nonce 1), msg (nonce 2), msg (nonce 3)]. *)
 
 (** Dropping the last element in [mylist] *)
-
 Definition dropone {n:nat} (m:mylist n):(mylist (pred n)):=
   match m with
     | [] => []
@@ -1389,7 +1356,6 @@ Definition dropone {n:nat} (m:mylist n):(mylist (pred n)):=
   end.
 
 (** Dropping last two elements in a [mylist] *)
-
 Definition  droptwo {n:nat} (ml: mylist n): mylist (pred (pred n)):= (dropone (dropone ml)).
 
 (** Apply reveal at position in [mylist] *)
@@ -1401,7 +1367,6 @@ Definition reveal_at_pos{m} (p:nat) (ml: mylist m) : message :=
   end.
 *)
 (** Apply [to] at position in [mylist] *)
-
 Definition to_at_pos {m} (p:nat) (ml: mylist m) : message :=
   match (chkmsg_os (getelt_at_pos  p ml)) with
     | true =>  to (ostomsg (getelt_at_pos  p ml) )
@@ -1426,12 +1391,10 @@ Definition m_at_pos {n} (p:nat) (ml:mylist n) : message :=
 (*Eval compute in to_at_pos 4 [bol (Bvar 1) , bol (Bvar 2), msg (nonce 1), msg (nonce 2), msg (nonce 3)]. *)
 *)
 (** Constant function [const] *)
-
 Definition const {X:Type}{Y:Type}(a : X) := fun _ : Y => a.
 (*Eval compute in (const (nonce 0) O ). *)
 
 (** Substitute [Bool] in [mylist] *)
-
 Fixpoint subbol_mylist {n1:nat} (n:nat)(s:Bool)(ml: mylist n1):mylist n1 :=
   match ml with
     | [] => []
@@ -1439,7 +1402,6 @@ Fixpoint subbol_mylist {n1:nat} (n:nat)(s:Bool)(ml: mylist n1):mylist n1 :=
   end.
 
 (** Substitute [msg] in [mylist] *)
-
 Fixpoint submsg_mylist {n1:nat} (n:nat)(s:message)(ml: mylist n1):mylist n1 :=
   match ml with
     | [] => []
@@ -1450,11 +1412,9 @@ Fixpoint submsg_mylist {n1:nat} (n:nat)(s:message)(ml: mylist n1):mylist n1 :=
 
 
 (** Drop last element *)
-
 Definition drpone_last {n} (l:mylist (S n)) : mylist n :=  dropone(reverse l).
 
 (** Project last element *)
-
 Definition proj_one {n} (l: mylist n) : mylist 1:=
   match (reverse   l)  with
     | [] => [msg O]
@@ -1462,7 +1422,6 @@ Definition proj_one {n} (l: mylist n) : mylist 1:=
   end.
 
 (** Project last two *)
-
 Definition proj_two {n} (l:mylist n) : mylist 2:=
   match (reverse l) with
     |[] => [msg O, msg O]
@@ -1471,7 +1430,6 @@ Definition proj_two {n} (l:mylist n) : mylist 2:=
   end.
 
 (** Drop last but one *)
-
 Definition droplastsec {n} (l:mylist n) : mylist (pred (pred n) + pred 2) :=
   let y := (proj_two l) in
   let x := (droptwo (reverse l)) in
@@ -1481,7 +1439,6 @@ Definition droplastsec {n} (l:mylist n) : mylist (pred (pred n) + pred 2) :=
 (*Eval compute in (droplastsec  [msg O, msg (Mvar 1)]). *)
 
 (** Project last three *)
-
 Definition proj_three {n} (l: mylist n) : mylist 3:=
   match (reverse l) with
     | [] => [msg O , msg O , msg O]
@@ -1491,7 +1448,6 @@ Definition proj_three {n} (l: mylist n) : mylist 3:=
   end.
 
 (** Drop last but third *)
-
 Definition droplast3rd {n} (l:mylist n) : mylist (( pred (pred (pred n) ) ) + pred 3) :=
   let y := (proj_three l) in
   let x := (dropone (droptwo (reverse l))) in
@@ -1501,7 +1457,6 @@ Definition droplast3rd {n} (l:mylist n) : mylist (( pred (pred (pred n) ) ) + pr
 (*Eval compute in (droplast3rd  [ msg (Mvar 1)]). *)
 
 (** Construct [mylist n] where each element is [msg O] *)
-
 Fixpoint app_n_elts (n:nat) :mylist n :=
   match n with
     | 0 => []
@@ -1511,7 +1466,6 @@ Fixpoint app_n_elts (n:nat) :mylist n :=
 (*Eval compute in app_n_elts 3. *)
 
 (** Apply [pred] on [m] for [n] times *)
-
 Fixpoint app_pred_n (n m:nat) : nat :=
   match n with
     | 0 => m
@@ -1519,7 +1473,6 @@ Fixpoint app_pred_n (n m:nat) : nat :=
   end.
 
 (** Drop [n] elements from [mylist] *)
-
 Fixpoint drop_n_times (n :nat) {m} (l:mylist m) : mylist (app_pred_n n m) :=
   match (leb n m) with
     | true => match n with
@@ -1533,15 +1486,12 @@ Fixpoint drop_n_times (n :nat) {m} (l:mylist m) : mylist (app_pred_n n m) :=
 (*Eval compute in drop_n_times 5 [msg O, msg O, msg O, msg O]. *)
 
 (** First [n] elements of [mylist] **)
-
 Definition Firstn (n:nat) {m} (l: mylist m) : mylist (app_pred_n (app_pred_n n  m) m) :=  reverse (drop_n_times (app_pred_n n m ) (reverse l)).
 
 (** Skip or remove first [n] elements in [mylist] **)
-
 Definition Skipn (n:nat) {m} (l: mylist m) : mylist (app_pred_n n m) :=  drop_n_times n l.
 
 (** Swap two elements in a [mylist] *)
-
 Definition swap_mylist (p1 p2 :nat) {m} (l:mylist m) : mylist
     (pred (app_pred_n (app_pred_n p1 m) m) +
      (1 +
@@ -1562,7 +1512,6 @@ Definition swap_mylist (p1 p2 :nat) {m} (l:mylist m) : mylist
 (*Eval compute in swap_mylist 1 3  [ msg O, msg (Mvar 3), msg (Mvar 2), msg (Mvar 1)]. *)
 
 (** Proj an element at a given [pos] [p] in [mylist] *)
-
 Definition proj_at_pos (p:nat) {m} (l:mylist m) : mylist (pred (app_pred_n (app_pred_n p m) m) + app_pred_n p m) :=
   let x := (Firstn p l) in
   let y := (Skipn p l) in
@@ -1572,7 +1521,6 @@ Definition proj_at_pos (p:nat) {m} (l:mylist m) : mylist (pred (app_pred_n (app_
 (*Eval compute in proj_at_pos 3  [ msg O, msg (Mvar 3), msg (Mvar 2), msg (Mvar 1)]. *)
 
 (** Check [equality] of two lists *)
-
 Section def.
 Variable A B :Type.
 Variable  f: message -> message -> bool.
@@ -1801,7 +1749,6 @@ with check_eq_msg ( t t' : msg ) : bool :=
 *)
 
 (** Check occurence of a term in a term *)
-
 Fixpoint checkbtbol ( b':Bool) (b:Bool) : bool :=
   if (Bool_beq b' b) then true else
   match b  with
@@ -1852,15 +1799,12 @@ with checkbtmsg (b :Bool) (t:message) : bool :=
          | sign t1 t2 t3 => orb (orb (checkbtmsg b t1) (checkbtmsg b t2)) (checkbtmsg b t3)
          (** zero symbol *)
          | z t1 => false
+         | compl t1 => checkbtmsg b t1
          (** all other constrs *)
          | _ => true
        end.
 
-
-
-
 (** Substitute term ts ([Bool]) for a term t'([Bool]) replace b' with s in b *)
-
 Fixpoint subbol_bol'  (b' : Bool) (s: Bool) (b :Bool) : Bool :=
   if (Bool_beq b' b) then s else
     match b  with
@@ -1912,13 +1856,10 @@ with subbol_msg' (b' : Bool )(s: Bool) (t:message) : message :=
          | sign t1 t2 t3 => sign (subbol_msg' b' s t1) (subbol_msg' b' s t2) (subbol_msg' b' s t3)
          (** zero symbol *)
          | z t1 => z t1
-         (** all other constrs *)
-
+         | compl t1 => compl (subbol_msg' b' s t1)
+         (** all other constrs *)            
          | _ => t
        end.
-
-
-
 
 Fixpoint submsg_bol' (t' : message)(s:message) (b:Bool) : Bool :=
   match b with
@@ -1934,7 +1875,6 @@ with submsg_msg' (t' : message )(s:message) (t:message) : message :=
 if  (message_beq t' t)  then s else
   match t with
          | ifm_then_else_ b1 t1 t2 =>    (If (submsg_bol' t' s b1) then (submsg_msg' t' s t1) else (submsg_msg' t' s t2))
-
          | pair t1 t2 => pair (submsg_msg' t' s t1) (submsg_msg' t' s t2)
          | pi1 t1 =>  pi1 (submsg_msg' t' s t1)
          | pi2 t1 =>  pi2 (submsg_msg' t' s t1)
@@ -1970,16 +1910,14 @@ if  (message_beq t' t)  then s else
          | rs t1 => rs (submsg_msg' t' s t1)
          | sign t1 t2 t3 => sign (submsg_msg' t' s t1) (submsg_msg' t' s t2) (submsg_msg' t' s t3)
          | z t1 => z t1
+         | compl t1 => compl (submsg_msg' t' s t1)
          (** all other constrs *)
          | _ => t
        end.
 
 (*Eval compute in (submsg_msg' (Mvar 1) O (Mvar 2)). *)
 
-
-
 (** Check if a term is constant *)
-
 Definition const_bol (t:Bool) : bool :=
   match t with
     | TRue => true
@@ -1997,7 +1935,6 @@ Definition const_msg (t:message) : bool :=
   end.
 
 (** Subterms of list of terms. *)
-
 Section subtrm.
 Variable f: message -> Mlist.
 Fixpoint subtrmls (l: Mlist) : Mlist :=
@@ -2054,21 +1991,18 @@ with subtrmls_msg (t:message) : Mlist :=
          | rs t' => (app (cons (rs t') nil ) (subtrmls_msg t'))
          | sign t1 t2 t3 => (app (app (app (cons (sign t1 t2 t3) nil) (subtrmls_msg t1)) (subtrmls_msg t2)) (subtrmls_msg t3))
          | nonce n'=> (cons (nonce n') nil)
-
          | pair t1 t2 => (app (cons (pair t1 t2) nil) (app (subtrmls_msg  t1) (subtrmls_msg t2) ))
          | pi1 t1 => (app (cons (pi1 t1) nil) (subtrmls_msg t1) )
          | pi2 t1 => (app (cons (pi2 t1) nil) (subtrmls_msg t1) )
-
          | L t1 => (app (cons (L t1) nil)  (subtrmls_msg t1) )
          | to t1 => (app (cons (to t1) nil)  (subtrmls_msg t1) )
          | f l => ((cons (f l) (@subtrmls subtrmls_msg l)))
          | z t1 =>  (cons (z t1) nil)
-
+         | compl t1 => (app (cons (compl t1) nil) (subtrmls_msg t1))
        end.
 
 
 (** Subterms of [oursum] term. *)
-
 Definition subtrmls_os (t:oursum) : Mlist :=
   match t with
     | msg t1 => subtrmls_msg t1
@@ -2076,7 +2010,6 @@ Definition subtrmls_os (t:oursum) : Mlist :=
   end.
 
 (** Subterms of terms of type [mylist n] for some [n].*)
-
 Fixpoint subtrmls_mylist {n} (l:mylist n) : Mlist :=
   match l with
     | [] => nil
@@ -2084,7 +2017,6 @@ Fixpoint subtrmls_mylist {n} (l:mylist n) : Mlist :=
   end.
 
 (** Check if [(nonce n)] occurs only under either [sk] or [pk] . *)
-
 (** [msg] or [Bool]. *)
 Fixpoint onlyin_pkrsk_bol (n : nat )(t:Bool) : bool :=
   match t with
@@ -2134,13 +2066,12 @@ with onlyin_pkrsk_msg (n : nat )(t:message) : bool :=
          | rs t1 =>  (onlyin_pkrsk_msg n t1)
          | sign t1 t2 t3 => (andb (andb (onlyin_pkrsk_msg n t1) ( onlyin_pkrsk_msg n t2)) (onlyin_pkrsk_msg n t3))
          | z t1 => true
+         | compl t1 => (onlyin_pkrsk_msg n t1)
          (** Foo function protocol *)
          | _ => true
        end.
 
-
 (** [oursum] *)
-
 Definition onlyin_pkrsk_os (n : nat )(t:oursum) : bool :=
   match t with
     | msg t1 => (onlyin_pkrsk_msg n t1)
@@ -2148,17 +2079,13 @@ Definition onlyin_pkrsk_os (n : nat )(t:oursum) : bool :=
   end.
 
 (** [mylist m] for some m *)
-
 Fixpoint onlyin_pkrsk_mylist (n : nat ){m}(t: mylist m) : bool :=
   match t with
     | []  => true
     | h: t=> (andb (onlyin_pkrsk_os n h) (onlyin_pkrsk_mylist n t))
   end.
 
-
 (** insec_n returns true only if n is a subterm of in pk(n) or in sign(sk(n), ti) for some ti. Of course, n may occur as a subterm of pk(n) and sign(sk(n), t') recursively. *)
-
-
 Fixpoint insec_n_bol (n : nat )(t:Bool) : bool :=
   match t with
     | eqb  b1 b2 =>  (orb (insec_n_bol n b1)  (insec_n_bol n b2))
@@ -2206,13 +2133,12 @@ with insec_n_msg (n : nat )(t:message) : bool :=
                            | _ => (orb (orb (insec_n_msg n t1) (insec_n_msg n t2)) (insec_n_msg n t3) )
                              end
          | z t1 => false
+         | compl t1 => insec_n_msg n t1
          (** Foo function protocol *)
          | _ => false
        end.
 
-
 (** [oursum]  *)
-
 Definition  insec_n_os (n : nat )(t:oursum) : bool :=
   match t with
     | msg t1 => (insec_n_msg n t1)
@@ -2220,7 +2146,6 @@ Definition  insec_n_os (n : nat )(t:oursum) : bool :=
   end.
 
 (** [mylist m] *)
-
 Fixpoint  insec_n_mylis (n : nat ){m}(t: mylist m) : bool :=
   match t with
     | []  => false
@@ -2230,16 +2155,13 @@ Fixpoint  insec_n_mylis (n : nat ){m}(t: mylist m) : bool :=
 (*Eval compute in insec_n_msg 1 (sign (ssk 2) (ssk 1) O). *)
 
 (** remove duplicates in a list *)
-
   Fixpoint nodupmsg  (l : Mlist) : Mlist :=
     match l with
       | nil => nil
       | cons x xs => if checkmtlism x xs then nodupmsg xs else cons x (nodupmsg xs)
     end.
 
-
 (** List of subterms of the form [sign ( sk(nonce n), t1),.....,sign ( sk(nonce n), tl)]. *)
-
 Fixpoint list_skn_in_sign (n:nat) (l:Mlist) : Mlist :=
   match l with
     | nil => nil
@@ -2253,10 +2175,7 @@ Fixpoint list_skn_in_sign (n:nat) (l:Mlist) : Mlist :=
 Definition distsigntrms n l := nodupmsg (list_skn_in_sign n l).
 
 (** Definitions related to vote privacy *)
-
 (*
-
-
 Definition topsymsg_beq (t t': message ) : bool :=
    match t, t' with
      | ifm  _ _ _ , ifm _ _ _ => true
@@ -2362,8 +2281,6 @@ Fixpoint topsyml_beq (m:nat) (t1: message) (l:mylist m): bool :=
 (** * Assumptions *)
 (** blinds of two indistinguishable msgs are also indistinguishable *)
 (** Signatures of two indistinguishable msgs are also indistinguishable *)
-
-
 Fixpoint checkostmylis (x:oursum) {n} (l:mylist n) : bool :=
   match l with
     | [] => false
@@ -2379,7 +2296,7 @@ match (leb n n) , l with
   | _ , _ => false
 end.
 
- (** return the element index *)
+(** return the element index *)
 Fixpoint eltPos  (x:oursum) {n} (l:mylist n) :nat :=
   match l with
     | [] => 0
@@ -2387,8 +2304,7 @@ Fixpoint eltPos  (x:oursum) {n} (l:mylist n) :nat :=
   end.
 
 (** sublisIndcs: mylist m -> mylist n -> list nat *)
-
- Fixpoint  sublisIndcs'  {n} (l :oslist) (l': mylist n) : list nat :=
+ Fixpoint sublisIndcs' {n} (l :oslist) (l': mylist n) : list nat :=
   match  l with
     | nil => nil
     | cons h t => cons (eltPos h l')  (sublisIndcs' t l')
@@ -2411,8 +2327,6 @@ Fixpoint listmsg_os (l:Mlist): oslist:=
     | h::t => (msg h) :: (listmsg_os t)
   end.
 (** list of subtemrs of type [oursum] from [msg] and [bool] *)
-
-
 Local Open Scope list_scope.
 Fixpoint subtrmls'_bol (t: Bool) : oslist :=
   match t with
@@ -2469,12 +2383,11 @@ with subtrmls'_msg (t:message) : oslist :=
          | f l => ((cons (msg (f l)) (@mapsubtrmls subtrmls'_msg l)))
                     (** zero symbol *)
          | z t1 => (cons (msg (z t1)) nil)
-
+         | compl t1 => cons (msg (compl t1)) nil
        end.
 
 
 (** Subterms of [oursum] term. *)
-
 Definition subtrmls'_os (t:oursum) : oslist :=
   match t with
     | msg t1 => subtrmls'_msg t1
@@ -2482,7 +2395,6 @@ Definition subtrmls'_os (t:oursum) : oslist :=
   end.
 
 (** Subterms of terms of type [mylist n] for some [n].*)
-
 Fixpoint subtrmls'_mylist {n} (l:mylist n) : oslist :=
   match l with
     | [] => nil
@@ -2493,11 +2405,8 @@ Fixpoint subtrmls'_mylist {n} (l:mylist n) : oslist :=
 
 
  (** Message Variables *)
-
 Section mVars.
-
 Variable f: message -> Nlist.
-
 Fixpoint mapmVarMsg (l: Mlist) : Nlist :=
   match l with
     | nil => nil
@@ -2553,32 +2462,28 @@ Fixpoint mVarBol (t: Bool) : Nlist :=
   | sign t1 t2 t3 =>  (mVarMsg t1) ++ (mVarMsg t2) ++ (mVarMsg t3)
   (* zero symbol*)
   | z t1 =>  mVarMsg t1
+  | compl t1 => mVarMsg t1
   (** all other constrs *)
   | Mvar n' => cons n' nil
   | _ => nil
    end.
 
 (** list free variables in a term of type [oursum] *)
-
 Definition mVarOs (t:oursum) :Nlist :=
   match t with
     | msg t1 => mVarMsg t1
     | bol b1 => mVarBol b1
   end.
 
-
 (** list free variables in a term of type [mylist] *)
-
 Fixpoint mVarMylist {n} (l:mylist n) : Nlist :=
   match l with
     | [] => nil
     | h : t => (mVarOs h)++(mVarMylist t)
   end.
+
 (** Bvars ****)
-
-
 Section bMars.
-
 Variable f: message -> Nlist.
 
 Fixpoint mapbVarMsg (l: Mlist) : Nlist :=
@@ -2636,22 +2541,19 @@ Fixpoint bVarBol (t: Bool) : Nlist :=
   | sign t1 t2 t3 =>  (bVarMsg t1) ++ (bVarMsg t2) ++ (bVarMsg t3)
   (** zeo symbol *)
   | z t1 => nil
+  | compl t1 => bVarMsg t1
   (** all other constrs *)
   | _ => nil
    end.
 
-
 (** list free variables in a term of type [oursum] *)
-
 Definition bVarOs (t:oursum) :Nlist :=
   match t with
     | msg t1 => bVarMsg t1
     | bol b1 => bVarBol b1
   end.
 
-
 (** list free variables in a term of type [mylist] *)
-
 Fixpoint bVarMylist {n} (l:mylist n) : Nlist :=
   match l with
     | [] => nil
@@ -2674,7 +2576,6 @@ Definition distMvars {n} (l :mylist n) := nodup (mVarMylist l).
 
 
 (** Substitution: (nonce n) <- (nonce n') in t *)
-
 Reserved Notation "'(' n '<-' s ')' t" (at level 0).
 Reserved Notation "'[' n '<-' s ']' t" (at level 0).
 
@@ -2727,6 +2628,7 @@ with subname_msg (n : nat )(s:nat) (t:message) : message :=
   | ks t1 => ks ((n<- s ) t1)
   | rs t1 => rs ((n<- s ) t1)
   | sign t1 t2 t3 => sign ((n<- s) t1) (( n<-s) t2) ((n<-s) t3)
+  | compl t1 => compl ((n<- s ) t1)
   (** zero symbol *)
   | z t1 => z t1
   (** all other constrs *)
@@ -2735,7 +2637,6 @@ with subname_msg (n : nat )(s:nat) (t:message) : message :=
   where "'(' x '<-' s ')' t" := (subname_msg x s t).
 
 (** Substitution: x <- s in t, x is a name, t is of [oursum] *)
-
 Definition subname_os (n:nat)(s:nat) (t:oursum):oursum :=
 match t with
 | msg t1 =>  msg ((n <- s) t1)
@@ -2743,8 +2644,6 @@ match t with
 end.
 
 (** Substitution in [ilist message n'] *)
-
-
 Fixpoint subname_mylist {n':nat} (n:nat)(s:nat)(l: mylist n') : mylist n' :=
 match l with
 | [] => []

@@ -4,7 +4,6 @@ src/voteprivacy/auth.v
 src/voteprivacy/coreAxioms.v
 src/voteprivacy/cpacca.v
 src/voteprivacy/cpdtTactics.v
-src/voteprivacy/definitions.v
 src/voteprivacy/eqBranch.v
 src/voteprivacy/eqCom.v
 src/voteprivacy/eqNonce.v
@@ -19,6 +18,7 @@ src/voteprivacy/ifMorph.v
 src/voteprivacy/ifTf.v
 src/voteprivacy/indEq.v
 src/voteprivacy/induction.v
+src/voteprivacy/lemma_11.v
 src/voteprivacy/lemma_25.v
 src/voteprivacy/lemma_26.v
 src/voteprivacy/lemma_27.v
@@ -29,4 +29,5 @@ src/voteprivacy/prop_16.v
 src/voteprivacy/prop_17.v
 src/voteprivacy/prop_21.v
 src/voteprivacy/tactics.v
+src/voteprivacy/types.v
 src/voteprivacy/voting_prop.v

@@ -104,6 +104,14 @@ Axiom FUNCApp_pair: forall (p1 p2 :nat) {m} (ml1 ml2 : mylist m), (ml1 ~ ml2) ->
 Axiom FUNCApp_pi1: forall (p :nat)  {m} (ml1 ml2 : mylist m), (ml1 ~ ml2) -> ( [ msg (pi1 (ostomsg (getelt_at_pos p ml1)))] ++ ml1) ~  ( [ msg (pi1 (ostomsg (getelt_at_pos p ml2)))] ++ ml2).
 
 Axiom FUNCApp_pi2: forall (p :nat)  {m} (ml1 ml2 : mylist m), (ml1 ~ ml2) -> ( [ msg (pi2 (ostomsg (getelt_at_pos p ml1)))] ++ ml1 ) ~  ( [ msg (pi2 (ostomsg (getelt_at_pos p ml2)))] ++ ml2).
+(** TODO: XXX a version of FuncApp is presented below*)
+Axiom funcApp_latest: forall p {m} (l1 l2: mylist m) n t,
+    (length (mVarMsg t) <=? 1)%nat = true ->
+    mVarMsg t = (cons n nil) ->
+    l1 ~ l2 ->
+    (l1 ++ [msg (submsg_msg n (ostomsg (getelt_at_pos p l1)) t)]) ~
+                     (l2 ++ [msg (submsg_msg n (ostomsg (getelt_at_pos p l2)) t)]).
+
 End funapp.
 
 (** [RESTR] *)
@@ -279,7 +287,10 @@ Axiom notocc_bolmb : forall (n1 n2 :nat) (b  b1:Bool) (m:message),(occur_name_bo
 Axiom notocc_bolbm : forall (n1 n2 :nat) (b  b1:Bool) (m:message),(occur_name_msg n1 m) = false -> ( ( n1 :=  b)  (( n2 := b1) m)  =    ( ( n2 := ([n1 := b] b1))  m)).
 (*Axiom occ_bolbm : forall (n1 n2 :nat) (b  b1:Bool) (m:message),(notoccur_msg n1 m) = false -> ( ( n1 :=  b)  (( n2 := b1) m)  =    ( ( n2 := ([n1 := b] b1))  (n1 := b)m)).*)
 
-
+Axiom single_var_sub: forall n t t1 n1 s, beq_nat n1 n = false ->
+                                          mVarMsg t1 = (cons n nil) ->
+                                          occur_name_msg n1 t = false ->
+                                               {{ n1 := s }} ({{ n := t}} t1) # ({{ n := t}} t1).
 (********************************************************************************)
 Axiom notoccn_Bool: forall (n:nat)(b t:Bool), ((occur_name_bol n t) = true )-> ([n := b]t =  t).
 Axiom notoccn_msg: forall (n:nat)(b:Bool)(t:message), ((occur_name_msg n t) = true) -> ((n:= b)t) = t.

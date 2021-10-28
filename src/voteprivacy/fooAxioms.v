@@ -47,6 +47,23 @@ Axiom compHid_ext: forall (n2 n3 n4 n5: nat) (t2 t3: message) {n} {m} (z: mylist
     let m1':= (comm t2 (k n3)) in
     (z ++ ([n4 <- m0]([n5 <- m1]l))) ~ (z ++ ([n4 <- m0']([n5 <- m1'] l))).
 
+(** TODO: XXX merge the following axiom with compHid *)
+Axiom compHid_latest: forall (n1 n2 : nat) (t t1 t2 : message) {n} (z : mylist n),
+       closMylist [msg t, msg t1, msg t2] = true /\
+       closMylist z = true /\
+       Fresh (cons n1 nil) ([msg t, msg t1, msg t2] ++ z) = true /\
+       Fresh (cons n2 nil) ([msg t, msg t1, msg t2] ++ z) = true ->
+       (z ++
+        [msg
+           (If (| t1 |) #? (| t2 |)
+               then (comm t1 (k n1), comm t2 (k n2))
+               else t)]) ~
+       (z ++
+        [msg
+           (If (| t1 |) #? (| t2 |)
+               then (comm t2 (k n1), comm t1 (k n2))
+               else t)]).
+
 (** * [Computational Binding] *)
 Axiom compBind: forall (t1 t2 t3 t4: message),
     let c1:= (comm t1 t3) in
@@ -128,5 +145,13 @@ Axiom agentDist2: (|A|#?|M|) ## FAlse.
 Axiom agentDist3: (|B|#?|M|) ## FAlse.
 
 Axiom phaseDist: (|TWO|#?|THREE|) ## FAlse.
+
+(** * axioms of [compl] *)
+Axiom complEmpty: compl O # O.
+Axiom complEql: forall t, (|t| #? |compl t|) ## TRue.
+Axiom closCompl: forall t, ^? t = true <-> ^? (compl t) = true.
+Axiom occurCheck: forall n t, occur_name_msg n t = false <-> occur_name_msg n (compl t) = false.
+Axiom Msgneql: forall (t: message), closMsg t = true ->
+                                    (IF t #? O then FAlse else t #? (compl t)) ## FAlse.
 
 End foo_axioms.

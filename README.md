@@ -8,7 +8,7 @@
 |Commitment Key unforgeability | prop_11 | Lemma 25 and 26| completed
 |Extended `Blindness`| prop_21| prop_22 | completed|
 |Extended `FuncApp`| prop_17| prop_21 |completed|
-|Extended `FreshInd`| prop_16| prop_11, prop_21 | Axiom, needs to complete the proof|
+|Extended `FreshInd`| prop_16|  prop_21 | Axiom, needs to complete the proof|
 |Extended `CompHid` | prop_20 | prop_24, 22, Lemma 25|
 | Corrected version of Prop from ESORICS paper| prop_13 (proof sketch), full proof in Appendix prop_22| prop_23|completed|
 | `&` properties | prop_15| |completed all except 15.2 (swapping branches)|
