@@ -1,4 +1,4 @@
-Require Export andbprops.
+Require Export ifMorph.
 
 (** * Proposition 15 presented in Section B.1 in the Appendix *)
 (** ** Unfold & *)
@@ -12,7 +12,19 @@ rewrite IFFALSE_M.
        apply beq_nat_false_iff in H. rewrite H. reflexivity. Qed.
 
 (** ** Swapping Branches *)
-(** TODO:XXX *)
+Axiom IFMORPH_M6: forall (b1 b2: Bool) (m1 m2 m3: message), (If b1 then m1 else (If b2 then m2 else m3) ) # (If b2 then (If b1 then m1 else m2) else (If b1 then m1 else m3)).
+Axiom IFEVAL_andB: forall b1 b2 t0 t1 t2 t3, (If b1 & b2 then t0 else (If b1 then (If b2 then t2 else t1) else (If b2 then t2 else t3))) # (If b1 & b2 then t0 else (If b1 then t1 else (If b2 then t2 else t3))).
+
+Proposition swapElseBranches: forall b1 b2 t0 t1 t2 t3, (If b1&b2 then t0 else (If b2 then t2 else (If b1 then t1 else t3))) #  (If b1&b2 then t0 else (If b1 then t1 else (If b2 then t2 else t3))).
+Proof. intros.
+       assert ((If b2 then t2 else (If b1 then t1 
+                                    else t3)) # (If b1 then (If b2 then t2 else t1) else (If b2 then t2 else t3))).
+       rewrite IFMORPH_M6.
+       reflexivity.
+       rewrite H.
+       rewrite IFEVAL_andB.
+       reflexivity.
+       Qed.
 
 (** ** Commutativity *)
 Proposition Prop_15_3: forall n1 n2 , ( (Bvar n1) & (Bvar n2))  ## ( (Bvar n2) & (Bvar n1)).
