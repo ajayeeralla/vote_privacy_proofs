@@ -7,6 +7,7 @@ Require Export lemma_25.
 Import ListNotations.
 Set Nested Proofs Allowed.
 Check bnlcheck.
+(* This can be proved from proposition 21 *)
 Axiom ext_blind_enc: forall {n} (t t0 t1: message) (z: mylist n),
     let v0 := (V0 (nonce 0)) in
     let v1 := (V1 (nonce 0)) in
@@ -36,9 +37,8 @@ Axiom ext_blind_enc: forall {n} (t t0 t1: message) (z: mylist n),
                  (z++[msg (bl c00 t r0), msg (bl c11 t r1), bol (acc c00 t r0 t2)& (acc c11 t r1 t3),
                         msg (If (acc c00 t r0 t2)& (acc c11 t r1 t3) then (((e00, e11), ((c00, k0), (c11, k1))), ((c00, ((ub c00 t r0 t2), (nonce 0))), (c11, ((ub c11 t r1 t3), (nonce 1))))) else |_ )])
                     ~
-
                     (z++[msg (bl c10 t r0), msg (bl c01 t r1), bol (acc c10 t r0 t4)& (acc c01 t r1 t5),
-                           msg (If (acc c10 t r0 t4)& (acc c01 t r1 t5) then (((e10, e01),((c01, k1), (c10, k0))), ((c01, ((ub c01 t r1 t5), (nonce 1))),(c10, ((ub c10 t r0 t4), (nonce 0))))) else |_)]).
+                           msg (If (acc c10 t r0 t4)& (acc c01 t r1 t5) then (((e10, e01),((c01, k1), (c10, k0))), ((c01, ((ub c01 t r1 t5), (nonce 1))), (c10, ((ub c10 t r0 t4), (nonce 0))))) else |_)]).
 Open Scope msg.
 Compute (enc ((label O O), (O, THREE)) (pke 11) (er 9)).
 
@@ -139,7 +139,6 @@ Proof. intros.
                                                                
 (*        let bcheck00 :=   *)
 (* let l00_temp := If acc00 & acc01 & bch *)
-pose proof(ext_blind_enc t t0 t1 []).
 (**
 
 Axiom extFuncapp_f1: forall n m b b' x x' y y' (z z': mylist n) g (g':_ -> mylist m), (z ++ [bol b, msg (If b then x else y)]) ~ (z' ++ [bol b', msg (If b' then x' else y')]) -> (z ++ [bol b, msg (If b then (x, (f (g (toListm (g' (z++[bol b] ++[msg x])))))) else |_)])~ (z' ++ [bol b', msg (If b' then (x', (f (g (toListm (g' (z'++[bol b'] ++[msg x'])))))) else |_)]).
@@ -149,20 +148,7 @@ Axiom extFuncapp_f2: forall n m b b' x x' y y' t t' (z z': mylist n) g (g':_ -> 
 Axiom extFuncapp_f3: forall {n m} b b' x x' y y' t t' t1 t1' (z z': mylist n) g (g':_ -> mylist m), (z ++ [bol b, msg (If b then ((x, t), t1) else y)]) ~ (z' ++ [bol b', msg (If b' then ((x', t'), t1') else y')]) -> (z ++ [bol b, msg (If b then ((x, t), ((f (g (toListm (g' (z++[bol b] ++[msg x, msg t]))))), t1)) else |_)])~ (z' ++ [bol b', msg (If b' then ((x', y'), ((f (g (toListm (g' (z'++[bol b'] ++[msg x', msg t']))))), t1')) else |_)]).
 Axiom extFuncapp_f4: forall {n m} b b' x x' y y' t t' t1 t1' t2 t2' (z z': mylist n) g (g':_ -> mylist m), (z ++ [bol b, msg (If b then ((x, t), (t1, t2)) else y)]) ~ (z' ++ [bol b', msg (If b' then ((x', t'), (t1', t2')) else y')]) -> (z ++ [bol b, msg (If b then ((x, t), ((f (g (toListm (g' (z ++[bol b, msg x, msg t]))))), (t1, t2))) else |_)])~ (z' ++ [bol b', msg (If b' then ((x', y'), ((f (g (toListm (g' (z' ++[bol b', msg x', msg t']))))), (t1', t2'))) else |_)]).
 **)
-(* assert( (| V0 (nonce 0) |) #? (| V1 (nonce 0) |) ## TRue -> *)
-(*        Fresh [1; 2; 3; 4] [msg t, msg (V0 (nonce 0)), msg (V1 (nonce 0)), msg t0, msg t1] = true -> *)
-(*        (^? (t) && true)%bool = true -> *)
-(*        (Datatypes.length (distMvars [msg t0, msg t1]) =? 2)%nat = true -> *)
-(*        (bVarMsg t0 ++ bVarMsg t1)%list = nil -> *)
-(*        mVarMsg t0 = [5; 6] /\ mVarMsg t1 = [5; 6] -> *)
-(*        (occur_name_msg 100 t || (occur_name_msg 100 t0 || (occur_name_msg 100 t1 || false)))%bool = false). *)
-(* auto. *)
-(* apply H7 in H8; auto. clear H7. *)
-(*  fold r0 r1 in H8. *)
-(* fold t2 t3 t4 t5 in H8. *)
-(* fold v0 v1 k0 k1 in H8. fold c00 c11 c10 c01 in H8. fold t2 t3 t4 t5 in H8. fold acc00 acc11 acc10 acc01 in H8. *)
-(* fold b00 b11 b10 b01 e00 e11 e10 e01 in H8. *)
-(* fold e01 in H8. simpl in H8. *)
+
 unfold t0s0, t1s1. unfold do0, do1. unfold fphi05, fphi15. simpl.
 repeat unfold l00, l11, l10, l01. simpl.
 (** These can be provable **)
@@ -222,17 +208,49 @@ let l11:= If b' then t3 else t4 in
                  ! ((isink k0 (f [b00; b11; e00; e11; dv0; l00'; l11'])) or (isink k1 (f [b00; b11; e00; e11; dv0; l00'; l11'])))
                  then sotrm (f [b00; b11; e00; e11; dv0; l00'; l11'])
                  else |_))) else |_))).
- 
+  
 rewrite dupAcc with (b:= acc00&acc11).
 rewrite dupAcc with (b:= acc10 & acc01).
 rewrite extIfmr with (b:= (acc00) & acc11).
-       rewrite extIfmr with (b:= (acc10) & acc01). simpl.
-       
-apply IFBRANCH_M1 with (ml1:= [msg b00, msg b11]) (ml2:= [msg b10, msg b01]). simpl.
+rewrite extIfmr with (b:= (acc10) & acc01).
+(* Get formula 13 using ifbranch *)
+apply IFBRANCH_M1 with (ml1:= [msg b00, msg b11]) (ml2:= [msg b10, msg b01]).
+simpl.
+(* Proof *)
+pose proof(ext_blind_enc t t0 t1 []).
+assert( (| V0 (nonce 0) |) #? (| V1 (nonce 0) |) ## TRue ->
+       Fresh [1; 2; 3; 4] [msg t, msg (V0 (nonce 0)), msg (V1 (nonce 0)), msg t0, msg t1] = true ->
+       (^? (t) && true)%bool = true ->
+       (Datatypes.length (distMvars [msg t0, msg t1]) =? 2)%nat = true ->
+       (bVarMsg t0 ++ bVarMsg t1)%list = nil ->
+       mVarMsg t0 = [5; 6] /\ mVarMsg t1 = [5; 6] ->
+       (occur_name_msg 100 t || (occur_name_msg 100 t0 || (occur_name_msg 100 t1 || false)))%bool = false).
+auto.
+apply H7 in H8; auto. clear H7.
+ fold r0 r1 in H8.
+fold t2 t3 t4 t5 in H8.
+fold v0 v1 k0 k1 in H8. fold c00 c11 c10 c01 in H8. fold t2 t3 t4 t5 in H8. fold acc00 acc11 acc10 acc01 in H8.
+fold b00 b11 b10 b01 e00 e11 e10 e01 in H8.
+fold e01 in H8. simpl in H8.
+       (* Get formula 14 using ifbranch *)
+       2:{
+       do 2 rewrite extIfmr.
+         simpl.
+         apply IFBRANCH_M1 with (ml1:= [msg b00, msg b11, bol ((acc00) & acc11) & (bchk00) & bchk11]) (ml2:= [msg b10, msg b01, bol ((acc10) & acc01) & (bchk10) & bchk01]).
+simpl.
 
-
-
-apply extFuncapp with (b:= acc00& acc11) (b':= acc10&acc01) (z:= [msg b00, msg b11]) (z':= [msg b10, msg b01]) (f:= (fun z b x => (x, (f (toListm (z ++ [msg (pi1 (pi1 (pi1 x))), msg (pi2 (pi1 (pi1 x)))])))))) in H8.
+         (* Get formula 15 using ifbranch *)
+         2:{
+          do 2 rewrite extIfmr.
+simpl.         
+  apply IFBRANCH_M1 with (ml1:= [msg b00, msg b11, bol ((acc00) & acc11) & (bchk00) & bchk11, bol ((acc00) & acc11) & (bchk00) & ! (bchk11)]) (ml2:= [msg b10, msg b01, bol ((acc10) & acc01) & (bchk10) & bchk01, bol ((acc10) & acc01) & (bchk10) & ! (bchk01)]).
+          simpl.
+          pose proof(extFuncapp).
+          (* Start here  *)
+          (**************************************)
+          
+          (* Prove formula 16 using 
+          apply extFuncapp with (b:= acc00& acc11) (b':= acc10&acc01) (z:= [msg b00, msg b11]) (z':= [msg b10, msg b01]) (f:= (fun z b x => (x, (f (toListm (z ++ [msg (pi1 (pi1 (pi1 x))), msg (pi2 (pi1 (pi1 x)))])))))) in H8.
 simpl in H8. repeat rewrite proj1 in H8. repeat rewrite proj2 in H8.
 
 
