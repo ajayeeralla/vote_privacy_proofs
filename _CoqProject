@@ -1,6 +1,7 @@
 -R src ""
 src/voteprivacy/andbprops.v
 src/voteprivacy/auth.v
+src/voteprivacy/commKeysDist.v
 src/voteprivacy/coreAxioms.v
 src/voteprivacy/cpacca.v
 src/voteprivacy/cpdtTactics.v
@@ -20,7 +21,7 @@ src/voteprivacy/indEq.v
 src/voteprivacy/induction.v
 src/voteprivacy/lemma_11.v
 src/voteprivacy/lemma_25.v
-src/voteprivacy/lemma_26.v
+src/voteprivacy/lemma_26_new.v
 src/voteprivacy/lemma_27.v
 src/voteprivacy/morphisms.v
 src/voteprivacy/prop_13.v

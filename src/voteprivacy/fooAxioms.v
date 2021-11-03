@@ -45,7 +45,7 @@ Axiom compHid_ext: forall (n2 n3 n4 n5: nat) (t2 t3: message) {n} {m} (z: mylist
     let m1 := (comm t3 (k n3)) in
     let m0':= (comm t3 (k n2)) in
     let m1':= (comm t2 (k n3)) in
-    (z ++ ([n4 <- m0]([n5 <- m1]l))) ~ (z ++ ([n4 <- m0']([n5 <- m1'] l))).
+    (z ++ ([n4 <- m0]([n5 <- m1] l))) ~ (z ++ ([n4 <- m0']([n5 <- m1'] l))).
 
 (** TODO: XXX merge the following axiom with compHid *)
 Axiom compHid_latest: forall (n1 n2 : nat) (t t1 t2 : message) {n} (z : mylist n),
@@ -145,6 +145,9 @@ Axiom agentDist2: (|A|#?|M|) ## FAlse.
 Axiom agentDist3: (|B|#?|M|) ## FAlse.
 
 Axiom phaseDist: (|TWO|#?|THREE|) ## FAlse.
+
+(** * Equality of names*)
+Axiom nameEql: forall n1 n2, (|nonce n1| #? |nonce n2|) ## TRue.
 
 (** * axioms of [compl] *)
 Axiom complEmpty: compl O # O.

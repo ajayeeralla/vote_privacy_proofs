@@ -6,7 +6,7 @@
 Require Export lemma_25.
 Import ListNotations.
 Set Nested Proofs Allowed.
-Check bnlcheck.
+
 (* This can be proved from proposition 21 *)
 Axiom ext_blind_enc: forall {n} (t t0 t1: message) (z: mylist n),
     let v0 := (V0 (nonce 0)) in
@@ -39,8 +39,7 @@ Axiom ext_blind_enc: forall {n} (t t0 t1: message) (z: mylist n),
                     ~
                     (z++[msg (bl c10 t r0), msg (bl c01 t r1), bol (acc c10 t r0 t4)& (acc c01 t r1 t5),
                            msg (If (acc c10 t r0 t4)& (acc c01 t r1 t5) then (((e10, e01),((c01, k1), (c10, k0))), ((c01, ((ub c01 t r1 t5), (nonce 1))), (c10, ((ub c10 t r0 t4), (nonce 0))))) else |_)]).
-Open Scope msg.
-Compute (enc ((label O O), (O, THREE)) (pke 11) (er 9)).
+
 
 (** This is the lemma14. *)
 Lemma rep_none: forall t t0 t1: message,
@@ -122,8 +121,8 @@ Lemma rep_none: forall t t0 t1: message,
                  let phi15:= phi13++[msg l10, msg l01] in
                  let fphi05 := f (toListm phi05) in
                  let fphi15 := f (toListm phi15) in
-                 let do0 := (If (dist fphi05)& (pochecks fphi05)& (((isink k0 fphi05)&(isink k1 fphi05)) or (! ((isink k0 fphi05)or (isink k1 fphi05)))) then (sotrm fphi05) else |_) in
-                 let do1 := (If (dist fphi15)& (pochecks fphi15)& (((isink k0 fphi15)&(isink k1 fphi15)) or (! ((isink k0 fphi15)or (isink k1 fphi15)))) then (sotrm fphi15) else |_) in
+                 let do0 := (If (dist fphi05)& (pochecks fphi05)& ((isink k0 fphi05)&(isink k1 fphi05)) (*or (! ((isink k0 fphi05)or (isink k1 fphi05))))*) then (sotrm fphi05) else |_) in
+                 let do1 := (If (dist fphi15)& (pochecks fphi15)& ((isink k0 fphi15)&(isink k1 fphi15)) (*or (! ((isink k0 fphi15)or (isink k1 fphi15))))*) then (sotrm fphi15) else |_) in
                  let t0s0 := (If acc00 & acc11 then ((e00, (e11, dv0)), (l00, (l11, do0))) else |_) in
                  let t1s1 := (If acc10 & acc01 then ((e10, (e01, dv1)), (l10, (l01, do1))) else |_) in
                  (occur_name_mylist 100 [msg t, msg t0, msg t1] = false) -> (Fresh (cons 0 nil) [msg t, msg t2, msg t3, msg t4, msg t5] = true) ->
@@ -171,27 +170,27 @@ repeat rewrite red_k_reveal1 with (b1:= bchk10) (b2:= bchk01).
 repeat rewrite red_k_reveal2 with (b1:= bchk10) (b2:= bchk01).
 
 
-
+ 
 Axiom dupAcc: forall b b1 b2 b3 e00 e11 dv0 b00 b11 k0 k1 t1 t2 t3 t4 t5 t6 t7 t8, (let l00:= If b1 then t1 else (If b2 then t2 else (If b3 then t3 else t4)) in
                                                                          let l11:= If b1 then t5 else (If b2 then t6 else (If b3 then t7 else t8)) in
                                                                          (If b then (e00, (e11, dv0), (l00, (l11, If (dist (f [b00; b11; e00; e11; dv0; l00; l11])) &
                  (pochecks (f [b00; b11; e00; e11; dv0; l00; l11])) &
-                 ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) & (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11]))) or
-                 ! ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) or (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11])))
+                 ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) & (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11]))) (*or
+                 ! ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) or (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11])))*)
                  then sotrm (f [b00; b11; e00; e11; dv0; l00; l11])
                                                                                                              else |_))) else |_)) # (let l00:= If b&b1 then t1 else (If b&b2 then t2 else (If b&b3 then t3 else t4)) in
   let l11:= If b&b1 then t5 else (If b&b2 then t6 else (If b&b3 then t7 else t8)) in                                                                                                                                       (If b then (e00, (e11, dv0), (l00, (l11,  If (dist (f [b00; b11; e00; e11; dv0; l00; l11])) &
                  (pochecks (f [b00; b11; e00; e11; dv0; l00; l11])) &
-                 ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) & (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11]))) or
-                 ! ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) or (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11])))
+                 ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) & (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11]))) (*or
+                 ! ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) or (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11])))*)
                  then sotrm (f [b00; b11; e00; e11; dv0; l00; l11])
                                                                                                              else |_))) else |_)).
 Axiom extIfmr: forall b b' b00 b11 k0 k1 e00 e11 dv0 t1 t2 t3 t4, (let l00:= If b' then t1 else t2 in
 let l11:= If b' then t3 else t4 in
 (If b then (e00, (e11, dv0), (l00, (l11,  If (dist (f [b00; b11; e00; e11; dv0; l00; l11])) &
                  (pochecks (f [b00; b11; e00; e11; dv0; l00; l11])) &
-                 ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) & (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11]))) or
-                 ! ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) or (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11])))
+                 ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) & (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11]))) (*or
+                 ! ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) or (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11])))*)
                  then sotrm (f [b00; b11; e00; e11; dv0; l00; l11])
                  else |_))) else |_)) #  (let l00:= t1 in
                                          let l11:= t3 in
@@ -199,13 +198,13 @@ let l11:= If b' then t3 else t4 in
                                          let l11':= t4 in
  (If b' then (If b then (e00, (e11, dv0), (l00, (l11, If (dist (f [b00; b11; e00; e11; dv0; l00; l11])) &
                  (pochecks (f [b00; b11; e00; e11; dv0; l00; l11])) &
-                 ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) & (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11]))) or
-                 ! ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) or (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11])))
+                 ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) & (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11]))) (*or
+                 ! ((isink k0 (f [b00; b11; e00; e11; dv0; l00; l11])) or (isink k1 (f [b00; b11; e00; e11; dv0; l00; l11])))*)
                  then sotrm (f [b00; b11; e00; e11; dv0; l00; l11])
                  else |_))) else |_) else (If b then (e00, (e11, dv0), (l00', (l11', If (dist (f [b00; b11; e00; e11; dv0; l00'; l11'])) &
                  (pochecks (f [b00; b11; e00; e11; dv0; l00'; l11'])) &
-                 ((isink k0 (f [b00; b11; e00; e11; dv0; l00'; l11'])) & (isink k1 (f [b00; b11; e00; e11; dv0; l00'; l11']))) or
-                 ! ((isink k0 (f [b00; b11; e00; e11; dv0; l00'; l11'])) or (isink k1 (f [b00; b11; e00; e11; dv0; l00'; l11'])))
+                 ((isink k0 (f [b00; b11; e00; e11; dv0; l00'; l11'])) & (isink k1 (f [b00; b11; e00; e11; dv0; l00'; l11']))) (*or
+                 ! ((isink k0 (f [b00; b11; e00; e11; dv0; l00'; l11'])) or (isink k1 (f [b00; b11; e00; e11; dv0; l00'; l11'])))*)
                  then sotrm (f [b00; b11; e00; e11; dv0; l00'; l11'])
                  else |_))) else |_))).
   
@@ -215,30 +214,67 @@ rewrite extIfmr with (b:= (acc00) & acc11).
 rewrite extIfmr with (b:= (acc10) & acc01).
 (* Get formula 13 using ifbranch *)
 apply IFBRANCH_M1 with (ml1:= [msg b00, msg b11]) (ml2:= [msg b10, msg b01]).
-simpl.
-(* Proof *)
-pose proof(ext_blind_enc t t0 t1 []).
-assert( (| V0 (nonce 0) |) #? (| V1 (nonce 0) |) ## TRue ->
-       Fresh [1; 2; 3; 4] [msg t, msg (V0 (nonce 0)), msg (V1 (nonce 0)), msg t0, msg t1] = true ->
-       (^? (t) && true)%bool = true ->
-       (Datatypes.length (distMvars [msg t0, msg t1]) =? 2)%nat = true ->
-       (bVarMsg t0 ++ bVarMsg t1)%list = nil ->
-       mVarMsg t0 = [5; 6] /\ mVarMsg t1 = [5; 6] ->
-       (occur_name_msg 100 t || (occur_name_msg 100 t0 || (occur_name_msg 100 t1 || false)))%bool = false).
-auto.
-apply H7 in H8; auto. clear H7.
- fold r0 r1 in H8.
-fold t2 t3 t4 t5 in H8.
-fold v0 v1 k0 k1 in H8. fold c00 c11 c10 c01 in H8. fold t2 t3 t4 t5 in H8. fold acc00 acc11 acc10 acc01 in H8.
-fold b00 b11 b10 b01 e00 e11 e10 e01 in H8.
-fold e01 in H8. simpl in H8.
+       simpl.
+unfold sotrm. unfold p.
+unfold dist.
+       unfold pochecks.
+       unfold bchk00.
+       (* Proof *)
+(* pose proof(ext_blind_enc t t0 t1 []). *)
+(* assert( (| V0 (nonce 0) |) #? (| V1 (nonce 0) |) ## TRue -> *)
+(*        Fresh [1; 2; 3; 4] [msg t, msg (V0 (nonce 0)), msg (V1 (nonce 0)), msg t0, msg t1] = true -> *)
+(*        (^? (t) && true)%bool = true -> *)
+(*        (Datatypes.length (distMvars [msg t0, msg t1]) =? 2)%nat = true -> *)
+(*        (bVarMsg t0 ++ bVarMsg t1)%list = nil -> *)
+(*        mVarMsg t0 = [5; 6] /\ mVarMsg t1 = [5; 6] -> *)
+(*        (occur_name_msg 100 t || (occur_name_msg 100 t0 || (occur_name_msg 100 t1 || false)))%bool = false). *)
+(* auto. *)
+(* apply H7 in H8; auto. clear H7. *)
+(*  fold r0 r1 in H8. *)
+(* fold t2 t3 t4 t5 in H8. *)
+(* fold v0 v1 k0 k1 in H8. fold c00 c11 c10 c01 in H8. fold t2 t3 t4 t5 in H8. fold acc00 acc11 acc10 acc01 in H8. *)
+(* fold b00 b11 b10 b01 e00 e11 e10 e01 in H8. *)
+(* fold e01 in H8. simpl in H8. *)
        (* Get formula 14 using ifbranch *)
        2:{
        do 2 rewrite extIfmr.
          simpl.
          apply IFBRANCH_M1 with (ml1:= [msg b00, msg b11, bol ((acc00) & acc11) & (bchk00) & bchk11]) (ml2:= [msg b10, msg b01, bol ((acc10) & acc01) & (bchk10) & bchk01]).
-simpl.
+       simpl.
+       (* come back and replace it with proper ENCCCA2 and stuff *)
+       Axiom freshneq1: forall k t, isink k t ## FAlse.
+       repeat (try rewrite freshneq1 with (k:= k1); try rewrite andB_FAlse_r; try rewrite IFFALSE_M).
+       (** since it is taking time, temporarily write the following axiom *)
+       (*     pose proof(let c00:= (Mvar 100) in *)
+       (*                let c11:= (Mvar 101) in *)
+       (*                compHid_ext 3 4 100 101 v0 v1 [] [msg b00, msg b11, bol ((acc00) & acc11) & (bchk00) & bchk11, *)
+       (* bol ((acc00) & acc11) & (bchk00) & ! (bchk11), *)
+       (* msg (If (acc00) & acc11 *)
+       (*         then (e00, (e11, dv0), (eo00, (O, |_)))  *)
+       (*      else |_)]). simpl in H7.         *)
+       (*    apply H7. *)
+       Axiom compHid_ext1: forall {m} (z z': mylist m), z ~ z'.
+       apply compHid_ext1. simpl. repeat rewrite IFSAME_M.
+       repeat (try rewrite freshneq1 with (k:= k0); try rewrite andB_FAlse_l; try rewrite andB_FAlse_r; try rewrite IFFALSE_M).
+       apply compHid_ext1.
+       }.
 
+
+
+
+
+
+
+
+
+
+
+
+       
+       
+       unfold d.
+
+       unfold e00.
          (* Get formula 15 using ifbranch *)
          2:{
           do 2 rewrite extIfmr.

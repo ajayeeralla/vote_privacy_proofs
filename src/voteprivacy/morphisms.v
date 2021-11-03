@@ -7,7 +7,6 @@ Require Export types.
 (** This library defines indistinguishability and all morphisms *)
 Open Scope msg_scope.
 
-
 (*Indistinguishability Relation ~*)
 (*Definition Ind_Relation := forall n , mylist n -> mylist n -> Prop.*)
 
@@ -335,7 +334,7 @@ Proof. intros; aply_cong; try auto. Qed.
 Add Parametric Morphism: (@ L) with
   signature EQm ==> EQm as L_mor.
  Proof. intros; aply_cong; try auto. Qed.
- 
+
 (** [f_m] *)
 Add Parametric Morphism : cons  with
   signature EQm ==> EQlm ==> EQlm as cons_m.
@@ -619,6 +618,12 @@ Qed.
 Add Parametric Morphism:(@ andB) with
     signature EQb ==> EQb ==> EQb as andB_mor.
 Proof. intros; aply_cong; try auto. Qed.
+
+(* orB_mor *)
+Axiom orB_cong: forall b1 b2 b3 b4, b1 ## b2 -> b3 ## b4 -> (IF b1 then TRue else b3) ## (IF b2 then TRue else b4).
+Add Parametric Morphism: (@orB) with
+      signature EQb ==> EQb ==> EQb as orB_mor.
+Proof. intros. apply orB_cong; auto. Qed.
 
 (** notb_mor *)
 Add Parametric Morphism: (@ notb) with
