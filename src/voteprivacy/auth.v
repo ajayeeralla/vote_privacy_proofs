@@ -1,8 +1,8 @@
 (************************************************************************)
-(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)     
+(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
 (************************************************************************)
-Require Export voting_prop.
- 
+Require Export prop_19.
+
 Definition phi0 := [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TWO, msg THREE, msg (vk 0), msg (vk 1), msg (pke 2)].
 
 (** STEP:1 *)
@@ -158,106 +158,21 @@ Definition x2t (n:nat) := f (toListm (phi0 ++ [msg (tr 0 n 3  5 9)])).
 (*Eval compute in x2t 0. *)
 Definition x2ft (n':nat) := f (toListm (phi0 ++ [msg (tr 1 n' 4 6 10)])).
 
-Definition t2 (n n': nat) := If (theta x1 A) then (If (theta (x2t n) B) then (tr 1 n' 4 6 10) else O) else (If (theta x1 B) then (If (theta (x2ft n') A) then (tr 0 n 3 5 9) else O) else O). 
- 
+Definition t2 (n n': nat) := If (theta x1 A) then (If (theta (x2t n) B) then (tr 1 n' 4 6 10) else O) else (If (theta x1 B) then (If (theta (x2ft n') A) then (tr 0 n 3 5 9) else O) else O).
+
 Definition phi2 (n n':nat) := (phi1 n n') ++ [msg (t2 n n') ].
-Print IFEVAL_B'.
-Axiom ext_ifeval: forall b1 b2 b3 x y, (IF b1 & (!b2)&(!b3) then x else y) ## (IF b1 & (!b2)&(!b3) then (subbol_bol' b1 TRue (subbol_bol' b2 FAlse (subbol_bol' b3 FAlse x))) else  (subbol_bol' b1 FAlse (subbol_bol' b2 TRue (subbol_bol' b3 TRue y)))).
-Axiom eqbrmsg_msg'' :forall ( m m1 m2:message) (b1 b2: Bool) ,  (IF (m1 #? m2) then (submsg_bol' m m1 b1) else b2) ##  (IF (eqm m1 m2) then (submsg_bol' m m2 b1) else b2).
 
-Ltac aply_eqbr :=
-match goal with
-| [|-  context [IF (?X #? ?Y) then ?B1 else ?B2] ] => pose proof (eqbrmsg_msg'' X X Y B1 B2)
-end.
-(** Using ext_comp_hid **)
-(*Eval compute in (v 0). *)
-Theorem vote_len_eql: (IF (vcheck (v 0)) & (vcheck (v 1)) then |(v 0)|#? |(v 1)| else TRue) ## TRue.
-Proof. unfold vcheck.
-
-
-       rewrite <- IFSAME_B with (b:= ((v 0) #? C1)).
-rewrite IFEVAL_B'.
-simpl.
-repeat redg.
-aply_eqbr.
-simpl in H.
-rewrite H.
-clear H.
-rewrite <- IFSAME_B with (b:= ((v 1) #? C1)).
-rewrite IFEVAL_B'.
-simpl.
-repeat redg.
-aply_eqbr.
-simpl in H.
-repeat red_in H.
-rewrite eqmeql in H. repeat red_in H.
-rewrite H; clear H.
-rewrite <- IFSAME_B with (b:= ((v 0) #? C2)).
-rewrite IFEVAL_B' ; repeat redg.
-simpl.
-repeat redg.
-aply_eqbr.
-simpl in H.
-pose proof(candEql1).
-Axiom Example14_M': forall m1 m2, (m1 #? m2) ## (m2 #? m1).
-
-rewrite Example14_M' in H0.
-rewrite H0 in H.
-repeat red_in H. rewrite H.
-rewrite <- IFSAME_B with (b:= ((v 1) #? C2)).
-rewrite IFEVAL_B'.
-simpl.
-repeat redg.
-aply_eqbr.
-simpl in H1.
-repeat rewrite eqmeql in H1.
-repeat red_in H1.
-rewrite Example14_M' in H0.
-rewrite H0 in H1; repeat red_in H1.
-rewrite H1. clear H1. clear H.
-rewrite <- IFSAME_B with (b:= ((v 0) #? C3)).
-rewrite IFEVAL_B'.
-simpl.
-repeat redg.
-aply_eqbr.
-simpl in H.
-repeat red_in H.
-pose proof (candEql2).
-pose proof (candEql3).
-rewrite Example14_M' in H1.
-
-repeat rewrite H1 in H.
-rewrite Example14_M' in H2.
-rewrite H2 in H. repeat red_in H.
-rewrite H.
-clear H.
-rewrite <- IFSAME_B with (b:= ((v 1) #? C3)).
-rewrite IFEVAL_B'.
-simpl.
-repeat redg.
-aply_eqbr.
-simpl in H.
-rewrite Example14_M' in H2.
-repeat rewrite H2 in H.
-rewrite Example14_M' in H0.
-repeat rewrite H0 in H.
-rewrite Example14_M' in H1.
-repeat rewrite H1 in H.
-repeat rewrite eqmeql in H.
-repeat red_in H. rewrite H.
-reflexivity.
-Qed.
 (** Go back apply ext_comphid in this way in prop1 and voting_prop*)
 
 Axiom compHid_ext': forall (n2 n3 n4 n5:nat) (t2 t3 : message) {n} {m} (z: mylist n) (l:mylist m), closMylist [msg t2, msg t3] = true /\ closMylist z = true /\ Fresh (cons n2 (cons n3 nil)) (z++[msg t2, msg t3]) = true  ->
-                                                                                ((length (distMvars l))=? 2)%nat = true -> 
+                                                                                ((length (distMvars l))=? 2)%nat = true ->
                                                                                 let mvl:= (cons n4 (cons n5 nil)) in ((distMvars l) = mvl \/ (distMvars l) = (cons n5 (cons n4 nil)))  ->
-                                                                                                        
+
                                                                                                          let m0 := (comm t2 (k n2)) in
                                                                                                          let m1 := (comm t3 (k n3)) in
                                                                                                          let m0':= (comm t3 (k n2)) in
-                                                                                                         let m1':= (comm t2 (k n3)) in 
-                                                                                                                                                          
+                                                                                                         let m1':= (comm t2 (k n3)) in
+
 (z ++ ([n4 <- (If |t2|#?|t3| then m0 else O)] ([n5 <- (If |t2|#?|t3| then m1 else O)]l))) ~ (z ++ ([n4 <- (If |t2|#?|t3| then m0' else O)]([n5 <- (If |t2|#?|t3| then m1' else O)]l))).
 
 
@@ -446,7 +361,7 @@ simpl in H.
 
 assert ( (| V0 x1 | #? |V1 x1|) ## TRue).
 apply vote_len_reg. simpl in H0. apply eqm_refl in H0.
-repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H.  
+repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H.
 funappf1 pi1 26 H.
 funappf1 pi2 27 H.
 repeat rewrite proj1, proj2 in H.

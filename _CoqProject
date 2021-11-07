@@ -5,6 +5,7 @@ src/voteprivacy/commKeysDist.v
 src/voteprivacy/coreAxioms.v
 src/voteprivacy/cpacca.v
 src/voteprivacy/cpdtTactics.v
+src/voteprivacy/destructTerm.v
 src/voteprivacy/eqBranch.v
 src/voteprivacy/eqCom.v
 src/voteprivacy/eqNonce.v

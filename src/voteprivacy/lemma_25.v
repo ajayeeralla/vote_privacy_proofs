@@ -1,11 +1,83 @@
-
-(************************************************************************)
+ 
+(************************************************************************) 
 (* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
 (************************************************************************)
-
-Require Export prop_17.
+Require Export destructTerm.
 Require Import Coq.Bool.Bool.
 Set Nested Proofs Allowed.
+
+Section auxProps.
+  Axiom ifMorphPair: forall b t1 t2 t3, (t1, If b then t2 else t3) # If b then (t1, t2) else (t1, t3).
+  Axiom andB_elim: forall b1 b2 t1 t2, (If b1 & b2 then t1 else t2) # (If b1 then (If b2 then t1 else t2) else t2).
+  Axiom ifMorphIfThen: forall b1 b2 t1 t2 t3, (If b1 then (If b2 then t1 else t2) else t3) # (If b2 then (If b1 then t1 else t3) else (If b1 then t2 else t3)).
+  Axiom orB_FAlse_r: forall b, b or FAlse = b.
+  Axiom orB_FAlse_l: forall b, FAlse or b = b.
+  Axiom ifMorphIf: forall b1 b2 b3 b4 t1 t2, (If b1 & (IF b2 then b3 else b4) then t1 else t2) # (If b2 then (If b1 & b3 then t1 else t2) else (If b1 & b4 then t1 else t2)).
+  Require Import List.
+  Import ListNotations.
+  Fixpoint ifMorphDef (f: Mlist -> message) (al: Mlist) (l: Mlist) :=
+    match l with
+    | nil => f (al ++ nil)
+    | (cons (If b then t1 else t2) nil)  => If b then (f (al ++ (cons t1 nil))) else (f (al ++ (cons t2 nil))) 
+| h :: tl => match h with
+             | If b then t1 else t2 => If b then (ifMorphDef f (al ++ (cons t1 nil)) tl) else (ifMorphDef f (al ++ (cons t2 nil)) tl)
+| _ => ifMorphDef f (al ++ (cons h nil)) tl
+  end
+  end.
+
+  (* Compute ifMorphDef f nil [O; If FAlse then nonce 1 else O; nonce 2; If TRue then (If TRue then nonce 100 else O) else nonce 4]. *)
+
+  Axiom ifMorphAttComp: forall b f l t, (If b then (f l) else t) # (If b then (ifMorphDef f nil l) else t).
+End auxProps.
+
+Section auxTacs.
+  Ltac rew_ifMorphIf :=
+    match goal with
+    |[|- context[(If ?B1 & (IF ?B2 then ?B3 else ?B4) then ?T1 else ?T2)] ] => rewrite (@ifMorphIf B1 B2 B3 B4 T1 T2)
+    end.
+  Ltac apply_ifbr ml1 ml2 b b' x x' y y' := apply (@IFBRANCH_M1 _ ml1 ml2 b b' x x' y y'); simpl.
+  Ltac aply_ifbr :=
+    match goal with
+    | [|- (Cons _ _ (msg (If ?B1 then ?T1 else ?F1)) (Nil _))
+            ~ (Cons _ _ (msg (If ?B2 then ?T2 else ?F2)) (Nil _))]
+        => apply_ifbr [] [] B1 B2 T1 T2 F1 F2
+    | [|- (Cons _ _ ?X4 (Cons _ _ (msg (If ?B1 then ?T1 else ?F1)) (Nil _)))
+            ~ (Cons _ _ ?Y4 (Cons _ _ (msg (If ?B2 then ?T2 else ?F2)) (Nil _)))]
+      => apply_ifbr [X4] [Y4] B1 B2 T1 T2 F1 F2
+    | [|- (Cons _ _ ?X3 (Cons _ _ ?X4 (Cons _ _ (msg (If ?B1 then ?T1 else ?F1)) (Nil _))))
+            ~ (Cons _ _ ?Y3 (Cons _ _ ?Y4 (Cons _ _ (msg (If ?B2 then ?T2 else ?F2)) (Nil _))))]
+      => apply_ifbr [X3, X4] [Y3, Y4] B1 B2 T1 T2 F1 F2
+    |[|- (Cons _ _ ?X2 (Cons _ _ ?X3 (Cons _ _ ?X4 (Cons _ _ (msg (If ?B1 then ?T1 else ?F1)) (Nil _)))))
+           ~ (Cons _ _ ?Y2 (Cons _ _ ?Y3 (Cons _ _ ?Y4 (Cons _ _ (msg (If ?B2 then ?T2 else ?F2)) (Nil _)))))]
+     => apply_ifbr [X2, X3, X4] [Y2, Y3, Y4] B1 B2 T1 T2 F1 F2
+    | [|- (Cons _ _ ?X1 (Cons _ _ ?X2 (Cons _ _ ?X3 (Cons _ _ ?X4 (Cons _ _ (msg (If ?B1 then ?T1 else ?F1)) (Nil _))))))
+            ~ (Cons _ _ ?Y1 (Cons _ _ ?Y2 (Cons _ _ ?Y3 (Cons _ _ ?Y4 (Cons _ _ (msg (If ?B2 then ?T2 else ?F2)) (Nil _))))))]
+      => apply_ifbr [X1, X2, X3, X4] [Y1, Y2, Y3, Y4] B1 B2 T1 T2 F1 F2
+                    (** extend this for other cases *)
+    end.
+End auxTacs.
+
+Goal [msg (comm O (nonce 0))]~[msg (comm O (nonce 3))].
+Search "subtrm".
+  Compute subtrmls_mylist [msg (comm O (nonce 0))].
+  Compute subtrmls_mylist [msg (nonce 0)].
+sumtrmls_ls''.
+Search "subtrm".
+  Ltac destruct_at n :=
+    match goal with
+    | [|- ?X ~ ?Y ] => match X with
+                         | [] => 
+    end.
+  f_equal.
+  match goal with
+  |[|- ?X # ?Y] => inversion X
+  end.
+  Goal [ msg (comm O (nonce 3))] ~  [  msg (comm (nonce 1) (nonce 4))].
+
+  match goal with
+  | [|- (Cons _ _ ?X (Nil _)) ~ (Cons _ _ ?Y (Nil _))  ] => destruct X; destruct Y
+  end.
+  
 Section lemma_25.
 
   Definition V (b:bool) :=
@@ -93,7 +165,6 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
       bVarMylist [msg t0, msg t1] = nil ->
       let mvl := (cons 5 (cons 6 nil)) in
       mVarMsg t0 = mvl /\ mVarMsg t1 = mvl ->
-
                  let r0 := (r 1) in
                  let r1 := (r 2) in
                  let k0 := (kc (nonce 3)) in
