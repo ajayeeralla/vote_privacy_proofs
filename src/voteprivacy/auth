@@ -3,21 +3,6 @@
 (************************************************************************)
 Require Export prop_19.
 
-Definition phi0 := [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TWO, msg THREE, msg (vk 0), msg (vk 1), msg (pke 2)].
-
-(** STEP:1 *)
-Definition vcheck (v:message) :=  (v #? C1) or (v#?C2) or (v#?C3).
-Definition x1:= f (toListm phi0).
-Definition pk:= (pubkey x1).
-Axiom vote_len_reg : forall t, (|V0 t| #? |V1 t|) ## TRue.
-(** * Phase 1:Authentication *)
-(** nA = 0, nB = 1, nM = 2 *)
-(*Eval compute in ssk. *)
-Definition v (n:nat) := match n with
-                        | 0 => V0 (x1)
-                        | 1 => V1 (x1)
-                        | _ => O
-                        end.
 
 (*Eval compute in kc. *)
 
@@ -35,10 +20,10 @@ Definition c (n k: nat) := (comm (v n) (kc (nonce k))).
 Definition b (n k r : nat) := (bl (c n k) pk (rb (nonce r))).
 Definition s (n k r n' r' : nat) := (sign (b n k r) (ssk n') (rs (nonce r'))).
 Definition tr (a n k r r':nat) := ( (vk a), ((b n k r), (s n k r a r'))).
- 
+
 Definition theta (x a: message) :=  ((to x) #? a) & (vcheck (v 0))&(vcheck (v  1)).
 
-Definition t1 (n n':nat)  := If (theta x1 A) then (tr 0 n 3 5 9) else (If (theta x1 B) then (tr 1 n' 4 6 10) else O). 
+Definition t1 (n n':nat)  := If (theta x1 A) then (tr 0 n 3 5 9) else (If (theta x1 B) then (tr 1 n' 4 6 10) else O).
 
 Definition phi1 (n n':nat) := phi0 ++ [msg (t1 n n')].
 
@@ -73,27 +58,27 @@ pose proof (let x1:= f (toListm phi0) in
 simpl in H.
 assert ( (| V0 x1 | #? |V1 x1|) ## TRue).
 apply vote_len_reg. simpl in H0.
-repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H. 
+repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H.
 funappf1 pi1 21 H.
 funappf1 pi2 22 H.
 repeat rewrite proj1, proj2 in H.
-funappf1 pubkey 15 H. 
-fold x1. 
-funapptrmhyp (msg (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))) (msg (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))) H;simpl; try reflexivity. 
- 
-funapptrmhyp (msg (sign (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+funappf1 pubkey 15 H.
+fold x1.
+funapptrmhyp (msg (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))) (msg (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))) H;simpl; try reflexivity.
+
+funapptrmhyp (msg (sign (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))
        (pi2 (ks (nonce 9))) (rs (nonce 7)))) (msg (sign (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) (pi2 (ks (nonce 9))) (rs (nonce 7)))) H;simpl; try reflexivity.
 funapptrmhyp (msg (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)),
-     sign (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+     sign (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))
        (pi2 (ks (nonce 9))) (rs (nonce 7)))) (msg (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)),
-    sign (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+    sign (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))
       (pi2 (ks (nonce 9))) (rs (nonce 7)))) H; simpl; try reflexivity.
 funapptrmhyp (msg (vk 0,
      (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)),
-     sign (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+     sign (bl (comm (V0 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))
        (pi2 (ks (nonce 9))) (rs (nonce 7))))) (msg (vk 0,
     (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)),
-    sign (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5))) 
+    sign (bl (comm (V1 x1) (kc (nonce 3))) (pubkey x1) (rb (nonce 5)))
       (pi2 (ks (nonce 9))) (rs (nonce 7))))) H; simpl; try reflexivity.
 
 restrsublis H.  auto. simpl; try reflexivity.  simpl. reflexivity. try split.
@@ -102,9 +87,9 @@ reflexivity. split. reflexivity. reflexivity.
 
 simpl.
 repeat unfold theta, tr, s, b, c.
-apply IFBRANCH_M1 with (ml1:= [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, 
+apply IFBRANCH_M1 with (ml1:= [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE,
    msg TWO, msg THREE, msg (vk 0), msg (vk 1), msg (pke 2),
-   bol ((to x1) #? A) & (vcheck (v 0)) & (vcheck (v 1))]) (ml2:= [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, 
+   bol ((to x1) #? A) & (vcheck (v 0)) & (vcheck (v 1))]) (ml2:= [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE,
    msg TWO, msg THREE, msg (vk 0), msg (vk 1), msg (pke 2),
    bol ((to x1) #? A) & (vcheck (v 0)) & (vcheck (v 1))]). simpl.
 
@@ -124,25 +109,25 @@ pose proof (let x1:= f (toListm phi0) in
 simpl in H.
 assert ( let x1:= f (toListm phi0) in (| V0 x1 | #? |V1 x1|) ## TRue).
 apply vote_len_reg. repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H.
- 
+
  funappf1 pi1 22 H.
 funappf1 pi2 23 H.
-repeat rewrite proj1, proj2 in H. 
+repeat rewrite proj1, proj2 in H.
  funapptrmhyp (msg (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)))) (msg (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)))) H;simpl; try reflexivity.
-   
-funapptrmhyp (msg (sign (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
-       (pi2 (ks (nonce 10))) (rs (nonce 8)))) (msg (sign (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) (pi2 (ks (nonce 10))) (rs (nonce 8)))) H;simpl; try reflexivity. 
+
+funapptrmhyp (msg (sign (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)))
+       (pi2 (ks (nonce 10))) (rs (nonce 8)))) (msg (sign (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) (pi2 (ks (nonce 10))) (rs (nonce 8)))) H;simpl; try reflexivity.
 funapptrmhyp (msg (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)),
-     sign (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+     sign (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)))
        (pi2 (ks (nonce 10))) (rs (nonce 8)))) (msg (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)),
-    sign (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+    sign (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)))
       (pi2 (ks (nonce 10))) (rs (nonce 8)))) H; simpl; try reflexivity.
 funapptrmhyp (msg (vk 1,
      (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)),
-     sign (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+     sign (bl (comm (V1 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)))
        (pi2 (ks (nonce 10))) (rs (nonce 8))))) (msg (vk 1,
     (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)),
-    sign (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6))) 
+    sign (bl (comm (V0 x1) (kc (nonce 4))) (pubkey x1) (rb (nonce 6)))
       (pi2 (ks (nonce 10))) (rs (nonce 8))))) H; simpl; try reflexivity.
 
  restrsublis H; try assumption;  simpl; try reflexivity. repeat (simpl; try split; try reflexivity).  reflexivity.
@@ -197,17 +182,17 @@ Axiom ifmr_gen31_bol: forall (f:Bool->Bool->Bool->Bool) s t b t1 t2, (f (IF b th
 Axiom ifmr_gen32_bol: forall (f:Bool->Bool->Bool->Bool) s t b t1 t2, (f s  (IF b then t1 else t2) t) ## (IF b then (f s t1 t) else (f s t2 t)).
 Axiom ifmr_gen33_bol: forall (f:Bool->Bool->Bool->Bool) s t b t1 t2, (f s t (IF b then t1 else t2)) ## (IF b then (f s t t1) else (f s t t2)).
 
-  Theorem frame2_ind: (|v 0| #? |v 1|) ## TRue -> (phi2 0 1) ~ (phi2 1 0). 
+  Theorem frame2_ind: (|v 0| #? |v 1|) ## TRue -> (phi2 0 1) ~ (phi2 1 0).
 Proof. intros. unfold phi2, phi1. unfold t1, t2. simpl.
        unfold x2t, x2ft, tr, theta. repeat unfold b, s.
        unfold andB.
-       pose proof(compHid_ext). 
+       pose proof(compHid_ext).
 pose proof(compHid_ext 3 4 0 1 (v 0) (v 1) [] (phi0++
 [msg
      (If IF (to x1) #? A then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
-         then (vk 0, (bl (Mvar 0) pk (rb (nonce 5)), sign (bl (Mvar 0) pk (rb (nonce 5))) (ssk 0) (rs (nonce 9)))) 
+         then (vk 0, (bl (Mvar 0) pk (rb (nonce 5)), sign (bl (Mvar 0) pk (rb (nonce 5))) (ssk 0) (rs (nonce 9))))
          else If IF (to x1) #? B then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
-                 then (vk 1, (bl (Mvar 1) pk (rb (nonce 6)), sign (bl (Mvar 1) pk (rb (nonce 6))) (ssk 1) (rs (nonce 10)))) 
+                 then (vk 1, (bl (Mvar 1) pk (rb (nonce 6)), sign (bl (Mvar 1) pk (rb (nonce 6))) (ssk 1) (rs (nonce 10))))
                  else O),
    msg
      (If IF (to x1) #? A then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
@@ -217,8 +202,8 @@ pose proof(compHid_ext 3 4 0 1 (v 0) (v 1) [] (phi0++
                              (phi0 ++
                               [msg (vk 0, (bl (Mvar 0) pk (rb (nonce 5)), sign (bl (Mvar 0) pk (rb (nonce 5))) (ssk 0) (rs (nonce 9))))])))) #?
                     B then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
-                 then (vk 1, (bl (Mvar 1) pk (rb (nonce 6)), sign (bl (Mvar 1) pk (rb (nonce 6))) (ssk 1) (rs (nonce 10)))) 
-                 else O 
+                 then (vk 1, (bl (Mvar 1) pk (rb (nonce 6)), sign (bl (Mvar 1) pk (rb (nonce 6))) (ssk 1) (rs (nonce 10))))
+                 else O
          else If IF (to x1) #? B then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
                  then If IF (to
                                (f
@@ -227,44 +212,44 @@ pose proof(compHid_ext 3 4 0 1 (v 0) (v 1) [] (phi0++
                                       [msg
                                          (vk 1, (bl (Mvar 1) pk (rb (nonce 6)), sign (bl (Mvar 1) pk (rb (nonce 6))) (ssk 1) (rs (nonce 10))))]))))
                             #? A then IF vcheck (v 0) then vcheck (v 1) else FAlse else FAlse
-                         then (vk 0, (bl (Mvar 0) pk (rb (nonce 5)), sign (bl (Mvar 0) pk (rb (nonce 5))) (ssk 0) (rs (nonce 9)))) 
-                         else O 
+                         then (vk 0, (bl (Mvar 0) pk (rb (nonce 5)), sign (bl (Mvar 0) pk (rb (nonce 5))) (ssk 0) (rs (nonce 9))))
+                         else O
                  else O)])).
 simpl in H1.
 apply H1.
 repeat (try split; auto).
 reflexivity. unfold distMvars.
-simpl; right. trivial. 
+simpl; right. trivial.
 
 Qed.
 (** Using FUNCApp and Comphid **)
 (*
 Theorem frame2_ind: (phi2 0 1) ~ (phi2 1 0).
-Proof. repeat unfold phi2, phi1, theta, tr, s, b, c, t1, t2. simpl. 
+Proof. repeat unfold phi2, phi1, theta, tr, s, b, c, t1, t2. simpl.
 apply IFBRANCH_M2 with (ml1:= phi0) (ml2:=phi0). simpl.
- 
+
 apply IFBRANCH_M1 with (ml1:= phi0 ++ [bol (theta x1 A), msg (tr 0 0 3 5 9)]) (ml2:= phi0 ++ [bol (theta x1 A), msg (tr 0 1 3 5 9)]).
-repeat unfold phi2, phi1, theta, tr, s, b, c, t1, t2. simpl. 
+repeat unfold phi2, phi1, theta, tr, s, b, c, t1, t2. simpl.
 pose proof (compHid 3 4 O (V0 x1) (V1 x1) (phi0++[msg x1,  bol (vcheck (v 0)), bol (vcheck (v 1)), bol ((to x1) #? A) & (vcheck (v 0))&(vcheck (v 1)),  msg rb0, msg rb1, msg rs0, msg rs1, msg ssk0, msg ssk1, bol FAlse, bol TRue])).
 simpl in H.
 assert ( (| V0 x1 | #? |V1 x1|) ## TRue).
 apply vote_len_reg. simpl in H0.
-repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H.  
+repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H.
 funappf1 pi1 25 H.
 funappf1 pi2 26 H.
 repeat rewrite proj1, proj2 in H.
 funappf1 pubkey 15 H.
 clear H0.
-(** construct bool condition *)  
+(** construct bool condition *)
  unfold rb0, rb1, rs0, rs1, ssk0, ssk1 in H.
  funapptrmhyp (msg (b 0 3 5)) (msg (b 1 3 5)) H; simpl; try reflexivity.
- 
+
 funapptrmhyp (msg (s 0 3 5 0 9)) (msg (s 1 3 5 0 9)) H; simpl; try reflexivity.
 funapptrmhyp (msg (tr 0 0 3 5 9)) (msg (tr 0 1 3 5 9)) H; simpl; try reflexivity.
 funapptrmhyp (msg (x2t 0)) (msg (x2t 1)) H; simpl; try reflexivity.
 funapptrmhyp (msg (to (x2t 0))) (msg (to (x2t 1))) H; simpl; try reflexivity.
-funapptrmhyp  (bol ((to (x2t 0)) #? B) & (vcheck (V0 x1)) & (vcheck (V1 x1))) ( bol ((to (x2t 1)) #? B) & (vcheck (V0 x1)) & (vcheck (V1 x1))) H; simpl; try reflexivity. 
-funapptrmhyp (msg (bl (comm (V1 x1) (kc (nonce 4))) pk (rb (nonce 6)))) (msg (bl (comm (V0 x1) (kc (nonce 4))) pk (rb (nonce 6)))) H; simpl; try reflexivity.  
+funapptrmhyp  (bol ((to (x2t 0)) #? B) & (vcheck (V0 x1)) & (vcheck (V1 x1))) ( bol ((to (x2t 1)) #? B) & (vcheck (V0 x1)) & (vcheck (V1 x1))) H; simpl; try reflexivity.
+funapptrmhyp (msg (bl (comm (V1 x1) (kc (nonce 4))) pk (rb (nonce 6)))) (msg (bl (comm (V0 x1) (kc (nonce 4))) pk (rb (nonce 6)))) H; simpl; try reflexivity.
 funapptrmhyp (msg (s 1 4 6 1 10)) (msg (s 0 4 6 1 10)) H; simpl; try reflexivity.
 
 funapptrmhyp (msg (tr 1 1 4 6 10)) (msg (tr 1 0 4 6 10)) H; simpl; try reflexivity.
@@ -283,7 +268,7 @@ pose proof (compHid 3 4 O (V0 x1) (V1 x1) (phi0++[msg x1,  bol (vcheck (v 0)), b
 simpl in H.
 assert ( (| V0 x1 | #? |V1 x1|) ## TRue).
 apply vote_len_reg. simpl in H0.
-repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H.  
+repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H.
 funappf1 pi1 25 H.
 funappf1 pi2 26 H.
 repeat rewrite proj1, proj2 in H.
@@ -309,17 +294,17 @@ simpl.
 (** goal 3 *)
 
 apply IFBRANCH_M2 with (ml1:= phi0 ++[ bol ((to x1) #? A) & (vcheck (V0 x1)) & (vcheck (V1 x1))] )  (ml2:=phi0 ++ [ bol ((to x1) #? A) & (vcheck (V0 x1)) & (vcheck (V1 x1))]). simpl.
- 
+
 apply IFBRANCH_M1 with (ml1:= phi0 ++ [bol (theta x1 A), bol (theta x1 B), msg (tr 1 1 4 6 10)]) (ml2:= phi0 ++ [bol (theta x1 A), bol (theta x1 B), msg (tr 1 0 4 6 10)]).
 
-repeat unfold phi2, phi1, theta, tr, s, b, c, t1, t2. simpl. 
+repeat unfold phi2, phi1, theta, tr, s, b, c, t1, t2. simpl.
 pose proof (compHid 4 3 O (V1 x1) (V0 x1) (phi0++[msg x1,  bol (vcheck (v 0)), bol (vcheck (v 1)),  bol ((to x1) #? A), bol ((to x1) #? B), msg rb0, msg rb1, msg rs0, msg rs1, msg ssk0, msg ssk1, bol FAlse, bol TRue])).
 simpl in H.
 Axiom eqm_refl: forall m1 m2, (m1 #? m2) ## TRue -> (m2 #? m1) ## TRue.
 assert ( (| V0 x1 | #? |V1 x1|) ## TRue).
 apply vote_len_reg. simpl in H.
 apply eqm_refl in H0.
-repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H.  
+repeat rewrite H0 in H. repeat rewrite IFTRUE_M in H.
 funappf1 pi1 26 H.
 funappf1 pi2 27 H.
 repeat rewrite proj1, proj2 in H.
@@ -335,11 +320,11 @@ funapptrmhyp (msg (tr 1 1 4 6 10)) (msg (tr 1 0 4 6 10)) H; simpl; try reflexivi
 funapptrmhyp (msg (x2ft 1)) (msg (x2ft 0)) H; simpl; try reflexivity.
 funapptrmhyp (msg (to (x2ft 1))) (msg (to (x2ft 0))) H; simpl; try reflexivity.
  funapptrmhyp (bol ((to (x2ft 1)) #? B)) (bol ((to (x2ft 0)) #? B)) H; simpl; try reflexivity.
-funapptrmhyp (bol (vcheck (V0 x1))& (vcheck (V1 x1))) (bol (vcheck (V0 x1))& (vcheck (V1 x1))) H; simpl; try reflexivity. 
+funapptrmhyp (bol (vcheck (V0 x1))& (vcheck (V1 x1))) (bol (vcheck (V0 x1))& (vcheck (V1 x1))) H; simpl; try reflexivity.
  funapptrmhyp  (bol ((to (x2ft 1)) #? B) & (vcheck (V0 x1)) & (vcheck (V1 x1))) ( bol ((to (x2ft 0)) #? B) & (vcheck (V0 x1)) & (vcheck (V1 x1))) H; simpl; try reflexivity.
 
 funapptrmhyp (bol ((to x1) #? B) & (vcheck (V0 x1)) & (vcheck (V1 x1))) (bol ((to x1) #? B) & (vcheck (V0 x1)) & (vcheck (V1 x1))) H; simpl; try reflexivity.
- 
+
 
 funapptrmhyp (msg (b 0 3 5)) (msg (b 1 3 5)) H; simpl; try reflexivity.
 funapptrmhyp (msg (s 0 3 5 0 9)) (msg (s 1 3 5 0 9)) H; simpl; try reflexivity.
@@ -390,7 +375,7 @@ Qed. *)
 Theorem frame1ind: (| V0 x1 |) #? (| V1 x1 |) ## TRue -> (phi1 0 1) ~ (phi1 1 0).
 Proof. intros. unfold phi1.
 simpl. pose proof (frame2_ind).
-unfold phi2, phi1 in H.  
+unfold phi2, phi1 in H.
 simpl in H.
 apply H0 in H.
 dropLast_in H; auto.

@@ -4,7 +4,7 @@
 (************************************************************************)
 
 (* Require Export voting_prop. *)
-Require Export voting_prop.
+Require Export cpacca.
 Require Import Coq.Bool.Bool.
 Set Nested Proofs Allowed.
 

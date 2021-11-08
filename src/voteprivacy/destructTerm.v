@@ -1,9 +1,9 @@
-Require Export prop_17.
+Require Export prop_19.
 Require Import List.
 Import ListNotations.
-Require Import Coq.Init.Datatypes. 
+Require Import Coq.Init.Datatypes.
 
-Declare Scope destruct_scope. 
+Declare Scope destruct_scope.
 Delimit Scope destruct_sope with destr.
 Inductive prodOsl: Type :=
 | mypair (l1 l2: oslist).
@@ -36,7 +36,7 @@ Definition pi1ProdMylist (p: option (prodMylist)): mylist (mylength p) :=
   | Some (pairMylist _ l1 _) => l1
   | _ => []
   end.
- 
+
 Definition pi2ProdMylist (p: option (prodMylist)): mylist (mylength p) :=
   match p with
   | Some (pairMylist _ _ l2) => l2
@@ -56,7 +56,7 @@ Fixpoint oslToMylist (l1 l2: oslist): option (prodMylist) :=
 Open Scope destr.
  Fixpoint remove (t1 t2: oursum) (l1 l2: oslist): prodOsl :=
   match l1, l2 with
-  | h1::tl1, h2::tl2 => if (h1 =?= t1) 
+  | h1::tl1, h2::tl2 => if (h1 =?= t1)
                           then (mypair tl1 tl2)
                           else let g:= remove t1 t2 tl1 tl2 in
                                (mypair (h1::fst g) (h2::snd g))
@@ -66,7 +66,7 @@ Open Scope destr.
 Definition remThenApp (t1 t2: oursum) (l1 l2: oslist): prodOsl :=
   let g := remove t1 t2 l1 l2 in
   mypair (t1::fst g) (t2::snd g).
-         
+
 Fixpoint remThenAppList (l1 l2 l1' l2': oslist): prodOsl :=
   match l1, l2 with
   | h1::t1, h2::t2 => let p := remThenApp h1 h2 l1' l2' in
@@ -83,7 +83,7 @@ Fixpoint aply_att (l1 l2: list message): prodOsl :=
                       mypair ((fst p)++(fst rec)) ((snd p)++(snd rec))
   | _, _ => mypair nil nil
   end.
-End all. 
+End all.
 Open Scope msg_scope.
 Fixpoint destrCommBol (b1 b2: Bool): prodOsl :=
   match b1, b2 with

@@ -1,10 +1,11 @@
- 
 (************************************************************************) 
 (* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
 (************************************************************************)
 Require Export destructTerm.
 Require Import Coq.Bool.Bool.
 Set Nested Proofs Allowed.
+Require Import List.
+Import ListNotations.
 
 Section auxProps.
   Axiom ifMorphPair: forall b t1 t2 t3, (t1, If b then t2 else t3) # If b then (t1, t2) else (t1, t3).
@@ -13,17 +14,16 @@ Section auxProps.
   Axiom orB_FAlse_r: forall b, b or FAlse = b.
   Axiom orB_FAlse_l: forall b, FAlse or b = b.
   Axiom ifMorphIf: forall b1 b2 b3 b4 t1 t2, (If b1 & (IF b2 then b3 else b4) then t1 else t2) # (If b2 then (If b1 & b3 then t1 else t2) else (If b1 & b4 then t1 else t2)).
-  Require Import List.
-  Import ListNotations.
   Fixpoint ifMorphDef (f: Mlist -> message) (al: Mlist) (l: Mlist) :=
     match l with
     | nil => f (al ++ nil)
-    | (cons (If b then t1 else t2) nil)  => If b then (f (al ++ (cons t1 nil))) else (f (al ++ (cons t2 nil))) 
+    | cons (If b then t1 else t2) nil  => If b then (f (al ++ (cons t1 nil))) else (f (al ++ (cons t2 nil)))
 | h :: tl => match h with
              | If b then t1 else t2 => If b then (ifMorphDef f (al ++ (cons t1 nil)) tl) else (ifMorphDef f (al ++ (cons t2 nil)) tl)
 | _ => ifMorphDef f (al ++ (cons h nil)) tl
   end
   end.
+  Axiom clos_sub_vtrm: forall n1 s1 n2 s2 t, let mvl:= (distMvars [msg t]) in (cons n1  (cons n2 nil))= mvl \/ (cons n2 (cons n1 nil)) = mvl -> closMsg ({{n1:=s1}} ({{n2:=s2}}t)) = true.
 
   (* Compute ifMorphDef f nil [O; If FAlse then nonce 1 else O; nonce 2; If TRue then (If TRue then nonce 100 else O) else nonce 4]. *)
 
@@ -57,27 +57,7 @@ Section auxTacs.
     end.
 End auxTacs.
 
-Goal [msg (comm O (nonce 0))]~[msg (comm O (nonce 3))].
-Search "subtrm".
-  Compute subtrmls_mylist [msg (comm O (nonce 0))].
-  Compute subtrmls_mylist [msg (nonce 0)].
-sumtrmls_ls''.
-Search "subtrm".
-  Ltac destruct_at n :=
-    match goal with
-    | [|- ?X ~ ?Y ] => match X with
-                         | [] => 
-    end.
-  f_equal.
-  match goal with
-  |[|- ?X # ?Y] => inversion X
-  end.
-  Goal [ msg (comm O (nonce 3))] ~  [  msg (comm (nonce 1) (nonce 4))].
 
-  match goal with
-  | [|- (Cons _ _ ?X (Nil _)) ~ (Cons _ _ ?Y (Nil _))  ] => destruct X; destruct Y
-  end.
-  
 Section lemma_25.
 
   Definition V (b:bool) :=
@@ -126,7 +106,10 @@ Definition p n x := ( (tau 1 (d n x)), (tau 2 (d n x))).
 Definition sotrm x := (shufl (p 1 x) (p 2 x) (p 3 x)).
 
 Definition isink (x y:message):Bool := (x #? (tau 2 (d 1 y))) or (x #? (tau 2 (d 2 y))) or (x #? (tau 2 (d 3 y))).
-(** **)
+
+  Open Scope msg_scope.
+  
+  (** **)
 Axiom funcapp_f1m': forall {n n'} f p1 (z z':mylist n) (z1 z1':mylist n'), (z ++ z1) ~ (z' ++ z1') -> ((z ++ z1) ++ [msg (f (ostomsg (getelt_at_pos p1 z1)))]) ~ ((z' ++ z1') ++ [msg (f (ostomsg (getelt_at_pos p1 z1')))]).
 Ltac funcapp_f1m'_in g n H:= apply funcapp_f1m' with (f:=g) (p1:=n) in H; unfold getelt_at_pos in H; simpl in H.
 Axiom ifmor_ifm: forall f b x y, (f (If b then x else y)) # (If b then (f x) else (f y)).
@@ -144,7 +127,7 @@ Proof. intros.
        do 2  apply restr with (p:= droplastsec) in H; unfold droplastsec in H; simpl in H; simpl; try rewrite Nat.eqb_refl; auto.
        repeat rewrite aply_ifeval_gen in H;auto. Qed.
 
- Axiom eqm_cong: forall m1 m2 m3 m4, m1 # m2 -> m3 # m4 -> (eqm m1 m3) ## (eqm m2 m4).
+Axiom eqm_cong: forall m1 m2 m3 m4, m1 # m2 -> m3 # m4 -> (eqm m1 m3) ## (eqm m2 m4).
 Add Parametric Morphism: (@ eqm) with
     signature EQm ==> EQm ==> EQb as eqm_mor.
 Proof. intros. rewrite H, H0. reflexivity. Qed.
@@ -216,13 +199,14 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
                  let fphi05 := f (toListm phi05) in
                  let fphi15 := f (toListm phi15) in
                  let do0 := (If (dist fphi05) & (pochecks fphi05) & (((isink k0 fphi05) & (isink k1 fphi05)) or (! ((isink k0 fphi05)or (isink k1 fphi05)))) then (sotrm fphi05) else |_) in
-                 let do1 := (If (dist fphi15)& (pochecks fphi15)& ((isink k0 fphi15)&(isink k1 fphi15)) (* or (! ((isink k0 fphi15)or (isink k1 fphi15)))) *) then (sotrm fphi15) else |_) in
+                 let do1 := (If (dist fphi15)& (pochecks fphi15)& (((isink k0 fphi15)&(isink k1 fphi15)) or (! ((isink k0 fphi15)or (isink k1 fphi15)))) then (sotrm fphi15) else |_) in
                  let t0s0 := (If acc00 & acc11 then ((e00, (e11, dv0)), (l00, (l11, do0))) else |_) in
                  let t1s1 := (If acc10 & acc01 then ((e10, (e01, dv1)), (l10, (l01, do1))) else |_) in
                  (occur_name_mylist 100 [msg t, msg t0, msg t1] = false) -> (Fresh (cons 0 nil) [msg t, msg t2, msg t3, msg t4, msg t5] = true) ->
                  [msg b00, msg b11, msg t0s0] ~ [msg b10, msg b01, msg t1s1].
 Proof. intros.
-       unfold t0s0, t1s1, l00, l10, bnlcheck.
+       unfold t0s0, t1s1.
+       unfold e00.
        (** x ~ y **)
        (**x~ x' and y~y', x' ~ y' **)
        (** replace the first voters' nonce (nonce 0) with a fresh nonce (nonce 20) **)
