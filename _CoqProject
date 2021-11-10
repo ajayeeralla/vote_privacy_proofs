@@ -32,4 +32,3 @@ src/voteprivacy/prop_19.v
 src/voteprivacy/prop_21.v
 src/voteprivacy/tactics.v
 src/voteprivacy/types.v
-src/voteprivacy/voting_prop.v
