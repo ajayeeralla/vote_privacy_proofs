@@ -1,63 +1,8 @@
-(************************************************************************) 
+(************************************************************************)
 (* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
-(************************************************************************) 
+(************************************************************************)
 Require Export destructTerm.
-Require Import Coq.Bool.Bool.
-Set Nested Proofs Allowed.
-Require Import List.
-Import ListNotations.
 
-Section auxProps.
-  Axiom ifMorphPair: forall b t1 t2 t3, (t1, If b then t2 else t3) # If b then (t1, t2) else (t1, t3).
-  Axiom andB_elim: forall b1 b2 t1 t2, (If b1 & b2 then t1 else t2) # (If b1 then (If b2 then t1 else t2) else t2).
-  Axiom ifMorphIfThen: forall b1 b2 t1 t2 t3, (If b1 then (If b2 then t1 else t2) else t3) # (If b2 then (If b1 then t1 else t3) else (If b1 then t2 else t3)).
-  Axiom orB_FAlse_r: forall b, b or FAlse = b.
-  Axiom orB_FAlse_l: forall b, FAlse or b = b.
-  Axiom ifMorphIf: forall b1 b2 b3 b4 t1 t2, (If b1 & (IF b2 then b3 else b4) then t1 else t2) # (If b2 then (If b1 & b3 then t1 else t2) else (If b1 & b4 then t1 else t2)).
-  Fixpoint ifMorphDef (f: Mlist -> message) (al: Mlist) (l: Mlist) :=
-    match l with
-    | nil => f (al ++ nil)
-    | cons (If b then t1 else t2) nil  => If b then (f (al ++ (cons t1 nil))) else (f (al ++ (cons t2 nil)))
-| h :: tl => match h with
-             | If b then t1 else t2 => If b then (ifMorphDef f (al ++ (cons t1 nil)) tl) else (ifMorphDef f (al ++ (cons t2 nil)) tl)
-| _ => ifMorphDef f (al ++ (cons h nil)) tl
-  end
-  end.
-  Axiom clos_sub_vtrm: forall n1 s1 n2 s2 t, let mvl:= (distMvars [msg t]) in (cons n1  (cons n2 nil))= mvl \/ (cons n2 (cons n1 nil)) = mvl -> closMsg ({{n1:=s1}} ({{n2:=s2}}t)) = true.
-
-  (* Compute ifMorphDef f nil [O; If FAlse then nonce 1 else O; nonce 2; If TRue then (If TRue then nonce 100 else O) else nonce 4]. *)
-
-  Axiom ifMorphAttComp: forall b f l t, (If b then (f l) else t) # (If b then (ifMorphDef f nil l) else t).
-End auxProps.
-
-(* Section auxTacs. *)
-  Ltac rew_ifMorphIf :=
-    match goal with
-    |[|- context[(If ?B1 & (IF ?B2 then ?B3 else ?B4) then ?T1 else ?T2)] ] => rewrite (@ifMorphIf B1 B2 B3 B4 T1 T2)
-    end.
-  Ltac apply_ifbr ml1 ml2 b b' x x' y y' := apply (@IFBRANCH_M1 _ ml1 ml2 b b' x x' y y'); simpl.
-  Ltac aply_ifbr :=
-    match goal with
-    | [|- (Cons _ _ (msg (If ?B1 then ?T1 else ?F1)) (Nil _))
-            ~ (Cons _ _ (msg (If ?B2 then ?T2 else ?F2)) (Nil _))]
-        => apply_ifbr [] [] B1 B2 T1 T2 F1 F2
-    | [|- (Cons _ _ ?X4 (Cons _ _ (msg (If ?B1 then ?T1 else ?F1)) (Nil _)))
-            ~ (Cons _ _ ?Y4 (Cons _ _ (msg (If ?B2 then ?T2 else ?F2)) (Nil _)))]
-      => apply_ifbr [X4] [Y4] B1 B2 T1 T2 F1 F2
-    | [|- (Cons _ _ ?X3 (Cons _ _ ?X4 (Cons _ _ (msg (If ?B1 then ?T1 else ?F1)) (Nil _))))
-            ~ (Cons _ _ ?Y3 (Cons _ _ ?Y4 (Cons _ _ (msg (If ?B2 then ?T2 else ?F2)) (Nil _))))]
-      => apply_ifbr [X3, X4] [Y3, Y4] B1 B2 T1 T2 F1 F2
-    |[|- (Cons _ _ ?X2 (Cons _ _ ?X3 (Cons _ _ ?X4 (Cons _ _ (msg (If ?B1 then ?T1 else ?F1)) (Nil _)))))
-           ~ (Cons _ _ ?Y2 (Cons _ _ ?Y3 (Cons _ _ ?Y4 (Cons _ _ (msg (If ?B2 then ?T2 else ?F2)) (Nil _)))))]
-     => apply_ifbr [X2, X3, X4] [Y2, Y3, Y4] B1 B2 T1 T2 F1 F2
-    | [|- (Cons _ _ ?X1 (Cons _ _ ?X2 (Cons _ _ ?X3 (Cons _ _ ?X4 (Cons _ _ (msg (If ?B1 then ?T1 else ?F1)) (Nil _))))))
-            ~ (Cons _ _ ?Y1 (Cons _ _ ?Y2 (Cons _ _ ?Y3 (Cons _ _ ?Y4 (Cons _ _ (msg (If ?B2 then ?T2 else ?F2)) (Nil _))))))]
-      => apply_ifbr [X1, X2, X3, X4] [Y1, Y2, Y3, Y4] B1 B2 T1 T2 F1 F2
-                    (** extend this for other cases *)
-    end.
-(* End auxTacs. *)
-
-Compute er.
 Module aux.
   Export destructTerm.
   Fixpoint submsg_bol pk r (t': message)(s: message) (b: Bool): Bool :=
@@ -78,7 +23,7 @@ Module aux.
                            | _, _ => t
                            end
          | _ => t
-                  
+
          end.
 
   Fixpoint submsg_os pk r (t': message) (s: message) (os: oursum): oursum :=
@@ -153,7 +98,7 @@ with repNonceMsg n n' t: message :=
     | msg t => msg (repNonceMsg n n' t)
     | bol b => bol (repNonceBol n n' b)
     end.
-  
+
   Fixpoint repNonceMylist n n' {m} (l: mylist m): mylist m :=
     match l with
     | [] => []
@@ -174,71 +119,13 @@ Section lemma_25.
     | false => 0
     | true => 1
     end.
-(* SearchAbout eqb%bool. *)
-(** abbreviations *)
 
-Definition tau n (m:message) := match n, m with
-                                | 1, m => (pi1 m)
-                                | 2, m => (pi1 (pi2 m))
-                                | 3, m => (pi2 (pi2 m))
-                                | _, _ => O
-                                end.
-
-Definition d n x := (dec (tau n x) (ske 11)).
-Definition pvchecks x := ((pi2 (d 1 x)) #? TWO) & ((pi2 (d 2 x)) #? TWO) & ((pi2 (d 3 x)) #? TWO).
-Definition pochecks x := ((tau 3 (d 1 x)) #? THREE) & ((tau 3 (d 2 x)) #? THREE) & ((tau 3 (d 3 x)) #? THREE).
-
-Definition dist x := !((d 1 x) #? (d 2 x)) & !((d 1 x) #? (d 3 x))& ! ((d 2 x) #? (d 3 x)).
-Definition isin (x y:message):Bool := (x #? (tau 1 y)) or (x #? (tau 2 y)) or (x #? (tau 3 y)).
-Definition bcheck (x y:message):Bool := (isin x ((tau 1 (pi2 (tau 1 y))), ((tau 1 (pi2 (tau 2 y))), (tau 1 (pi2 (tau 3 y)))))).
-Definition ncheck (x y:message):Bool := (isin x ((tau 3 (pi2 (tau 1 y))), ((tau 3 (pi2 (tau 2 y))), (tau 3 (pi2 (tau 3 y)))))).
-
-
-Definition lbl:= |(nonce 100)|.
-Definition label x y := If (x #? (tau 2 (pi2 (tau 1 y)))) then (pi1 (tau 1 y))
-                           else  (If (x#? (tau 2 (pi2 (tau 2 y)))) then (pi1 (tau 2 y))
-                                                       else (If (x #? (tau 2 (pi2 (tau 3 y)))) then (pi1 (tau 3 y))
-                                                             else O)).
-
-Definition bnlcheck( x y z:message):Bool:= (bcheck x z) & (|(label x z)| #? lbl) & (ncheck y z).
-
-Definition mvchecks x (n n':nat) := (dist (x n n')) & (pvchecks (x n n')).
-
-Definition p n x := ( (tau 1 (d n x)), (tau 2 (d n x))).
-
-Definition sotrm x := (shufl (p 1 x) (p 2 x) (p 3 x)).
-
-Definition isink (x y:message):Bool := (x #? (tau 2 (d 1 y))) or (x #? (tau 2 (d 2 y))) or (x #? (tau 2 (d 3 y))).
 
   Open Scope msg_scope.
-  
+
   (** **)
-Axiom funcapp_f1m': forall {n n'} f p1 (z z':mylist n) (z1 z1':mylist n'), (z ++ z1) ~ (z' ++ z1') -> ((z ++ z1) ++ [msg (f (ostomsg (getelt_at_pos p1 z1)))]) ~ ((z' ++ z1') ++ [msg (f (ostomsg (getelt_at_pos p1 z1')))]).
-Ltac funcapp_f1m'_in g n H:= apply funcapp_f1m' with (f:=g) (p1:=n) in H; unfold getelt_at_pos in H; simpl in H.
-Axiom ifmor_ifm: forall f b x y, (f (If b then x else y)) # (If b then (f x) else (f y)).
 
-Lemma extFuncapp1: forall n b b' x x' y y' (z z': mylist n) g, (z ++ [bol b, msg (If b then x else y)]) ~ (z' ++ [bol b', msg (If b' then x' else y')]) -> (z ++ [bol b, msg (If b then x else y), msg (If b then (g x) else |_)])~ (z' ++ [bol b', msg (If b' then x' else y'), msg (If b' then (g x') else |_)]).
-Proof. intros.
-       funcapp_f1m'_in g 2 H.
-       simpl.
-       repeat rewrite ifmor_ifm in H.
-       funcapp_fm_last |_ H; auto. apply ind_assoc in H; simpl in H.
-       apply funcapp_f3bm' with (f:= (ifm_then_else_)) (p1:= 1) (p2:=3) (p3:=4) in H; unfold getelt_at_pos; simpl in H.
-       simpl in H.
-       (********************)
-       apply ind_assoc in H; simpl in H.
-       do 2  apply restr with (p:= droplastsec) in H; unfold droplastsec in H; simpl in H; simpl; try rewrite Nat.eqb_refl; auto.
-       repeat rewrite aply_ifeval_gen in H;auto. Qed.
 
-Axiom eqm_cong: forall m1 m2 m3 m4, m1 # m2 -> m3 # m4 -> (eqm m1 m3) ## (eqm m2 m4).
-Add Parametric Morphism: (@ eqm) with
-    signature EQm ==> EQm ==> EQb as eqm_mor.
-Proof. intros. rewrite H, H0. reflexivity. Qed.
-
-Axiom orB_cong: forall b1 b2 b3 b4, b1 ## b2 -> b3 ## b4 -> (IF b1 then TRue else b3) ## (IF b2 then TRue else b4).
-Add Parametric Morphism: (@orB) with
-      signature EQb ==> EQb ==> EQb as orB_mor.
-Proof. intros. apply orB_cong; auto. Qed.
 Import aux.
 (* Require Import Coq.Lists.List. *)
 Lemma rep_first_ballot: forall t t0 t1 : message,
@@ -284,7 +171,7 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
 
       (* Right-side *)
       let c10 := (comm v1 k0) in
-      let c01 := (comm v0 k1) in 
+      let c01 := (comm v0 k1) in
       let b10 := (bl c10 t r0) in
       let b01 := (bl c01 t r1) in
       let t4 := ({{ 5 := (bl c10 t r0) }} ({{ 6:=(bl c01 t r1) }} t0)) in
@@ -313,7 +200,7 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
 
  (* Proof.  intros. *)
  (*        unfold t0s0, t1s1. *)
-       
+
  (*        (* Replace nonce 20 with nonce 50 in the first ballot *)
         (* Left side *) *)
  (*        (* To prove left frame indistinguishable to the following using CCA2 *) *)
@@ -352,7 +239,7 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
  (*                    let t1s1' := (If acc10 & acc01 then ((e10', (e01, dv1)), (l10', (l01', do1'))) else |_) in *)
  (*                    [msg b10, msg b01,  msg t1s1']). *)
 
-        
+
  (*        Axiom cca2Trans: forall {m} {l1 l2 l1' l2': mylist m}, l1 ~ l1' /\ l2 ~ l2' /\ l1' ~ l2' -> l1 ~ l2. *)
  (*        Ltac aply_cca2Trans L R := *)
  (*          match goal with *)
@@ -375,7 +262,7 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
  (*        repeat rewrite tmp. *)
  (*        repeat try rewrite andB_FAlse_r, andB_FAlse_l. *)
  (*        redg.    *)
-        
+
  (*          Axiom destrAbstrTerm: forall n t, destrEncMsg n t t = mypair (cons (msg t) nil) (cons (msg t) nil).      *)
  (*           repeat rewrite destrAbstrTerm.  simpl. *)
  (*        Axiom nodup: forall {m} (l1 l2: mylist m), let l1' := conv_mylist_listos l1 in *)
@@ -385,22 +272,13 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
  (*                                           let y:= oslToMylist l1'' l2'' in *)
  (*                                           (pi1ProdMylist y) ~ (pi2ProdMylist y) -> l1 ~ l2.                                                   *)
 Proof.
-        Proposition freshNeqExt: forall (n: nat) (m: message), ^? m = true /\ (Fresh (cons n nil) [msg m]) = true -> ((nonce n) #? m) ## FAlse.
-          Proof. intros. pose proof(FRESHNEQ n m).
-                 apply (@Example10_B ((nonce n)#?m) FAlse FAlse).
-                 unfold const; auto.
-          Qed.
-        Ltac aply_freshneq n :=
-          match goal with
-          |[|-context[ (nonce n) #? ?X] ] =>  pose proof(@freshNeqExt n X) as tmp; rewrite tmp; try unfold Fresh; try auto
-          end.
-        
+
         intros.
         unfold t0s0, t1s1.
        (** x ~ y **)
        (**x~ x' and y~y', x' ~ y' **)
         (** replace the first voters' nonce (nonce 0) with a fresh nonce (nonce 20) **)
-        Axiom cca2Trans: forall {m} {l1 l2 l1' l2': mylist m}, l1'~l2' /\ l1 ~ l1' /\ l2 ~ l2' -> l1 ~ l2.
+
        unfold do0, dv0.
        unfold s0. unfold e00.
        Axiom dummy: forall {n} (z z': mylist n), z ~ z'.
@@ -784,7 +662,7 @@ Axiom infeasible_comp_ck: forall n t g, (closMsg t) = true ->
                                           (** (distMvars [msg t']) = (cons m nil) ->  I can prove this:Fresh (cons n nil) [msg t, msg t'] = true **) ((g t) #? (kc (nonce n)))  ## FAlse.
 (*** I will prove this later **) unfold b00.
         (*Eval compute in b00. *)
-Search eqm.        
+Search eqm.
 (* Axiom eqm_sym: forall m1 m2, (m1 #? m2) ## (m2 #? m1). *)
         repeat rewrite eqCom.Example14_M' with (m1:= (kc (nonce 3))).
 repeat rewrite infeasible_comp_ck with (n:= 3); auto.
@@ -792,20 +670,23 @@ unfold orB.
 repeat rewrite IFFALSE_B.
 repeat rewrite andB_FAlse_l.  repeat rewrite andB_FAlse_r. repeat rewrite IFFALSE_M. simpl.
 (** we replace the encryption that emits *)
-(*         aply_ifbr. simpl. repeat unfold acc00, acc11, acc10, acc01. *)
-(*         Axiom instantiate: forall n n' c00 c11 t r0 r1 t0, ({{ n := (bl c00 t r0) }} ({{ n':=(bl c11 t r1) }} t0)) # ((bl c00 t r0), (bl c11 t r1)). unfold t2, t3, t4, t5; repeat try rewrite instantiate. *)
-(*         aplyDestrComm. simpl. *)
-(*         Axiom destCommAbsTerm: forall t, destrCommMsg t t = mypair (cons (msg t) nil) (cons (msg t) nil). simpl. *)
-(*         repeat rewrite destCommAbsTerm. simpl. unfold mylength. simpl. *)
-(*         2:{ *)
-(*           simpl. rewrite destCommAbsTerm. simpl. *)
-(*         unfold mylength. simpl. *)
-       
+        aply_ifbr. simpl. repeat unfold acc00, acc11, acc10, acc01.
+        aplyDestrComm. simpl.
+        2:{
+          simpl.
+        Axiom instantiate: forall n n' c00 c11 t r0 r1 t0, ({{ n := (bl c00 t r0) }} ({{ n':=(bl c11 t r1) }} t0)) # ((bl c00 t r0), (bl c11 t r1)). unfold t2, t3, t4, t5; repeat try rewrite instantiate.
+        aplyDestrComm. Simpl.
+        Axiom destCommAbsTerm: forall t, destrCommMsg t t = mypair (cons (msg t) nil) (cons (msg t) nil). simpl.
+        repeat rewrite destCommAbsTerm. simpl. unfold mylength. simpl.
+        2:{
+          simpl. rewrite destCommAbsTerm. simpl.
+        unfold mylength. simpl.
+
 (*         Goal destrCommMsg t2 t4 = mypair (cons (msg |_) nil) (cons (msg |_) nil). *)
 (* 2:{ repeat rewrite destCommAbsTerm. simpl. unfold r1. unfold r. unfold pi1ProdMylist. *)
 (* simpl. *)
     pose proof(compHid_ext).
-        
+
 apply extcomphid.
 
  simpl.

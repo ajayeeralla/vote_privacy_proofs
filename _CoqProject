@@ -1,5 +1,8 @@
 -R src ""
 src/voteprivacy/andbprops.v
+src/voteprivacy/applyDestrComm.v
+src/voteprivacy/applyDestrEnc.v
+src/voteprivacy/auxDefs.v
 src/voteprivacy/commKeysDist.v
 src/voteprivacy/coreAxioms.v
 src/voteprivacy/cpacca.v

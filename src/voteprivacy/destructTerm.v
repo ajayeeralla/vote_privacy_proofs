@@ -118,8 +118,17 @@ Fixpoint nodupOsl l : oslist :=
   | h::t => if checkOsList h t then nodupOsl t else h::(nodupOsl t)
   end.
 
-
-
+(* This works great  *)
+Fixpoint In (a: oursum) (l: oslist): bool :=
+  match l with
+  | [ ]%list => false
+  | h::t => oursum_beq h a || In a t
+  end.
+Fixpoint noDup (l: oslist): oslist :=
+  match l with
+  | [ ] => [ ]
+  | h::t => if In h t then noDup t else h::(noDup t)
+  end.
 (* Check map. *)
 
 Section destrComm.
@@ -134,9 +143,13 @@ Fixpoint destrComm_f_all (l1 l2: list message): prodOsl :=
 End destrComm.
 
 Open Scope msg_scope.
-
 Fixpoint destrCommBol (b1 b2: Bool): prodOsl :=
+  if Bool_beq b1 b2 then mypair [ ] [ ] else
   match b1, b2 with
+  | IF b01 then b02 else b03, IF b11 then b12 else b13 => let posl1 := destrCommBol b01 b11 in
+                                                          let posl2 := destrCommBol b02 b12 in
+                                                          let posl3 := destrCommBol b03 b13 in
+                                                          mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
   | eqb b01 b02, eqb b11 b12 => let posl1 := destrCommBol b01 b11 in
                                 let posl2 := destrCommBol b02 b12 in
                                 mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
@@ -159,6 +172,7 @@ Fixpoint destrCommBol (b1 b2: Bool): prodOsl :=
   | _, _ => mypair (cons (bol b1) nil) (cons (bol b2) nil)
   end
   with destrCommMsg (t1 t2: message): prodOsl :=
+    if  message_beq t1 t2 then mypair [ ] [ ] else
          match t1, t2 with
          | open t01 t02 t03, open t11 t12 t13 => let posl1 := destrCommMsg t01 t11 in
                                                  let posl2 := destrCommMsg t02 t12 in
@@ -207,6 +221,7 @@ Fixpoint destrCommBol (b1 b2: Bool): prodOsl :=
 end.
 
 Definition destrCommOs (os1 os2: oursum): prodOsl :=
+  if oursum_beq os1 os2 then (mypair [ ] [ ]) else
   match os1, os2 with
   | msg t00, msg t10 => destrCommMsg t00 t10
   | bol b00, bol b10 => destrCommBol b00 b10
@@ -221,9 +236,9 @@ Fixpoint destrCommOsl (l1 l2: oslist): prodOsl :=
                       let l01:= fst rec in
                       let l10:= snd curr in
                       let l11:= snd rec in
-                      (* let left:= nodupOsl (l00 ++ l01) in
-                      let right:= nodupOsl (l10 ++ l11) in *)
-                      (* mypair left right *)
+                      (* let left:= noDup (l00 ++ l01) in
+                      let right:= noDup (l10 ++ l11) in
+                      mypair left right *)
                       (* remThenAppList l00 l10 l01 l11 *)
                       mypair ((fst curr)++(fst rec)) ((snd curr)++(snd rec))
   | _, _ => mypair nil nil
@@ -242,133 +257,154 @@ Ltac aplyDestrComm:=
 (* Destruct terms for applying CCA1 and CCA2 of encryptions *)
 
 Section destrEnc.
-Variable f: nat -> message -> message -> prodOsl.
-Fixpoint destrEnc_f_all (n: nat) (l1 l2: list message): prodOsl :=
+Variable f: nat -> nat -> message -> message -> prodOsl.
+Fixpoint destrEnc_f_all (a r: nat) (l1 l2: list message): prodOsl :=
   match l1, l2 with
-  | h1::t1, h2::t2 => let p:= f n h1 h2 in
-                      let rec:= destrEnc_f_all n t1 t2 in
+  | h1::t1, h2::t2 => let p:= f a r h1 h2 in
+                      let rec:= destrEnc_f_all a r t1 t2 in
                       mypair ((fst p)++(fst rec)) ((snd p)++(snd rec))
   | _, _ => mypair nil nil
   end.
 End destrEnc.
 Open Scope msg_scope.
-Fixpoint destrEncBol (n: nat) (b1 b2: Bool): prodOsl:=
+(* a is used to represent the agent name and r is used to randomize encryption *)
+Fixpoint destrEncBol (a r: nat) (b1 b2: Bool): prodOsl:=
+  if Bool_beq b1 b2 then mypair [ ] [ ] else
   match b1, b2 with
-  | eqb b01 b02, eqb b11 b12 => let posl1 := destrEncBol n b01 b11 in
-                                let posl2 := destrEncBol n b02 b12 in
+  | IF b01 then b02 else b03, IF b11 then b12 else b13 => let posl1 := destrEncBol a r b01 b11 in
+                                                          let posl2 := destrEncBol a r b02 b12 in
+                                                          let posl3 := destrEncBol a r b03 b13 in
+                                                          mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
+  | eqb b01 b02, eqb b11 b12 => let posl1 := destrEncBol a r b01 b11 in
+                                let posl2 := destrEncBol a r b02 b12 in
                                 mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
-  | eqm t01 t02, eqm t11 t12 =>  let posl1 := destrEncMsg n t01 t11 in
-                                 let posl2 := destrEncMsg n t02 t12 in
+  | eqm t01 t02, eqm t11 t12 =>  let posl1 := destrEncMsg a r t01 t11 in
+                                 let posl2 := destrEncMsg a r t02 t12 in
                                  mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
-  | ver t01 t02 t03, ver t11 t12 t13 => let posl1 := destrEncMsg n t01 t11 in
-                                        let posl2 := destrEncMsg n t02 t12 in
-                                        let posl3 := destrEncMsg n t03 t13 in
+  | ver t01 t02 t03, ver t11 t12 t13 => let posl1 := destrEncMsg a r t01 t11 in
+                                        let posl2 := destrEncMsg a r t02 t12 in
+                                        let posl3 := destrEncMsg a r t03 t13 in
                                         mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-  | bver t01 t02 t03, bver t11 t12 t13 => let posl1 := destrEncMsg n t01 t11 in
-                                          let posl2 := destrEncMsg n t02 t12 in
-                                          let posl3 := destrEncMsg n t03 t13 in
+  | bver t01 t02 t03, bver t11 t12 t13 => let posl1 := destrEncMsg a r t01 t11 in
+                                          let posl2 := destrEncMsg a r t02 t12 in
+                                          let posl3 := destrEncMsg a r t03 t13 in
                                           mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-  | acc t01 t02 t03 t04, acc t11 t12 t13 t14 => let posl1 := destrEncMsg n t01 t11 in
-                                                let posl2 := destrEncMsg n t02 t12 in
-                                                let posl3 := destrEncMsg n t03 t13 in
-                                                let posl4 := destrEncMsg n t04 t14 in
+  | acc t01 t02 t03 t04, acc t11 t12 t13 t14 => let posl1 := destrEncMsg a r t01 t11 in
+                                                let posl2 := destrEncMsg a r t02 t12 in
+                                                let posl3 := destrEncMsg a r t03 t13 in
+                                                let posl4 := destrEncMsg a r t04 t14 in
                                                 mypair ((fst posl1)++(fst posl2)++(fst posl3)++(fst posl4)) ((snd posl1)++(snd posl2)++(snd posl3)++(snd posl4))
   | _, _ => mypair (cons (bol b1) nil) (cons (bol b2) nil)
   end
-  with destrEncMsg (n: nat) (t1 t2: message): prodOsl :=
+  with destrEncMsg (a r: nat) (t1 t2: message): prodOsl :=
+  if message_beq t1 t2 then mypair [ ] [ ] else
          match t1, t2 with
-         | open t01 t02 t03, open t11 t12 t13 => let posl1 := destrEncMsg n t01 t11 in
-                                                 let posl2 := destrEncMsg n t02 t12 in
-                                                 let posl3 := destrEncMsg n t03 t13 in
+         | comm t01 t02, comm t11 t12 =>  let posl1 := destrEncMsg a r t01 t11 in
+                                          let posl2 := destrEncMsg a r t02 t12 in
+                                          mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
+
+         | open t01 t02 t03, open t11 t12 t13 => let posl1 := destrEncMsg a r t01 t11 in
+                                                 let posl2 := destrEncMsg a r t02 t12 in
+                                                 let posl3 := destrEncMsg a r t03 t13 in
                                                  mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-         | shufl t01 t02 t03, shufl t11 t12 t13 => let posl1 := destrEncMsg n t01 t11 in
-                                                   let posl2 := destrEncMsg n t02 t12 in
-                                                   let posl3 := destrEncMsg n t03 t13 in
+         | shufl t01 t02 t03, shufl t11 t12 t13 => let posl1 := destrEncMsg a r t01 t11 in
+                                                   let posl2 := destrEncMsg a r t02 t12 in
+                                                   let posl3 := destrEncMsg a r t03 t13 in
                                                    mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-         | enc t01 t02 t03, enc t11 t12 t13 => let posl1 := destrEncMsg n t01 t11 in
-                                               let posl2 := destrEncMsg n t02 t12 in
-                                               let posl3 := destrEncMsg n t03 t13 in
+         | enc t01 t02 t03, enc t11 t12 t13 => let posl1 := destrEncMsg a r t01 t11 in
+                                               let posl2 := destrEncMsg a r t02 t12 in
+                                               let posl3 := destrEncMsg a r t03 t13 in
                                                let res := mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3)) in
                                                let left := cons (msg (enc t01 t02 t03)) nil in
                                                let right := cons (msg (enc t11 t12 t13)) nil in
+                                               (* match t02, t12 with
+                                               | pi1 (ke (nonce n01)), pi1 (ke (nonce n11)) => if ((a =? n01)%nat &&(n01 =? n11)%nat)%bool then *)
                                                match t03, t13 with
-                                               | re (nonce n1), re (nonce n2) => if ((n =? n1)%nat && (n1 =? n2)%nat)%bool then mypair left right else res
-                                               | _, _ => res
+                                                | re (nonce n02), re (nonce n12) => if ((r =? n02)%nat && (n02 =? n12)%nat)%bool then mypair left right else res
+                                                |  _, _ => res
                                                end
+                                                                                              (* (* else res
+                                               | _, _ => res *)
+                                               end *)
 
-         | dec t01 t02, dec t11 t12 =>  let posl1 := destrEncMsg n t01 t11 in
-                                        let posl2 := destrEncMsg n t02 t12 in
+         | dec t01 t02, dec t11 t12 =>  let posl1 := destrEncMsg a r t01 t11 in
+                                        let posl2 := destrEncMsg a r t02 t12 in
                                         let res :=  mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2)) in
                                         let left := (cons (msg (dec t01 t02)) nil) in
                                         let right := (cons (msg (dec t11 t12)) nil) in
                                         match t02, t12 with
-                                        | pi2 (ke (nonce n1)), pi2 (ke (nonce n2)) => if ((n =? n1)%nat && (n1 =? n2)%nat)%bool
+                                        | pi2 (ke (nonce n1)), pi2 (ke (nonce n2)) => if ((a =? n1)%nat && (n1 =? n2)%nat)%bool
                                                                                       then mypair left right
                                                                                       else res
                                         | _, _ => res
                                         end
 
-         | bsign t01 t02 t03, bsign t11 t12 t13 => let posl1 := destrEncMsg n t01 t11 in
-                                                   let posl2 := destrEncMsg n t02 t12 in
-                                                   let posl3 := destrEncMsg n t03 t13 in
+         | bsign t01 t02 t03, bsign t11 t12 t13 => let posl1 := destrEncMsg a r t01 t11 in
+                                                   let posl2 := destrEncMsg a r t02 t12 in
+                                                   let posl3 := destrEncMsg a r t03 t13 in
                                                    mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-         | bl t01 t02 t03, bl t11 t12 t13 => let posl1 := destrEncMsg n t01 t11 in
-                                             let posl2 := destrEncMsg n t02 t12 in
-                                             let posl3 := destrEncMsg n t03 t13 in
+         | bl t01 t02 t03, bl t11 t12 t13 => let posl1 := destrEncMsg a r t01 t11 in
+                                             let posl2 := destrEncMsg a r t02 t12 in
+                                             let posl3 := destrEncMsg a r t03 t13 in
                                              mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-         | sign t01 t02 t03, sign t11 t12 t13 => let posl1 := destrEncMsg n t01 t11 in
-                                                 let posl2 := destrEncMsg n t02 t12 in
-                                                 let posl3 := destrEncMsg n t03 t13 in
+         | sign t01 t02 t03, sign t11 t12 t13 => let posl1 := destrEncMsg a r t01 t11 in
+                                                 let posl2 := destrEncMsg a r t02 t12 in
+                                                 let posl3 := destrEncMsg a r t03 t13 in
                                                  mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-         | ub t01 t02 t03 t04, ub t11 t12 t13 t14 => let posl1 := destrEncMsg n t01 t11 in
-                                                     let posl2 := destrEncMsg n t02 t12 in
-                                                     let posl3 := destrEncMsg n t03 t13 in
-                                                     let posl4 := destrEncMsg n t04 t14 in
+         | ub t01 t02 t03 t04, ub t11 t12 t13 t14 => let posl1 := destrEncMsg a r t01 t11 in
+                                                     let posl2 := destrEncMsg a r t02 t12 in
+                                                     let posl3 := destrEncMsg a r t03 t13 in
+                                                     let posl4 := destrEncMsg a r t04 t14 in
                                                      mypair ((fst posl1)++(fst posl2)++(fst posl3)++(fst posl4)) ((snd posl1)++(snd posl2)++(snd posl3)++(snd posl4))
-         | If b00 then t01 else t02, If b10 then t11 else t12 => let posl1 := destrEncBol n b00 b10 in
-                                                                 let posl2 := destrEncMsg n t01 t11 in
-                                                                 let posl3 := destrEncMsg n t02 t12 in
+         | If b00 then t01 else t02, If b10 then t11 else t12 => let posl1 := destrEncBol a r b00 b10 in
+                                                                 let posl2 := destrEncMsg a r t01 t11 in
+                                                                 let posl3 := destrEncMsg a r t02 t12 in
                                                                  mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-| (t01, t02), (t11, t12) => let posl1 := destrEncMsg n t01 t11 in
-                            let posl2 := destrEncMsg n t02 t12 in
+| (t01, t02), (t11, t12) => let posl1 := destrEncMsg a r t01 t11 in
+                            let posl2 := destrEncMsg a r t02 t12 in
                             mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
-| (f l1), (f l2) => let res := (@destrEnc_f_all destrEncMsg n l1 l2) in
+| (f l1), (f l2) => let res := (@destrEnc_f_all destrEncMsg a r l1 l2) in
                     let left := fst res in
                     let right := snd res in
                     mypair left right
+      | pi1 t01, pi1 t11 => let posl1 := destrEncMsg a r t01 t11 in
+                            mypair (fst posl1) (snd posl1)
+      | pi2 t01, pi2 t11 => let posl1 := destrEncMsg a r t01 t11 in
+                            mypair (fst posl1) (snd posl1)
          | _, _ => mypair (cons (msg t1) nil) (cons (msg t2) nil)
 end.
 
-Definition destrEncOs n (os1 os2: oursum): prodOsl :=
+Definition destrEncOs a r (os1 os2: oursum): prodOsl :=
+  if oursum_beq os1 os2 then (mypair [ ] [ ]) else
   match os1, os2 with
-  | msg t00, msg t10 => destrEncMsg n t00 t10
-  | bol b00, bol b10 => destrEncBol n b00 b10
+  | msg t00, msg t10 => destrEncMsg a r t00 t10
+  | bol b00, bol b10 => destrEncBol a r b00 b10
   | _, _ => mypair nil nil
   end.
 
-Fixpoint destrEncOsl n (l1 l2: oslist): prodOsl :=
+Fixpoint destrEncOsl a r (l1 l2: oslist): prodOsl :=
   match l1, l2 with
-  | h1::t1, h2::t2 => let rec:= destrEncOsl n t1 t2 in
-                      let curr:= destrEncOs n h1 h2 in
+  | h1::t1, h2::t2 => let rec:= destrEncOsl a r t1 t2 in
+                      let curr:= destrEncOs a r h1 h2 in
                       let l00:= fst curr in
                       let l01:= fst rec in
                       let l10:= snd curr in
                       let l11:= snd rec in
-                      (* let left:= nodupOsl (l00 ++ l01) in
-                      let right:= nodupOsl (l10 ++ l11) in
+                      (* let left:= noDup (l00 ++ l01) in
+                      let right:= noDup (l10 ++ l11) in
                       mypair left right *)
                       (* remThenAppList l00 l10 l01 l11 *)
                       mypair ((fst curr)++(fst rec)) ((snd curr)++(snd rec))
-  | _, _ => mypair nil nil
+  | _, _ => mypair [ ] [ ]
   end.
-Axiom aplyCCA: forall {n} (l1 l2: mylist n), let l1' := conv_mylist_listos l1 in
+Axiom aplyCCA: forall {n} (l1 l2: mylist n) a r, let l1' := conv_mylist_listos l1 in
                                              let l2' := conv_mylist_listos l2 in
-                                             let p := destrEncOsl 7 l1' l2' in
+                                             let p := destrEncOsl a r l1' l2' in
                                              let y := oslToMylist (pi1ProdOsl p) (pi2ProdOsl p) in
                                              ((mylength y) =? 0 = false)%nat -> (pi1ProdMylist y) ~ (pi2ProdMylist y) -> l1 ~ l2.
-Ltac aplyDestrEnc :=
+Ltac aplyDestrEnc name seed :=
   match goal with
-  |[|- ?X ~ ?Y] => apply aplyCCA with (l1:= X) (l2:=Y); simpl
+  |[|- ?X ~ ?Y] => apply aplyCCA with (l1:= X) (l2:=Y) (a:= name) (r:= seed); simpl; try auto
   end.
 
 

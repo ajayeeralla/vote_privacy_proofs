@@ -5,7 +5,7 @@ Require Export types.
 
 (*Require Import lib.definitions.*)
 (** This library defines indistinguishability and all morphisms *)
-Open Scope msg_scope.
+
 
 (*Indistinguishability Relation ~*)
 (*Definition Ind_Relation := forall n , mylist n -> mylist n -> Prop.*)
@@ -168,11 +168,11 @@ Proof.
   intros.  rewrite <- H in H0; auto.
 Qed.
 
-Delimit Scope msg_scope with mor.
+
 (** Equivalence relation [EQosl] is defined on [mylist n] for a natural number [n]. *)
 Inductive EQosl: forall {n:nat}, relation (mylist n) :=
 | eqnos :  EQosl  (Nil _) (Nil _)
-| eqconos: forall (m:nat)(os1 os2:oursum)(l1 l2: mylist m), os1 ### os2 -> (EQosl  l1  l2) -> EQosl (os1%mor:l1)  (os2%mor:l2).
+| eqconos: forall (m:nat)(os1 os2:oursum)(l1 l2: mylist m), os1 ### os2 -> (EQosl  l1  l2) -> EQosl (os1:l1)  (os2:l2).
 
 Infix "####" := EQosl (at level 0, right associativity): ind_scope.
 

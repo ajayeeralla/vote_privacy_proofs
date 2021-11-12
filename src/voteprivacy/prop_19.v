@@ -6,7 +6,7 @@ Definition phi0 := [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TW
 Definition vcheck (v:message) :=  (v #? C1) or (v#?C2) or (v#?C3).
 Definition x1:= f (toListm phi0).
 Definition pk:= (pubkey x1).
-Axiom vote_len_reg : forall t, (|V0 t| #? |V1 t|) ## TRue.
+(* Axiom vote_len_reg : forall t, (|V0 t| #? |V1 t|) ## TRue. *)
 (** * Phase 1:Authentication *)
 (** nA = 0, nB = 1, nM = 2 *)
 (*Eval compute in ssk. *)

@@ -624,7 +624,7 @@ with subbol_msg (n : nat )(s:Bool) (t:message) : message :=
   | sign t1 t2 t3 => sign ((n:= s) t1) (( n:=s) t2) ((n:=s) t3)
   (** Zero symbol *)
   | z t1 => z t1
-  | compl t1 => compl ((n:= s) t1)            
+  | compl t1 => compl ((n:= s) t1)
   (** all other constrs *)
   | _ => t
   end
@@ -700,7 +700,7 @@ with closMsg (t:message) : bool:=
   | sign t1 t2 t3 => (^? t1) && (^? t2)&& (^? t3)
   (** zero symbol *)
   | z t1 => ^? t1
-  | compl t1 => ^? t1 
+  | compl t1 => ^? t1
   (** all other constrs *)
   | _ => true
  end
@@ -1091,7 +1091,7 @@ with checkmtmsg (t:message) (t':message) : bool :=
            | sign t1 t2 t3 => orb (orb (checkmtmsg t t1) (checkmtmsg t t2)) (checkmtmsg t t3)
            (** all other constrs *)
            | z t1 => false
-           | compl t1 => checkmtmsg t t1   
+           | compl t1 => checkmtmsg t t1
            | _ => true
          end.
 
@@ -1857,7 +1857,7 @@ with subbol_msg' (b' : Bool )(s: Bool) (t:message) : message :=
          (** zero symbol *)
          | z t1 => z t1
          | compl t1 => compl (subbol_msg' b' s t1)
-         (** all other constrs *)            
+         (** all other constrs *)
          | _ => t
        end.
 
