@@ -11,138 +11,134 @@ Require Export prop_21.
 
 (** * Formalization of the section12 in the paper *)
 
-(** Auxiliary functions  *)
+(* (** Auxiliary functions  *) *)
 
-(** Check if (rs n) occurs, and returns TRUE if (rs n) occurs, FALSE otherwise *)
-(** It is enough to check if n occurs instead *)
- Fixpoint  checkrsnbol (n:nat) (t:Bool) : bool :=
- match t with
-| eqb  b1 b2 =>  (orb (checkrsnbol n b1)  (checkrsnbol n b2))
-| eqm t1 t2 => orb (checkrsnmsg n t1) (checkrsnmsg n t2)
-| ifb_then_else_ t1 t2 t3 => orb (checkrsnbol n t1)(orb (checkrsnbol n t2)(checkrsnbol n t3))
-| bver t1 t2 t3 => (orb  (orb (checkrsnmsg n t1) (checkrsnmsg n t2)) (checkrsnmsg n t3))
-| ver t1 t2 t3 => (orb  (orb (checkrsnmsg n t1) (checkrsnmsg n t2)) (checkrsnmsg n t3))
-| acc t1 t2 t3  t4 => (orb (orb  (orb (checkrsnmsg n t1) (checkrsnmsg n t2)) (checkrsnmsg n t3))  (checkrsnmsg n t4))
-| _ => false
- end
-with checkrsnmsg (n:nat) (t:message) : bool :=
-       orb (message_beq (r n) t)
-           match t with
-             | nonce n' =>  (beq_nat n' n)
-             | ifm_then_else_ b3 t1 t2 => (orb (checkrsnbol n b3) (orb (checkrsnmsg n  t1)(checkrsnmsg n t2)))
-             | pair t1 t2 => (orb (checkrsnmsg n t1) (checkrsnmsg n t2))
-             | L t1 => (checkrsnmsg n t1)
-             | pi1 t1 => (checkrsnmsg n t1)
-             | pi2 t1 =>  (checkrsnmsg n t1)
-             | to t1 => (checkrsnmsg n t1)
-             | f l => (@existsb message (checkrsnmsg n) l)
-             (** Vote Values *)
-             | V0 t1 => (checkrsnmsg n t1)
-             | V1 t1 => (checkrsnmsg n t1)
-             (** public key *)
-             | pubkey t1 => (checkrsnmsg n t1)
-             (* commitments *)
-             | kc t1 => (checkrsnmsg n t1)
-             | comm t1 t2 => (orb (checkrsnmsg n t1) (checkrsnmsg n t2))
-             | open t1 t2 t3 =>  orb (checkrsnmsg n t1) (orb (checkrsnmsg n t2) (checkrsnmsg n t3))
-             (* shuffling *)
-             | shufl t1 t2 t3 =>  orb (checkrsnmsg n t1) (orb (checkrsnmsg n t2) (checkrsnmsg n t3))
-             (* Encryptions *)
-             | re t1 =>  (checkrsnmsg n t1)
-             | ke t1 =>  (checkrsnmsg n t1)
-             | enc t1 t2 t3 =>  orb (checkrsnmsg n t1) (orb (checkrsnmsg n t2) (checkrsnmsg n t3))
-             | dec t1 t2 => orb (checkrsnmsg n t1) (checkrsnmsg n t2)
-             (* Blind Signatues *)
-             | kb t1 => (checkrsnmsg n t1)
-             | rb t1 => (checkrsnmsg n t1)
-             | bsign t1 t2 t3 =>  orb (checkrsnmsg n t1) (orb (checkrsnmsg n t2) (checkrsnmsg n t3))
-             | bl t1 t2 t3 =>  orb (checkrsnmsg n t1) (orb (checkrsnmsg n t2) (checkrsnmsg n t3))
-             | ub t1 t2 t3  t4 => (orb (orb  (orb (checkrsnmsg n t1) (checkrsnmsg n t2)) (checkrsnmsg n t3))  (checkrsnmsg n t4))
-             (* Signatures *)
-             | ks t1 => (checkrsnmsg n t1)
-             | rs t1 => (checkrsnmsg n t1)
-             | sign t1 t2 t3 => (orb (checkrsnmsg n t1) (orb (checkrsnmsg n t2) (checkrsnmsg n t3)))
-             | _ => false
-           end.
+(* (** Check if (rs n) occurs, and returns TRUE if (rs n) occurs, FALSE otherwise *) *)
+(* (** It is enough to check if n occurs instead *) *)
+(*  Fixpoint  checkrsnbol (n:nat) (t:Bool) : bool := *)
+(*  match t with *)
+(* | eqb  b1 b2 =>  (orb (checkrsnbol n b1)  (checkrsnbol n b2)) *)
+(* | eqm t1 t2 => orb (checkrsnmsg n t1) (checkrsnmsg n t2) *)
+(* | ifb_then_else_ t1 t2 t3 => orb (checkrsnbol n t1)(orb (checkrsnbol n t2)(checkrsnbol n t3)) *)
+(* | bver t1 t2 t3 => (orb  (orb (checkrsnmsg n t1) (checkrsnmsg n t2)) (checkrsnmsg n t3)) *)
+(* | ver t1 t2 t3 => (orb  (orb (checkrsnmsg n t1) (checkrsnmsg n t2)) (checkrsnmsg n t3)) *)
+(* | acc t1 t2 t3  t4 => (orb (orb  (orb (checkrsnmsg n t1) (checkrsnmsg n t2)) (checkrsnmsg n t3))  (checkrsnmsg n t4)) *)
+(* | _ => false *)
+(*  end *)
+(* with checkrsnmsg (n:nat) (t:message) : bool := *)
+(*        orb (message_beq (r n) t) *)
+(*            match t with *)
+(*              | nonce n' =>  (beq_nat n' n) *)
+(*              | ifm_then_else_ b3 t1 t2 => (orb (checkrsnbol n b3) (orb (checkrsnmsg n  t1)(checkrsnmsg n t2))) *)
+(*              | pair t1 t2 => (orb (checkrsnmsg n t1) (checkrsnmsg n t2)) *)
+(*              | L t1 => (checkrsnmsg n t1) *)
+(*              | pi1 t1 => (checkrsnmsg n t1) *)
+(*              | pi2 t1 =>  (checkrsnmsg n t1) *)
+(*              | to t1 => (checkrsnmsg n t1) *)
+(*              | f l => (@existsb message (checkrsnmsg n) l) *)
+(*              (** Vote Values *) *)
+(*              | V0 t1 => (checkrsnmsg n t1) *)
+(*              | V1 t1 => (checkrsnmsg n t1) *)
+(*              (** public key *) *)
+(*              | pubkey t1 => (checkrsnmsg n t1) *)
+(*              (* commitments *) *)
+(*              | kc t1 => (checkrsnmsg n t1) *)
+(*              | comm t1 t2 => (orb (checkrsnmsg n t1) (checkrsnmsg n t2)) *)
+(*              | open t1 t2 t3 =>  orb (checkrsnmsg n t1) (orb (checkrsnmsg n t2) (checkrsnmsg n t3)) *)
+(*              (* shuffling *) *)
+(*              | shufl t1 t2 t3 =>  orb (checkrsnmsg n t1) (orb (checkrsnmsg n t2) (checkrsnmsg n t3)) *)
+(*              (* Encryptions *) *)
+(*              | re t1 =>  (checkrsnmsg n t1) *)
+(*              | ke t1 =>  (checkrsnmsg n t1) *)
+(*              | enc t1 t2 t3 =>  orb (checkrsnmsg n t1) (orb (checkrsnmsg n t2) (checkrsnmsg n t3)) *)
+(*              | dec t1 t2 => orb (checkrsnmsg n t1) (checkrsnmsg n t2) *)
+(*              (* Blind Signatues *) *)
+(*              | kb t1 => (checkrsnmsg n t1) *)
+(*              | rb t1 => (checkrsnmsg n t1) *)
+(*              | bsign t1 t2 t3 =>  orb (checkrsnmsg n t1) (orb (checkrsnmsg n t2) (checkrsnmsg n t3)) *)
+(*              | bl t1 t2 t3 =>  orb (checkrsnmsg n t1) (orb (checkrsnmsg n t2) (checkrsnmsg n t3)) *)
+(*              | ub t1 t2 t3  t4 => (orb (orb  (orb (checkrsnmsg n t1) (checkrsnmsg n t2)) (checkrsnmsg n t3))  (checkrsnmsg n t4)) *)
+(*              (* Signatures *) *)
+(*              | ks t1 => (checkrsnmsg n t1) *)
+(*              | rs t1 => (checkrsnmsg n t1) *)
+(*              | sign t1 t2 t3 => (orb (checkrsnmsg n t1) (orb (checkrsnmsg n t2) (checkrsnmsg n t3))) *)
+(*              | _ => false *)
+(*            end. *)
 
 
-(** Check if (r n) occurs in oursum *)
+(* (** Check if (r n) occurs in oursum *) *)
 
-Definition checkrsnos (n:nat)(t:oursum): bool :=
-  match t with
-    |bol b => checkrsnbol n b
-    |msg t =>checkrsnmsg n t
-  end.
+(* Definition checkrsnos (n:nat)(t:oursum): bool := *)
+(*   match t with *)
+(*     |bol b => checkrsnbol n b *)
+(*     |msg t =>checkrsnmsg n t *)
+(*   end. *)
 
-(* Check if (r n) occurs in mylist m, for some m *)
+(* (* Check if (r n) occurs in mylist m, for some m *) *)
 
-Fixpoint checkrsnmylis {m:nat}(x:nat) (ml :  mylist m):bool :=
-  match ml with
-    | [] => false
-    | h : ml1 => (orb (checkrsnos x h) (checkrsnmylis x ml1))
-  end.
+(* Fixpoint checkrsnmylis {m:nat}(x:nat) (ml :  mylist m):bool := *)
+(*   match ml with *)
+(*     | [] => false *)
+(*     | h : ml1 => (orb (checkrsnos x h) (checkrsnmylis x ml1)) *)
+(*   end. *)
 
-(** Check if (sk n) occurs *)
+(* Search "ske". *)
+
+(* Check if secret key [ske n := (pi2 (kb (nonce n)))] occurs  *)
 
 (** Check in terms of type message and Bool  *)
 
  Fixpoint checksknbol (n:nat) (t:Bool) : bool :=
- match t with
-| eqb  b1 b2 =>  (orb (checksknbol n b1)  (checksknbol n b2))
-| eqm t1 t2 => orb (checksknmsg n t1) (checksknmsg n t2)
-| ifb_then_else_ t1 t2 t3 => orb (checksknbol n t1)(orb (checksknbol n t2)(checksknbol n t3))
-| bver t1 t2 t3 => (orb  (orb (checksknmsg n t1) (checksknmsg n t2)) (checksknmsg n t3))
-| ver t1 t2 t3 => (orb  (orb (checksknmsg n t1) (checksknmsg n t2)) (checksknmsg n t3))
-| acc t1 t2 t3  t4 => (orb (orb  (orb (checksknmsg n t1) (checksknmsg n t2)) (checksknmsg n t3))  (checksknmsg n t4))
-| _ => false
- end
-with checksknmsg (n:nat) (t:message) : bool :=
-       orb (message_beq (r n) t)
-           match t with
-             | nonce n' =>  (beq_nat n' n)
-             | ifm_then_else_ b3 t1 t2 => (orb (checksknbol n b3) (orb (checksknmsg n  t1)(checksknmsg n t2)))
-             | pair t1 t2 => (orb (checksknmsg n t1) (checksknmsg n t2))
-             | L t1 => (checksknmsg n t1)
-             | pi1 t1 => (checksknmsg n t1)
-             | pi2 t1 =>  (checksknmsg n t1)
-             | to t1 => (checksknmsg n t1)
-             | f l => (@existsb message (checksknmsg n) l)
-             (** Vote Values *)
-             | V0 t1 => (checksknmsg n t1)
-             | V1 t1 => (checksknmsg n t1)
-             (** public key *)
-             | pubkey t1 => (checksknmsg n t1)
-             (* commitments *)
-             | kc t1 => (checksknmsg n t1)
-             | comm t1 t2 => (orb (checksknmsg n t1) (checksknmsg n t2))
-             | open t1 t2 t3 =>  orb (checksknmsg n t1) (orb (checksknmsg n t2) (checksknmsg n t3))
-             (* shuffling *)
-             | shufl t1 t2 t3 =>  orb (checksknmsg n t1) (orb (checksknmsg n t2) (checksknmsg n t3))
-             (* Encryptions *)
-             | re t1 =>  (checksknmsg n t1)
-             | ke t1 =>  (checksknmsg n t1)
-             | enc t1 t2 t3 =>  orb (checksknmsg n t1) (orb (checksknmsg n t2) (checksknmsg n t3))
-             | dec t1 t2 => orb (checksknmsg n t1) (checksknmsg n t2)
-             (* Blind Signatues *)
-             | kb t1 => (checksknmsg n t1)
-             | rb t1 => (checksknmsg n t1)
-             | bsign t1 t2 t3 =>  orb (checksknmsg n t1) (orb (checksknmsg n t2) (checksknmsg n t3))
-             | bl t1 t2 t3 =>  orb (checksknmsg n t1) (orb (checksknmsg n t2) (checksknmsg n t3))
-             | ub t1 t2 t3  t4 => (orb (orb  (orb (checksknmsg n t1) (checksknmsg n t2)) (checksknmsg n t3))  (checksknmsg n t4))
-             (* Signatures *)
-             | ks t1 => (checksknmsg n t1)
-             | rs t1 => (checksknmsg n t1)
-             | sign t1 t2 t3 => (orb (checksknmsg n t1) (orb (checksknmsg n t2) (checksknmsg n t3)))
-             | _ => false
-           end.
+   match t with
+   | eqb  b1 b2 =>  (orb (checksknbol n b1)  (checksknbol n b2))
+   | eqm t1 t2 => orb (checksknmsg n t1) (checksknmsg n t2)
+   | ifb_then_else_ t1 t2 t3 => orb (checksknbol n t1)(orb (checksknbol n t2)(checksknbol n t3))
+   | bver t1 t2 t3 => (orb  (orb (checksknmsg n t1) (checksknmsg n t2)) (checksknmsg n t3))
+   | ver t1 t2 t3 => (orb  (orb (checksknmsg n t1) (checksknmsg n t2)) (checksknmsg n t3))
+   | acc t1 t2 t3  t4 => (orb (orb  (orb (checksknmsg n t1) (checksknmsg n t2)) (checksknmsg n t3))  (checksknmsg n t4))
+   | _ => false
+   end
+ with checksknmsg (n:nat) (t:message) : bool :=
+        (message_beq (ske n) t) ||
+         match t with
+         | nonce n' =>  (beq_nat n' n)
+         | ifm_then_else_ b3 t1 t2 => (orb (checksknbol n b3) (orb (checksknmsg n  t1)(checksknmsg n t2)))
+         | pair t1 t2 => (orb (checksknmsg n t1) (checksknmsg n t2))
+         | L t1 => (checksknmsg n t1)
+         | pi1 t1 => (checksknmsg n t1)
+         | pi2 t1 =>  (checksknmsg n t1)
+         | to t1 => (checksknmsg n t1)
+         | f l => (@existsb message (checksknmsg n) l)
+         (** Vote Values *)
+         | V0 t1 => (checksknmsg n t1)
+         | V1 t1 => (checksknmsg n t1)
+         (** public key *)
+         | pubkey t1 => (checksknmsg n t1)
+         (* commitments *)
+         | kc t1 => (checksknmsg n t1)
+         | comm t1 t2 => (orb (checksknmsg n t1) (checksknmsg n t2))
+         | open t1 t2 t3 =>  orb (checksknmsg n t1) (orb (checksknmsg n t2) (checksknmsg n t3))
+         (* shuffling *)
+         | shufl t1 t2 t3 =>  orb (checksknmsg n t1) (orb (checksknmsg n t2) (checksknmsg n t3))
+         (* Encryptions *)
+         | re t1 =>  (checksknmsg n t1)
+         | ke t1 =>  (checksknmsg n t1)
+         | enc t1 t2 t3 =>  orb (checksknmsg n t1) (orb (checksknmsg n t2) (checksknmsg n t3))
+         | dec t1 t2 => orb (checksknmsg n t1) (checksknmsg n t2)
+         (* Blind Signatues *)
+         | kb t1 => (checksknmsg n t1)
+         | rb t1 => (checksknmsg n t1)
+         | bsign t1 t2 t3 =>  orb (checksknmsg n t1) (orb (checksknmsg n t2) (checksknmsg n t3))
+         | bl t1 t2 t3 =>  orb (checksknmsg n t1) (orb (checksknmsg n t2) (checksknmsg n t3))
+         | ub t1 t2 t3  t4 => (orb (orb  (orb (checksknmsg n t1) (checksknmsg n t2)) (checksknmsg n t3))  (checksknmsg n t4))
+         (* Signatures *)
+         | ks t1 => (checksknmsg n t1)
+         | rs t1 => (checksknmsg n t1)
+         | sign t1 t2 t3 => (orb (checksknmsg n t1) (orb (checksknmsg n t2) (checksknmsg n t3)))
+         | _ => false
+         end.
 
-
-
-(*Eval compute in checksknmsg 1 (pi1 (pi2(kc (nonce 1)))  ). *)
-
-
-(** Check if (sk n) occurs in term of type oursum *)
-
+(** Check if (sk n) occurs in oursum term*)
 Definition checksknos (n:nat)(t:oursum): bool :=
   match t with
     |bol b =>checksknbol n b
@@ -150,11 +146,10 @@ Definition checksknos (n:nat)(t:oursum): bool :=
   end.
 
 (** Check if (sk n) occurs in term of type mylist m for some m *)
-
 Fixpoint checksknmylis {m:nat}(x:nat) (ml :  mylist m):bool :=
   match ml with
     | [] => true
-    | h : ml1 => (orb (checksknos x h) (checksknmylis x ml1))
+    | h : ml1 => (checksknos x h) || (checksknmylis x ml1)
   end.
 
 (** list free variables in a term *)
@@ -234,212 +229,371 @@ Axiom dep_enc :  forall(n:nat) (x z :message), (dec (enc x (pke n) z) (ske n)) #
 
 (*Definition distvars {n} (l :mylist n) := nodup (mvars_mylis  l).*)
 
-Notation "'[' x '<-' s ']' l" :=  (submsg_mylist x s l).
+Notation "'[' x '<-' s ']' l" :=  (submsg_mylist x s l): msg_scope.
 
 (** ENCCPA assumption *)
 
-Axiom ENCCPA: forall (u u' u'': message) (n n1 n2 n3 :nat) {m} (l:mylist m), (leb (length (distMvars l)) 1) = true /\ (closMlist (cons u nil) = true) /\ ((checkrsnmylis n2 l) = false) /\ ((checkrsnmylis n3 l) = false)/\ ((checkrsnmylis n1 l) = false)  ->
- ([ n <- (If (|u|#?|u'|) then {u}_n1^^n2 else u'')] l) ~ ([ n <-  (If (|u|#?|u'|) then {u'}_n1^^n3 else u'')] l).
-
+Import ListNotations.
+Axiom ENCCPA: forall (n n1 n2 n3: nat) (u u': message) {m} (l:mylist m), ((length (distMvars l)) <=? 1)%nat = true ->
+                                                                         (closMlist [u; u']) = true ->
+                                                                         (|u|#?|u'|) ## TRue ->
+                                                                         Fresh (cons n2 nil) (l++[msg u, msg u']) = true ->
+                                                                         Fresh (cons n3 nil) (l++[msg u, msg u']) = true ->
+                                                                         ([n <- {u}_n1^^n2] l) ~ ([n <- {u'}_n1^^n3] l).
 
 (** ENCCCA1 assumption *)
-
-Axiom ENCCCA1 : forall (t u u' u'': message) (n n1 n2 n3 :nat){m} (l :mylist m), (leb (length (distMvars l)) 1) = true /\ (closMlist (cons u (cons u' (cons u'' nil))) = true) /\ ((checkrsnmylis n2 l) = false) /\ ((checkrsnmylis n3 l) = false)/\ (checkmtmylis t l) = true /\ (mVarMsg t = (cons n nil)) -> (checkmtmylis (dec t (ske n1)) l) = false ->
-  ([ n <- (If (|u|#?|u'|) then {u}_n1^^n2 else u'')] l) ~ ([ n <-  (If (|u|#?|u'|) then {u'}_n1^^n3 else u'')] l).
+Axiom ENCCCA1: forall (t u u': message) (n n1 n2 n3: nat){m} (l: mylist m), (length (distMvars l) <=? 1)%nat = true ->
+                                                                            closMlist [u; u'] = true ->
+                                                                            (|u|#?|u'|) ## TRue ->
+                                                                            Fresh (cons n2 nil) (l++[msg u, msg u']) = true ->
+                                                                            Fresh (cons n3 nil) (l++[msg u, msg u']) = true ->
+                                                                            (if checkmtmylis (dec t (ske n1)) l then (checkmtmsg (Mvar n) t) else false) = false ->
+                                                                            ([ n <- {u}_n1^^n2 ] l) ~ ([ n <- {u'}_n1^^n3 ] l).
 
 (** To check if a term t is [(n1 u u')] compliant *)
 
 Section compliant.
   Variable f: message -> bool.
-   Fixpoint aplycca2comp  (l:list message) :bool :=
+   Fixpoint aplycca2comp (l: Mlist): bool :=
     match l with
       | nil => true
-      | cons h t => (andb (f h) (aplycca2comp t))
+      | cons h t =>  (f h) && (aplycca2comp t)
     end.
 End compliant.
 
+(* Just keep t'' as a ground term say O *)
 
-Fixpoint cca2compmsg (t' t'':message) (n n1:nat) (u u':message) (t:message) :bool :=
-(negb (checkmtmsg (ske n) t)) ||  match t with
+Fixpoint cca2compmsg (t': message) (n n1: nat) (u u': message) (t: message): bool :=
+  (negb (checkmtmsg (ske n) t)) ||  match t with
       | nonce n' => true
-      | ifm_then_else_ b1 t4 t5 => if (message_beq t (If (t'#? (Mvar n)) & (eqm (L u) (L u')) then t'' else (dec t' (ske n1)))) then true
-                        else (andb (cca2compbol t' t'' n n1 u u' b1) (andb (cca2compmsg t' t'' n n1 u u' t4) (cca2compmsg t' t'' n n1 u u' t5)))
-      | pair t1 t2 => (andb (cca2compmsg t' t'' n n1 u u' t1) (cca2compmsg t' t'' n n1 u u' t2))
-      | pi2 t1 =>  (cca2compmsg t' t'' n n1 u u' t1)
-      | to t1 => (cca2compmsg t' t'' n n1 u u' t1)
-      | pi1 t1 => (cca2compmsg t' t'' n n1 u u' t1)
-      | f l => (aplycca2comp (cca2compmsg t' t'' n n1 u u') l)
+      | ifm_then_else_ b1 t4 t5 => if (message_beq t (If (t'#? (Mvar n)) & (eqm (L u) (L u')) then O else (dec t' (ske n1)))) then true
+                        else (andb (cca2compbol t' n n1 u u' b1) (andb (cca2compmsg t' n n1 u u' t4) (cca2compmsg t' n n1 u u' t5)))
+      | pair t1 t2 => (andb (cca2compmsg t' n n1 u u' t1) (cca2compmsg t' n n1 u u' t2))
+      | pi2 t1 =>  (cca2compmsg t' n n1 u u' t1)
+      | to t1 => (cca2compmsg t' n n1 u u' t1)
+      | pi1 t1 => (cca2compmsg t' n n1 u u' t1)
+      | f l => (aplycca2comp (cca2compmsg t' n n1 u u') l)
       (* Vote values *)
-      | V0 t1 => (cca2compmsg t' t'' n n1 u u' t1)
-      | V1 t1 => (cca2compmsg t' t'' n n1 u u' t1)
+      | V0 t1 => (cca2compmsg t' n n1 u u' t1)
+      | V1 t1 => (cca2compmsg t' n n1 u u' t1)
       (* public key *)
-      | pubkey t1 => (cca2compmsg t' t'' n n1 u u' t1)
+      | pubkey t1 => (cca2compmsg t' n n1 u u' t1)
       (** commitments *)
       | kc t1 => true
-      | comm t1 t2 => (andb (cca2compmsg t' t'' n n1 u u' t1) (cca2compmsg t' t'' n n1 u u' t2))
-      | open t1 t2 t3 => (andb (cca2compmsg t' t'' n n1 u u' t1) (andb (cca2compmsg t' t'' n n1 u u' t2) (cca2compmsg t' t'' n n1 u u' t3)))
+      | comm t1 t2 => (andb (cca2compmsg t' n n1 u u' t1) (cca2compmsg t' n n1 u u' t2))
+      | open t1 t2 t3 => (andb (cca2compmsg t' n n1 u u' t1) (andb (cca2compmsg t' n n1 u u' t2) (cca2compmsg t' n n1 u u' t3)))
       (** encryptions *)
       | ke t1 => true
       | re t1 => true
-      | enc t1 t2 t3 => (andb (cca2compmsg t' t'' n n1 u u' t1) (andb (cca2compmsg t' t'' n n1 u u' t2) (cca2compmsg t' t'' n n1 u u' t3)))
-      | dec t1  t2 => if (andb (leb 1 (@count_occ nat eq_nat_dec (mVarMsg t1) n)) (message_beq (ske n1) t2)) then false else (andb (cca2compmsg t' t'' n n1 u u' t1) (cca2compmsg t' t'' n n1 u u' t2))
+      | enc t1 t2 t3 => (andb (cca2compmsg t' n n1 u u' t1) (andb (cca2compmsg t' n n1 u u' t2) (cca2compmsg t' n n1 u u' t3)))
+      | dec t1  t2 => if ((message_beq (ske n1) t2) && (checkmtmsg (Mvar n) t1))%bool then false else (andb (cca2compmsg t' n n1 u u' t1) (cca2compmsg t' n n1 u u' t2))
       (** Blind digital signatures *)
       | kb t1 => true
       | rb t1 => true
-      | bl t1 t2 t3 => (andb (cca2compmsg t' t'' n n1 u u' t1) (andb (cca2compmsg t' t'' n n1 u u' t2) (cca2compmsg t' t'' n n1 u u' t3)))
-      | ub t1 t2 t3 t4 => (andb (andb (cca2compmsg t' t'' n n1 u u' t1) (andb (cca2compmsg t' t'' n n1 u u' t2) (cca2compmsg t' t'' n n1 u u' t3))) (cca2compmsg t' t'' n n1 u u' t4))
-      | bsign t1 t2 t3 => (andb (cca2compmsg t' t'' n n1 u u' t1) (andb (cca2compmsg t' t'' n n1 u u' t2) (cca2compmsg t' t'' n n1 u u' t3)))
+      | bl t1 t2 t3 => (andb (cca2compmsg t' n n1 u u' t1) (andb (cca2compmsg t' n n1 u u' t2) (cca2compmsg t' n n1 u u' t3)))
+      | ub t1 t2 t3 t4 => (andb (andb (cca2compmsg t' n n1 u u' t1) (andb (cca2compmsg t' n n1 u u' t2) (cca2compmsg t' n n1 u u' t3))) (cca2compmsg t' n n1 u u' t4))
+      | bsign t1 t2 t3 => (andb (cca2compmsg t' n n1 u u' t1) (andb (cca2compmsg t' n n1 u u' t2) (cca2compmsg t' n n1 u u' t3)))
       (** signatures *)
       | ks t1 => true
       | rs t1 => true
-      | sign t1 t2 t3 => (andb (cca2compmsg t' t'' n n1 u u' t1) (andb (cca2compmsg t' t'' n n1 u u' t2) (cca2compmsg t' t'' n n1 u u' t3)))
+      | sign t1 t2 t3 => (andb (cca2compmsg t' n n1 u u' t1) (andb (cca2compmsg t' n n1 u u' t2) (cca2compmsg t' n n1 u u' t3)))
        (* shuffling *)
-      | shufl t1 t2 t3 => (andb (cca2compmsg t' t'' n n1 u u' t1) (andb (cca2compmsg t' t'' n n1 u u' t2) (cca2compmsg t' t'' n n1 u u' t3)))
+      | shufl t1 t2 t3 => (andb (cca2compmsg t' n n1 u u' t1) (andb (cca2compmsg t' n n1 u u' t2) (cca2compmsg t' n n1 u u' t3)))
       | _ => true
 
   end
-with cca2compbol t' t'' (n n1:nat) (u u':message)  (b:Bool) :bool :=
+with cca2compbol t' (n n1: nat) (u u': message) (b: Bool): bool :=
        match b with
-         | eqb b1 b2 => (andb (cca2compbol t' t'' n n1 u u' b1) (cca2compbol t' t''  n n1 u u' b2))
-         | eqm  t1 t2 =>  (andb (cca2compmsg t' t'' n n1 u u' t1) (cca2compmsg t' t''  n n1 u u' t2))
-         | ifb_then_else_  b1 b2 b3 =>  (andb (cca2compbol t' t'' n n1 u u' b1) (andb (cca2compbol t' t'' n n1 u u' b2) (cca2compbol t' t'' n n1 u u' b3)))
-         | ver  t1 t2 t3 => (andb (cca2compmsg t' t'' n n1 u u' t1) (andb (cca2compmsg t' t'' n n1 u u' t2) (cca2compmsg t' t'' n n1 u u' t3)))
-         | bver  t1 t2 t3 => (andb (cca2compmsg t' t'' n n1 u u' t1) (andb (cca2compmsg t' t'' n n1 u u' t2) (cca2compmsg t' t'' n n1 u u' t3)))
-         | acc t1 t2 t3 t4 => (andb (andb (cca2compmsg t' t'' n n1 u u' t1) (andb (cca2compmsg t' t'' n n1 u u' t2) (cca2compmsg t' t'' n n1 u u' t3))) (cca2compmsg t' t'' n n1 u u' t4))
+         | eqb b1 b2 => (andb (cca2compbol t' n n1 u u' b1) (cca2compbol t' n n1 u u' b2))
+         | eqm  t1 t2 =>  (andb (cca2compmsg t' n n1 u u' t1) (cca2compmsg t' n n1 u u' t2))
+         | ifb_then_else_  b1 b2 b3 =>  (andb (cca2compbol t' n n1 u u' b1) (andb (cca2compbol t' n n1 u u' b2) (cca2compbol t' n n1 u u' b3)))
+         | ver  t1 t2 t3 => (andb (cca2compmsg t' n n1 u u' t1) (andb (cca2compmsg t' n n1 u u' t2) (cca2compmsg t' n n1 u u' t3)))
+         | bver  t1 t2 t3 => (andb (cca2compmsg t' n n1 u u' t1) (andb (cca2compmsg t' n n1 u u' t2) (cca2compmsg t' n n1 u u' t3)))
+         | acc t1 t2 t3 t4 => (andb (andb (cca2compmsg t' n n1 u u' t1) (andb (cca2compmsg t' n n1 u u' t2) (cca2compmsg t' n n1 u u' t3))) (cca2compmsg t' n n1 u u' t4))
          | _ => true
        end.
 
-Definition cca2compos (t' t'':message) (n n1:nat) ( u u' :message) (t:oursum) : bool :=
+Definition cca2compos (t': message) (n n1: nat) (u u': message) (t: oursum): bool :=
   match t with
-    | msg s => cca2compmsg t' t'' n n1 u u' s
-    | bol b => cca2compbol t' t'' n n1 u u' b
+    | msg s => cca2compmsg t' n n1 u u' s
+    | bol b => cca2compbol t' n n1 u u' b
   end.
-Fixpoint cca2compmylis (t' t'':message) (n n1:nat) (u u':message) {m} (l:mylist m):bool :=
+Fixpoint cca2compmylis (t': message) (n n1: nat) (u u': message) {m} (l: mylist m):bool :=
   match l with
     | [] => true
-    | h : t => if (cca2compos t' t'' n n1 u u' h) then (cca2compmylis t' t'' n n1 u u' t) else false
+    | h:t => if (cca2compos t' n n1 u u' h) then (cca2compmylis t' n n1 u u' t) else false
   end.
+
 (** ENCCCA2 assumption *)
-
-
-
-Axiom ENCCCA2 : forall (t' t'' u u' u'': message) (n n1 n2 n3 :nat){m} (l :mylist m), (leb (length (distMvars ([msg t' , msg t''] ++ l))) 1) = true /\ (closMlist (cons u nil) = true) /\ (cca2compmylis t' t'' n n1 u u' l) = true /\ ( (cca2compmsg t' t'' n n1 u u' t') = true) /\ (cca2compmsg t' t'' n n1 u u' t'') = true ->
-                                                                                                             ([ n <- (If (|u|#?|u'|) then {u}_n1^^n2 else u'')] l) ~ ([ n <-  (If (|u|#?|u'|) then {u'}_n1^^n3 else u'')] l).
-
-(** Extended ENCCCA2 *)
-
-Axiom tempax: forall t n n' n1 u u' v v', (dec t (ske n1)) # (If (t#? (Mvar n)) & (|u|#?|u'|) then (dec (Mvar n) (ske n1)) else
-                                                                (If (t#?(Mvar n'))& (|v|#?|v'|) then (dec (Mvar n') (ske n1)) else (dec t (ske n1)))).
-
-(** To check if a term t is [(n1 u u')] compliant *)
-
-Section extCompliant.
-  Variable f: message -> bool.
-   Fixpoint aplyExtcca2comp  (l:list message) :bool :=
+(* Rewriting decryption term to apply ENCCCA2 (dec t (ske n1)) #  If (t #? (Mvar n))&(|u|#?|u'|) then O else (dec t (ske n1)). *)
+Section all.
+  Variable g: nat -> nat -> message -> message -> message -> message -> message.
+  Fixpoint rewInf n n1 t u u' (l: Mlist): Mlist :=
     match l with
-      | nil => true
-      | cons h t => (andb (f h) (aplyExtcca2comp t))
+    | nil => nil
+    | h::tl => (g n n1 t u u' h) :: rewInf n n1 t u u' tl
     end.
-End extCompliant.
-
-
-Fixpoint extCca2compmsg (t':message) (n n' n1:nat) (u u' v v':message) (t:message) :bool :=
-    match t with
-      | Mvar n2 => (beq_nat n2 n) || (beq_nat n2 n')
-      | nonce n2 => (negb (beq_nat n2 n1))
-      | ifm_then_else_ b1 t4 t5 => (extCca2compbol t' n n' n1 u u' v v' b1)
-                                     (** if (message_beq t (If (t'#? (Mvar n)) & (|u|#?|u'|) then (dec (Mvar n) (ske n1)) else
-                                                                (If (t'#?(Mvar n'))& (|v|#?|v'|) then (dec (Mvar n') (ske n1)) else (dec t' (ske n1))))) then true
-                        else (andb (extCca2compbol t' n n' n1 u u' v v' b1) (andb (extCca2compmsg t' n n' n1 u u' v v' t4) (extCca2compmsg t' n n' n1 u u' v v' t5))) *)
-      | pair t1 t2 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (extCca2compmsg t' n n' n1 u u' v v' t2))
-      | pi2 t1 =>  (extCca2compmsg t' n n' n1 u u' v v' t1)
-      | to t1 => (extCca2compmsg t' n n' n1 u u' v v' t1)
-      | pi1 t1 => true
-      | f l => (aplycca2comp (extCca2compmsg t' n n' n1 u u' v v') l)
-      (* Vote values *)
-      | V0 t1 => (extCca2compmsg t' n n' n1 u u' v v' t1)
-      | V1 t1 => (extCca2compmsg t' n n' n1 u u' v v' t1)
-      (* public key *)
-      | pubkey t1 => (extCca2compmsg t' n n' n1 u u' v v' t1)
-      (** commitments *)
-      | kc t1 => (extCca2compmsg t' n n' n1 u u' v v' t1)
-      | comm t1 t2 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (extCca2compmsg t' n n' n1 u u' v v' t2))
-      | open t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3)))
-      (** encryptions *)
-      | ke t1 => (extCca2compmsg t' n n' n1 u u' v v' t1)
-      | re t1 => (extCca2compmsg t' n n' n1 u u' v v' t1)
-      | enc t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3)))
-      | dec t1  t2 => true (*if (andb (leb 2 (@count_occ nat eq_nat_dec (mVarMsg t1) n)) (message_beq (ske n1) t2)) then false else (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (extCca2compmsg t' n n' n1 u u' v v' t2)) *)
-      (** Blind digital signatures *)
-      | kb t1 => (extCca2compmsg t' n n' n1 u u' v v' t1)
-      | rb t1 => (extCca2compmsg t' n n' n1 u u' v v' t1)
-      | bl t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3)))
-      | ub t1 t2 t3 t4 => (andb (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3))) (extCca2compmsg t' n n' n1 u u' v v' t4))
-      | bsign t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3)))
-      (** signatures *)
-      | ks t1 => (extCca2compmsg t' n n' n1 u u' v v' t1)
-      | rs t1 => (extCca2compmsg t' n n' n1 u u' v v' t1)
-      | sign t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3)))
-       (* shuffling *)
-      | shufl t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3)))
-      | _ => true
-
-  end
-with extCca2compbol t' (n n' n1:nat) (u u' v v':message)  (b:Bool) :bool :=
+  End all.
+Fixpoint rewDecMsg (n n1: nat) (t u u' m: message): message :=
+  match m with
+  | dec t1 t2 => match t2 with
+                 | pi2 (ke (nonce n2)) => if (n1 =? n2)%nat
+                                          then (If (t #? (Mvar n))&(|u|#?|u'|) then O else (dec t (ske n1)))
+                                          else (dec (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2))
+                 | _ => (dec (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2))
+                 end
+  | If b1 then t1 else t2 => If (rewDecBol n n1 t u u' b1) then (rewDecMsg n n1 t u u' t1) else (rewDecMsg n n1 t u u' t2)
+| (t1, t2) => ((rewDecMsg n n1 t u u' t1), (rewDecMsg n n1 t u u' t2))
+| pi1 t1 => pi1 (rewDecMsg n n1 t u u' t1)
+| pi2 t1 => pi2 (rewDecMsg n n1 t u u' t1)
+| to t1 => to (rewDecMsg n n1 t u u' t1)
+| L t1 => L (rewDecMsg n n1 t u u' t1)
+| f l => f (@rewInf rewDecMsg n n1 t u u' l)
+| V0 t1 => V0 (rewDecMsg n n1 t u u' t1)
+| V1 t1 => V1 (rewDecMsg n n1 t u u' t1)
+| pubkey t1 => pubkey (rewDecMsg n n1 t u u' t1)
+| kc t1 => kc (rewDecMsg n n1 t u u' t1)
+| comm t1 t2 => comm (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2)
+| open t1 t2 t3 => open (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2) (rewDecMsg n n1 t u u' t3)
+| shufl t1 t2 t3 => shufl (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2) (rewDecMsg n n1 t u u' t3)
+| ke t1 => ke (rewDecMsg n n1 t u u' t1)
+| re t1 => re (rewDecMsg n n1 t u u' t1)
+| enc t1 t2 t3 => enc (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2) (rewDecMsg n n1 t u u' t3)
+| kb t1 => kb (rewDecMsg n n1 t u u' t1)
+| rb t1 => rb (rewDecMsg n n1 t u u' t1)
+| bsign t1 t2 t3 => bsign (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2) (rewDecMsg n n1 t u u' t3)
+| bl t1 t2 t3 => bl (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2) (rewDecMsg n n1 t u u' t3)
+| ub t1 t2 t3 t4 => ub (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2) (rewDecMsg n n1 t u u' t3) (rewDecMsg n n1 t u u' t4)
+| ks t1 => ks (rewDecMsg n n1 t u u' t1)
+| rs t1 => rs (rewDecMsg n n1 t u u' t1)
+| sign t1 t2 t3 => sign (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2) (rewDecMsg n n1 t u u' t3)
+| compl t1 => compl (rewDecMsg n n1 t u u' t1)
+| _ => m
+end
+with rewDecBol n n1 t u u' (b: Bool): Bool :=
        match b with
-         | eqb b1 b2 => (andb (extCca2compbol t' n n' n1 u u' v v' b1) (extCca2compbol t' n n' n1 u u' v v' b2))
-         | eqm  t1 t2 =>  (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (extCca2compmsg t' n n' n1 u u' v v' t2))
-         | ifb_then_else_  b1 b2 b3 =>  (andb (extCca2compbol t' n n' n1 u u' v v' b1) (andb (extCca2compbol t' n n' n1 u u' v v' b2) (extCca2compbol t' n n' n1 u u' v v' b3)))
-         | ver  t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3)))
-         | bver  t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3)))
-         | acc t1 t2 t3 t4 => (andb (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3))) (extCca2compmsg t' n n' n1 u u' v v' t4))
-         | _ => true
-       end.
+       | eqb b1 b2 => eqb (rewDecBol n n1 t u u' b1) (rewDecBol n n1 t u u' b2)
+       | eqm t1 t2 => eqm (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2)
+       | IF b1 then b2 else b3 => IF (rewDecBol n n1 t u u' b1) then (rewDecBol n n1 t u u' b2) else (rewDecBol n n1 t u u' b3)
+| acc t1 t2 t3 t4 => acc (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2) (rewDecMsg n n1 t u u' t3) (rewDecMsg n n1 t u u' t4)
+| bver t1 t2 t3 => bver (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2) (rewDecMsg n n1 t u u' t3)
+(** Signatures *)
+| ver t1 t2 t3 => ver (rewDecMsg n n1 t u u' t1) (rewDecMsg n n1 t u u' t2) (rewDecMsg n n1 t u u' t3)
+| _ => b
+end.
 
-Definition extCca2compos (t':message) (n n' n1:nat) (u u' v v' :message) (t:oursum) : bool :=
-  match t with
-    | msg s => extCca2compmsg t' n n' n1 u u' v v' s
-    | bol b => extCca2compbol t' n n' n1 u u' v v' b
+Definition rewDecOs (n n1: nat) (t u u': message) (os: oursum): oursum :=
+  match os with
+  | msg t1 => msg (rewDecMsg n n1 t u u' t1)
+  | bol b => bol (rewDecBol n n1 t u u' b)
   end.
-Fixpoint extCca2compmylis (t':message) (n n' n1:nat) (u u' v v':message) {m} (l:mylist m):bool :=
+(* Open Scope msg_scope. *)
+Fixpoint rewDecMylist (n n1: nat) (t u u': message) {m} (l: mylist m): mylist m :=
   match l with
-    | [] => true
-    | h : t => if (extCca2compos t' n n' n1 u u' v v' h) then (extCca2compmylis t' n n' n1 u u' v v' t) else false
+  | [] => []
+  | h:tl => ((rewDecOs n n1 t u u' h):(rewDecMylist n n1 t u u' tl))
   end.
-(** EXTENCCCA2 assumption *)
+(* substitute encryption terms with a variable, say [Mvar n] to apply ENCCPA,ENCCCA1, ENCCCA2 *)
+(* Variable g1: nat -> message -> message -> message. *)
+Section All.
+  Variable g1: nat -> message -> message -> message.
+  Fixpoint subMvarEncInf n s (l: Mlist): Mlist :=
+    match l with
+    | nil => nil
+    | h::tl => (g1 n s h) :: (subMvarEncInf n s tl)
+    end.
+End All.
+Fixpoint subMvarEncMsg n s (t: message): message :=
+  if message_beq s t then (Mvar n)
+  else
+    match t with
+    | dec t1 t2 => dec (subMvarEncMsg n s t1) (subMvarEncMsg n s t2)
+    | If b1 then t1 else t2 => If (subMvarEncBol n s b1) then (subMvarEncMsg n s t1) else (subMvarEncMsg n s t2)
+| pair t1 t2 => ((subMvarEncMsg n s t1), (subMvarEncMsg n s t2))
+| pi1 t1 => pi1 (subMvarEncMsg n s t1)
+| pi2 t1 => pi2 (subMvarEncMsg n s t1)
+| to t1 => to (subMvarEncMsg n s t1)
+| L t1 => L (subMvarEncMsg n s t1)
+| f l => f (@subMvarEncInf subMvarEncMsg n s l)
+| V0 t1 => V0 (subMvarEncMsg n s t1)
+| V1 t1 => V1 (subMvarEncMsg n s t1)
+| pubkey t1 => pubkey (subMvarEncMsg n s t1)
+| kc t1 => kc (subMvarEncMsg n s t1)
+| comm t1 t2 => comm (subMvarEncMsg n s t1) (subMvarEncMsg n s t2)
+| open t1 t2 t3 => open (subMvarEncMsg n s t1) (subMvarEncMsg n s t2) (subMvarEncMsg n s t3)
+| shufl t1 t2 t3 => shufl (subMvarEncMsg n s t1) (subMvarEncMsg n s t2) (subMvarEncMsg n s t3)
+| ke t1 => ke (subMvarEncMsg n s t1)
+| re t1 => re (subMvarEncMsg n s t1)
+| enc t1 t2 t3 => enc (subMvarEncMsg n s t1) (subMvarEncMsg n s t2) (subMvarEncMsg n s t3)
+| kb t1 => kb (subMvarEncMsg n s t1)
+| rb t1 => rb (subMvarEncMsg n s t1)
+| bsign t1 t2 t3 => bsign (subMvarEncMsg n s t1) (subMvarEncMsg n s t2) (subMvarEncMsg n s t3)
+| bl t1 t2 t3 => bl (subMvarEncMsg n s t1) (subMvarEncMsg n s t2) (subMvarEncMsg n s t3)
+| ub t1 t2 t3 t4 => ub (subMvarEncMsg n s t1) (subMvarEncMsg n s t2) (subMvarEncMsg n s t3) (subMvarEncMsg n s t4)
+| ks t1 => ks (subMvarEncMsg n s t1)
+| rs t1 => rs (subMvarEncMsg n s t1)
+| sign t1 t2 t3 => sign (subMvarEncMsg n s t1) (subMvarEncMsg n s t2) (subMvarEncMsg n s t3)
+| compl t1 => compl (subMvarEncMsg n s t1)
+| _ => t
+end
+with subMvarEncBol n s (b: Bool): Bool :=
+       match b with
+       | eqb b1 b2 => eqb (subMvarEncBol n s b1) (subMvarEncBol n s b2)
+       | eqm t1 t2 => eqm (subMvarEncMsg n s t1) (subMvarEncMsg n s t2)
+       | IF b1 then b2 else b3 => IF (subMvarEncBol n s b1) then (subMvarEncBol n s b2) else (subMvarEncBol n s b3)
+| acc t1 t2 t3 t4 => acc (subMvarEncMsg n s t1) (subMvarEncMsg n s t2) (subMvarEncMsg n s t3) (subMvarEncMsg n s t4)
+| bver t1 t2 t3 => bver (subMvarEncMsg n s t1) (subMvarEncMsg n s t2) (subMvarEncMsg n s t3)
+(** Signatures *)
+| ver t1 t2 t3 => ver (subMvarEncMsg n s t1) (subMvarEncMsg n s t2) (subMvarEncMsg n s t3)
+| _ => b
+end.
 
-Axiom EXTENCCCA2 : forall (t' u u' u'' v v' v'': message) (n n' n1 n2 n3 n4 n5:nat){m} (l:mylist m), ( (length (distMvars ([msg t'] ++ l))) <=? 2) = true /\ (closMlist (cons u' nil) = true) /\ (closMlist (cons v nil) = true) /\ (extCca2compmylis t' n n' n1 u u' v v' l) = true /\ ((extCca2compmsg t' n n' n1 u u' v v' t') = true) ->
-  ([n' <- (If (|v|#?|v'|) then {v}_n1^^n3 else v'')][ n <- (If (|u|#?|u'|) then {u}_n1^^n2 else u'')] l) ~ ([n' <- (If (|v|#?|v'|) then {v'}_n1^^n5 else v'')][ n <-  (If (|u|#?|u'|) then {u'}_n1^^n4 else u'')] l).
+Definition subMvarEncOs n s (os: oursum): oursum :=
+  match os with
+  | msg t1 => msg (subMvarEncMsg n s t1)
+  | bol b => bol (subMvarEncBol n s b)
+  end.
+Open Scope msg_scope.
+Fixpoint subMvarEncMylist n s {m} (l: mylist m): mylist m :=
+  match l with
+  | [] => []
+  | h:tl => (subMvarEncOs n s h): subMvarEncMylist n s tl
+  end.
+
+Axiom ENCCCA2: forall (u u': message) (n n1 n2 n3: nat){m} (l: mylist m),
+    (|u|#?|u'|) ## TRue ->
+    (List.length (distMvars l) <=? 1) = true ->
+    (closMylist [msg u, msg u'] = true) ->
+    forall t, (List.length (distMvars [msg t] )<=? 1) = true ->
+              let l' := rewDecMylist n n1 t u u' l in
+              cca2compmylis t n n1 u u' l' = true ->
+              ([ n <- {u}_n1^^n2 ] l) ~ ([ n <- {u'}_n1^^n3] l).
+
+Ltac aplyCCA2 f u u' n n1 n2 n3 :=
+  match goal with
+  | [|- ?X ~ ?Y] => let l':= f X in
+                    apply (@ENCCCA2 u u' n n1 n2 n3 l')
+  end.
 
 
 
+(* Axiom ENCCCA2 : forall (t' t'' u u' u'': message) (n n1 n2 n3 :nat){m} (l :mylist m), (leb (length (distMvars ([msg t' , msg t''] ++ l))) 1) = true /\ (closMlist (cons u nil) = true) /\ (cca2compmylis t' t'' n n1 u u' l) = true /\ ( (cca2compmsg t' n n1 u u' t') = true) /\ (cca2compmsg t' n n1 u u' t'') = true -> *)
+(*                                                                                                              ([ n <- (If (|u|#?|u'|) then {u}_n1^^n2 else u'')] l) ~ ([ n <-  (If (|u|#?|u'|) then {u'}_n1^^n3 else u'')] l). *)
 
-(** * Example 12.2 *)
-(*
-(** nonce and key generation *)
+(* (** Extended ENCCCA2 *) *)
 
-Axiom ln: forall n, lnc # (L (nonce n)).
+(* Axiom tempax: forall t n n' n1 u u' v v', (dec t (ske n1)) # (If (t#? (Mvar n)) & (|u|#?|u'|) then (dec (Mvar n) (ske n1)) else *)
+(*                                                                 (If (t#?(Mvar n'))& (|v|#?|v'|) then (dec (Mvar n') (ske n1)) else (dec t (ske n1)))). *)
 
-(** Definition lskey {n} := (L (sk n))*)
+(* (** To check if a term t is [(n1 u u')] compliant *) *)
 
-(** length regular *)
+(* Section extCompliant. *)
+(*   Variable f: message -> bool. *)
+(*    Fixpoint aplyExtcca2comp  (l:list message) :bool := *)
+(*     match l with *)
+(*       | nil => true *)
+(*       | cons h t => (andb (f h) (aplyExtcca2comp t)) *)
+(*     end. *)
+(* End extCompliant. *)
 
-Axiom len_regular: forall (x1 x2 y1 y2 :message), (L x1) # (L y1) /\ (L x2) # (L y2) -> (L (pair x1 x2)) # (L (pair y1 y2)).
 
-(** Idempotence: L(L(x)) = L(x) *)
+(* Fixpoint extCca2compmsg (t':message) (n n' n1:nat) (u u' v v':message) (t:message) :bool := *)
+(*     match t with *)
+(*       | Mvar n2 => (beq_nat n2 n) || (beq_nat n2 n') *)
+(*       | nonce n2 => (negb (beq_nat n2 n1)) *)
+(*       | ifm_then_else_ b1 t4 t5 => (extCca2compbol t' n n' n1 u u' v v' b1) *)
+(*                                      (** if (message_beq t (If (t'#? (Mvar n)) & (|u|#?|u'|) then (dec (Mvar n) (ske n1)) else *)
+(*                                                                 (If (t'#?(Mvar n'))& (|v|#?|v'|) then (dec (Mvar n') (ske n1)) else (dec t' (ske n1))))) then true *)
+(*                         else (andb (extCca2compbol t' n n' n1 u u' v v' b1) (andb (extCca2compmsg t' n n' n1 u u' v v' t4) (extCca2compmsg t' n n' n1 u u' v v' t5))) *) *)
+(*       | pair t1 t2 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (extCca2compmsg t' n n' n1 u u' v v' t2)) *)
+(*       | pi2 t1 =>  (extCca2compmsg t' n n' n1 u u' v v' t1) *)
+(*       | to t1 => (extCca2compmsg t' n n' n1 u u' v v' t1) *)
+(*       | pi1 t1 => true *)
+(*       | f l => (aplycca2comp (extCca2compmsg t' n n' n1 u u' v v') l) *)
+(*       (* Vote values *) *)
+(*       | V0 t1 => (extCca2compmsg t' n n' n1 u u' v v' t1) *)
+(*       | V1 t1 => (extCca2compmsg t' n n' n1 u u' v v' t1) *)
+(*       (* public key *) *)
+(*       | pubkey t1 => (extCca2compmsg t' n n' n1 u u' v v' t1) *)
+(*       (** commitments *) *)
+(*       | kc t1 => (extCca2compmsg t' n n' n1 u u' v v' t1) *)
+(*       | comm t1 t2 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (extCca2compmsg t' n n' n1 u u' v v' t2)) *)
+(*       | open t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3))) *)
+(*       (** encryptions *) *)
+(*       | ke t1 => (extCca2compmsg t' n n' n1 u u' v v' t1) *)
+(*       | re t1 => (extCca2compmsg t' n n' n1 u u' v v' t1) *)
+(*       | enc t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3))) *)
+(*       | dec t1  t2 => true (*if (andb (leb 2 (@count_occ nat eq_nat_dec (mVarMsg t1) n)) (message_beq (ske n1) t2)) then false else (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (extCca2compmsg t' n n' n1 u u' v v' t2)) *) *)
+(*       (** Blind digital signatures *) *)
+(*       | kb t1 => (extCca2compmsg t' n n' n1 u u' v v' t1) *)
+(*       | rb t1 => (extCca2compmsg t' n n' n1 u u' v v' t1) *)
+(*       | bl t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3))) *)
+(*       | ub t1 t2 t3 t4 => (andb (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3))) (extCca2compmsg t' n n' n1 u u' v v' t4)) *)
+(*       | bsign t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3))) *)
+(*       (** signatures *) *)
+(*       | ks t1 => (extCca2compmsg t' n n' n1 u u' v v' t1) *)
+(*       | rs t1 => (extCca2compmsg t' n n' n1 u u' v v' t1) *)
+(*       | sign t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3))) *)
+(*        (* shuffling *) *)
+(*       | shufl t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3))) *)
+(*       | _ => true *)
 
-Axiom idemp_L: forall x,  (L (L x)) # (L x).
+(*   end *)
+(* with extCca2compbol t' (n n' n1:nat) (u u' v v':message)  (b:Bool) :bool := *)
+(*        match b with *)
+(*          | eqb b1 b2 => (andb (extCca2compbol t' n n' n1 u u' v v' b1) (extCca2compbol t' n n' n1 u u' v v' b2)) *)
+(*          | eqm  t1 t2 =>  (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (extCca2compmsg t' n n' n1 u u' v v' t2)) *)
+(*          | ifb_then_else_  b1 b2 b3 =>  (andb (extCca2compbol t' n n' n1 u u' v v' b1) (andb (extCca2compbol t' n n' n1 u u' v v' b2) (extCca2compbol t' n n' n1 u u' v v' b3))) *)
+(*          | ver  t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3))) *)
+(*          | bver  t1 t2 t3 => (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3))) *)
+(*          | acc t1 t2 t3 t4 => (andb (andb (extCca2compmsg t' n n' n1 u u' v v' t1) (andb (extCca2compmsg t' n n' n1 u u' v v' t2) (extCca2compmsg t' n n' n1 u u' v v' t3))) (extCca2compmsg t' n n' n1 u u' v v' t4)) *)
+(*          | _ => true *)
+(*        end. *)
 
-Axiom lskey: forall n, lsk # (L (sk n)). *)
+(* Definition extCca2compos (t':message) (n n' n1:nat) (u u' v v' :message) (t:oursum) : bool := *)
+(*   match t with *)
+(*     | msg s => extCca2compmsg t' n n' n1 u u' v v' s *)
+(*     | bol b => extCca2compbol t' n n' n1 u u' v v' b *)
+(*   end. *)
+(* Fixpoint extCca2compmylis (t':message) (n n' n1:nat) (u u' v v':message) {m} (l:mylist m):bool := *)
+(*   match l with *)
+(*     | [] => true *)
+(*     | h : t => if (extCca2compos t' n n' n1 u u' v v' h) then (extCca2compmylis t' n n' n1 u u' v v' t) else false *)
+(*   end. *)
+(* (** EXTENCCCA2 assumption *) *)
 
-(** few tactics *)
-   Ltac tryrewhyps :=
-   match goal with
-     | [|- context [beq_nat ?n1 ?n2] ] =>  match goal with
-                                            | [H: beq_nat n2 n1 = ?Y |- _ ] => rewrite <- Nat.eqb_sym in H; try rewrite H; try split; try reflexivity
-                                            | [H1: beq_nat n1 n2 = ?Y1 |- _] => rewrite H1; try split; try reflexivity
-                                          end
-   end.
+(* Axiom EXTENCCCA2 : forall (t' u u' u'' v v' v'': message) (n n' n1 n2 n3 n4 n5:nat){m} (l:mylist m), ( (length (distMvars ([msg t'] ++ l))) <=? 2) = true /\ (closMlist (cons u' nil) = true) /\ (closMlist (cons v nil) = true) /\ (extCca2compmylis t' n n' n1 u u' v v' l) = true /\ ((extCca2compmsg t' n n' n1 u u' v v' t') = true) -> *)
+(*   ([n' <- (If (|v|#?|v'|) then {v}_n1^^n3 else v'')][ n <- (If (|u|#?|u'|) then {u}_n1^^n2 else u'')] l) ~ ([n' <- (If (|v|#?|v'|) then {v'}_n1^^n5 else v'')][ n <-  (If (|u|#?|u'|) then {u'}_n1^^n4 else u'')] l). *)
+
+                      
+
+
+(* (** * Example 12.2 *) *)
+(* (* *)
+(* (** nonce and key generation *) *)
+
+(* Axiom ln: forall n, lnc # (L (nonce n)). *)
+
+(* (** Definition lskey {n} := (L (sk n))*) *)
+
+(* (** length regular *) *)
+
+(* Axiom len_regular: forall (x1 x2 y1 y2 :message), (L x1) # (L y1) /\ (L x2) # (L y2) -> (L (pair x1 x2)) # (L (pair y1 y2)). *)
+
+(* (** Idempotence: L(L(x)) = L(x) *) *)
+
+(* Axiom idemp_L: forall x,  (L (L x)) # (L x). *)
+
+(* Axiom lskey: forall n, lsk # (L (sk n)). *) *)
+
+(* (** few tactics *) *)
+(*    Ltac tryrewhyps := *)
+(*    match goal with *)
+(*      | [|- context [beq_nat ?n1 ?n2] ] =>  match goal with *)
+(*                                             | [H: beq_nat n2 n1 = ?Y |- _ ] => rewrite <- Nat.eqb_sym in H; try rewrite H; try split; try reflexivity *)
+(*                                             | [H1: beq_nat n1 n2 = ?Y1 |- _] => rewrite H1; try split; try reflexivity *)
+(*                                           end *)
+(*    end. *)
 
 (* Ltac beqneq n1 n2 :=
  assert( n1 <> n2) ; simpl; try lia;
