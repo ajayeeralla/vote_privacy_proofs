@@ -3,7 +3,7 @@ Require Export prop_17.
 Definition phi0 := [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TWO, msg THREE, msg (vk 0), msg (vk 1), msg (pke 2)].
 
 (** STEP:1 *)
-Definition vcheck (v:message) :=  (v #? C1) or (v#?C2) or (v#?C3).
+Definition vcheck (v:message) := (v #? C1) or (v#?C2) or (v#?C3).
 Definition x1:= f (toListm phi0).
 Definition pk:= (pubkey x1).
 (* Axiom vote_len_reg : forall t, (|V0 t| #? |V1 t|) ## TRue. *)

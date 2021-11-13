@@ -152,11 +152,21 @@ Axiom nodup: forall {m} (l1 l2: mylist m), let l1' := conv_mylist_listos l1 in
                                            (pi1ProdMylist y) ~ (pi2ProdMylist y) -> l1 ~ l2.
 
 Axiom cca2Trans: forall {m} {l1 l2 l1' l2': mylist m}, l1 ~ l1' /\ l2 ~ l2' /\ l1' ~ l2' -> l1 ~ l2.
-        Ltac aply_cca2Trans L R :=
-          match goal with
-          | [|- ?X ~ ?Y] => apply (@cca2Trans _ X Y L R); try split
-          end.
+Ltac aply_cca2Trans L R :=
+  match goal with
+  | [|- ?X ~ ?Y] => apply (@cca2Trans _ X Y L R); try split
+  end.
 
+Ltac aplyCCA2 n n1 n2 n3 u u' := aplyDestrEnc 11 7; apply nodup; simpl;
+  match goal with
+  | [|- ?X ~ ?Y] => apply (@subMvarEnc n n1 n2 n3 u u' _ X Y); simpl; (* replace encryptions with (Mvar n) *)
+                    match goal with
+                    | [|- ?X1 ~ ?Y1] => apply (@rewDecs n n1 u u' _ X1 Y1); simpl; (* rewrite decryptions to pass the cca2compliance *)
+                                        match goal with
+                                        |[|- ?X2 ~ ?Y2] => apply (@ENCCCA2 n n1 n2 n3 u u' _ X2); repeat (try apply len_reg; try rewrite eqmeql; try apply nameEql; try simpl; try intuition)
+                                        end
+                    end
+  end.
 (* Some stuff *)
 Axiom funcapp_f1m': forall {n n'} f p1 (z z':mylist n) (z1 z1':mylist n'), (z ++ z1) ~ (z' ++ z1') -> ((z ++ z1) ++ [msg (f (ostomsg (getelt_at_pos p1 z1)))]) ~ ((z' ++ z1') ++ [msg (f (ostomsg (getelt_at_pos p1 z1')))]).
 Ltac funcapp_f1m'_in g n H:= apply funcapp_f1m' with (f:=g) (p1:=n) in H; unfold getelt_at_pos in H; simpl in H.

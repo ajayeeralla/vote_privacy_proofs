@@ -1,9 +1,9 @@
 (************************************************************************) 
 (* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
 (************************************************************************)
-        
+         
 Require Export auxDefs.
-   
+  Arguments phi0: simpl never.
 Proposition destrEnc:
       let v0 := V0 (f (toListm phi0)) in
       let v1 := V1 (f (toListm phi0)) in
@@ -35,7 +35,7 @@ Proposition destrEnc:
       let dv0 := (If (dist fphi02) & (pvchecks fphi02) then s0 else |_) in
       let t0s0 := (If acc00 & acc11 then (e00, (e11, dv0)) else |_) in
 
-      (* Right-side *)
+                       (* Right-side *)
       let c10 := (comm v1 k0) in
       let c01 := (comm v0 k1) in 
       let b10 := (bl c10 t r0) in
@@ -53,38 +53,23 @@ Proposition destrEnc:
       let s1 := (If (! (isin pv10 ((pi1 (d 1 fphi12)), ((pi1 (d 2 fphi12)), (pi1 (d 3 fphi12)))))) then (shufl (pi1 (d 1 fphi12)) (pi1 (d 2 fphi12)) (pi1 (d 3 fphi12))) else O)in
       let dv1 := (If (dist fphi12) & (pvchecks fphi12) then s1 else |_) in
       let t1s1 := (If acc10 & acc01 then (e10, (e01, dv1)) else |_) in 
- 
-      [msg b00, msg b11, msg t0s0] ~ [msg b10, msg b01, msg t1s1].
+       [msg b00, msg b11, msg t0s0] ~ [msg b10, msg b01, msg t1s1].
 Proof. intros.
        aply_cca2Trans (let e00' := (enc ((c00, ((ub c00 t r0 t2), (nonce 100))), TWO) (pke 11) (er 7)) in
-               let phi02':= [msg b00, msg b11, msg e00', msg e11] in
-               let fphi02':= f (toListm phi02') in
-               let s0' := (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02')))))) then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O)in
-                                              let dv0' := (If (dist fphi02') & (pvchecks fphi02') then s0' else |_) in
-                                              let t0s0' := (If acc00 & acc11 then (e00', (e11, dv0')) else |_) in
-                                              [msg b00, msg b11, msg t0s0'])
-
-                ( let e10' := (enc ((c10, ((ub c10 t r0 t4), (nonce 100))), TWO) (pke 11) (er 7)) in
+                       let phi02':= [msg b00, msg b11, msg e00', msg e11] in
+                       let fphi02':= f (toListm phi02') in
+                       let s0' := (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02')))))) then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O)in
+                       let dv0' := (If (dist fphi02') & (pvchecks fphi02') then s0' else |_) in
+                       let t0s0' := (If acc00 & acc11 then (e00', (e11, dv0')) else |_) in
+                       [msg b00, msg b11, msg t0s0'])
+                      (let e10' := (enc ((c10, ((ub c10 t r0 t4), (nonce 100))), TWO) (pke 11) (er 7)) in
                   let phi12':= [msg b10, msg b01, msg e10', msg e01] in
       let fphi12':= f (toListm phi12') in
       let s1' := (If (! (isin pv10 ((pi1 (d 1 fphi12')), ((pi1 (d 2 fphi12')), (pi1 (d 3 fphi12')))))) then (shufl (pi1 (d 1 fphi12')) (pi1 (d 2 fphi12')) (pi1 (d 3 fphi12'))) else O)in
       let dv1' := (If (dist fphi12') & (pvchecks fphi12') then s1' else |_) in
       let t1s1' := (If acc10 & acc01 then (e10', (e01, dv1')) else |_) in
       [msg b10, msg b01, msg t1s1']).
-                      simpl.
-                      apply aplyCCA with (a:= 11) (r:= 7).
-                      simpl. reflexivity.
-                      simpl.
-apply nodup. simpl.
-                      aplyDestrEnc 11 7.
-      apply nodup.
-       simpl. simpl. unfold d. Compute destrEncMsg 11 (pi2 (dec (tau 3 fphi02) (ske 11))) (pi2 (dec (tau 3 O) (ske 11))).
-       (dec
-          (tau 3
-             (f
-                (b00
-                 :: b11
-                    :: {(c00, (ub c00 t r0 t2, nonce 100), TWO) }_ 11 ^^ 7
-                       :: e11 :: nil))) (ske 11))).
-Qed.
+ repeat aplyCCA2 150 11 7 7 ((c00, ((ub c00 t r0 t2), (nonce 20))), TWO) ((c00, ((ub c00 t r0 t2), (nonce 100))), TWO).                    
+Qed.                  
+                     
        
