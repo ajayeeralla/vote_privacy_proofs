@@ -1,143 +1,153 @@
 (************************************************************************)
-(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
+(* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*) 
 (************************************************************************)
-Require Export destructTerm.
+Require Export auxDefs.
 
-Module aux.
-  Export destructTerm.
-  Fixpoint submsg_bol pk r (t': message)(s: message) (b: Bool): Bool :=
-    match b with
-    | eqb  b1 b2 =>  (eqb (submsg_bol pk r t' s b1) (submsg_bol pk r t' s b2))
-    | eqm t1 t2 => (eqm (submsg_msg pk r t' s t1) (submsg_msg pk r t' s t2))
-    | ifb_then_else_ t1 t2 t3 => (IF (submsg_bol pk r t' s t1) then (submsg_bol pk r t' s t2) else (submsg_bol pk r t' s t3))
-    | ver t1 t2 t3 => ver (submsg_msg pk r t' s t1) (submsg_msg pk r t' s t2) (submsg_msg pk r t' s t3)
-    | bver t1 t2 t3 => bver (submsg_msg pk r t' s t1) (submsg_msg pk r t' s t2) (submsg_msg pk r t' s t3)
-    | acc t1 t2 t3 t4 => acc (submsg_msg pk r t' s t1) (submsg_msg pk r t' s t2) (submsg_msg pk r t' s t3) (submsg_msg pk r t' s t4)
-    | _ => b
-    end
-  with submsg_msg pk r (t': message)(s: message) (t: message): message :=
-         match t with
-         | enc t1 t2 t3 => match t2, t3 with
-                           | pi1 (ke (nonce n1)), re (nonce n2) => if ((n1 =? pk)%nat && (n2 =? r)%nat)&& message_beq t1 t'
-                                                                   then enc s t2 t3 else t
-                           | _, _ => t
-                           end
-         | _ => t
+(* Module aux. *)
+(*   Export destructTerm. *)
+(*   Fixpoint submsg_bol pk r (t': message)(s: message) (b: Bool): Bool := *)
+(*     match b with *)
+(*     | eqb  b1 b2 =>  (eqb (submsg_bol pk r t' s b1) (submsg_bol pk r t' s b2)) *)
+(*     | eqm t1 t2 => (eqm (submsg_msg pk r t' s t1) (submsg_msg pk r t' s t2)) *)
+(*     | ifb_then_else_ t1 t2 t3 => (IF (submsg_bol pk r t' s t1) then (submsg_bol pk r t' s t2) else (submsg_bol pk r t' s t3)) *)
+(*     | ver t1 t2 t3 => ver (submsg_msg pk r t' s t1) (submsg_msg pk r t' s t2) (submsg_msg pk r t' s t3) *)
+(*     | bver t1 t2 t3 => bver (submsg_msg pk r t' s t1) (submsg_msg pk r t' s t2) (submsg_msg pk r t' s t3) *)
+(*     | acc t1 t2 t3 t4 => acc (submsg_msg pk r t' s t1) (submsg_msg pk r t' s t2) (submsg_msg pk r t' s t3) (submsg_msg pk r t' s t4) *)
+(*     | _ => b *)
+(*     end *)
+(*   with submsg_msg pk r (t': message)(s: message) (t: message): message := *)
+(*          match t with *)
+(*          | enc t1 t2 t3 => match t2, t3 with *)
+(*                            | pi1 (ke (nonce n1)), re (nonce n2) => if ((n1 =? pk)%nat && (n2 =? r)%nat)&& message_beq t1 t' *)
+(*                                                                    then enc s t2 t3 else t *)
+(*                            | _, _ => t *)
+(*                            end *)
+(*          | _ => t *)
 
-         end.
+(*          end. *)
 
-  Fixpoint submsg_os pk r (t': message) (s: message) (os: oursum): oursum :=
-    match os with
-    | msg t => msg (submsg_msg pk r t' s t)
-    | bol b => bol (submsg_bol pk r t' s b)
-    end.
+(*   Fixpoint submsg_os pk r (t': message) (s: message) (os: oursum): oursum := *)
+(*     match os with *)
+(*     | msg t => msg (submsg_msg pk r t' s t) *)
+(*     | bol b => bol (submsg_bol pk r t' s b) *)
+(*     end. *)
 
-  Fixpoint submsgMylist pk r (t': message) (s: message) {n} (ml: mylist n): mylist n :=
-    match ml with
-    | [] => []
-    | h:t => (submsg_os pk r t' s h): submsgMylist pk r t' s t
-    end.
+(*   Fixpoint submsgMylist pk r (t': message) (s: message) {n} (ml: mylist n): mylist n := *)
+(*     match ml with *)
+(*     | [] => [] *)
+(*     | h:t => (submsg_os pk r t' s h): submsgMylist pk r t' s t *)
+(*     end. *)
 
-  (* Replace nonce directly as the above definition seems slow  *)
-  Fixpoint repNonceBol n n' b: Bool :=
-  match b with
-    | eqb  b1 b2 =>  (eqb (repNonceBol n n' b1) (repNonceBol n n' b2))
-    | eqm t1 t2 => (eqm (repNonceMsg n n' t1) (repNonceMsg n n' t2))
-    | ifb_then_else_ t1 t2 t3 => (IF (repNonceBol n n' t1) then (repNonceBol n n' t2) else (repNonceBol n n' t3))
-    | ver t1 t2 t3 => ver  (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3)
-    | bver t1 t2 t3 => bver (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3)
-    | acc t1 t2 t3 t4 => acc (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3) (repNonceMsg n n' t4)
-    | _ => b
-  end
-with repNonceMsg n n' t: message :=
-       match t with
-         | nonce k => if (k =? n)%nat then (nonce n') else t
-         | ifm_then_else_ b1 t1 t2 =>    (If (repNonceBol n n' b1) then (repNonceMsg n n' t1) else (repNonceMsg n n' t2))
-         | pair t1 t2 => pair (repNonceMsg n n' t1) (repNonceMsg n n' t2)
-         | pi1 t1 =>  pi1 (repNonceMsg n n' t1)
-         | pi2 t1 =>  pi2 (repNonceMsg n n' t1)
-         | L t1 =>  L (repNonceMsg n n' t1)
-         | to t1 => to  (repNonceMsg n n' t1)
-         | f l =>  (f (@map message message  (repNonceMsg n n') l))
-         (** foo function symbol *)
-         (** FOO syntax *)
-         (** Vote values *)
-         | V0 t1 => V0 (repNonceMsg n n' t1)
-         | V1 t1 => V1 (repNonceMsg n n' t1)
-         (** Public Key *)
-         | pubkey t1 => pubkey (repNonceMsg n n' t1)
-         (** Commitments *)
-         | kc t1 => kc (repNonceMsg n n' t1)
-         | comm t1 t2 => comm (repNonceMsg n n' t1) (repNonceMsg n n' t2)
-         | open t1 t2 t3 => open (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3)
-         (** Shuffling *)
-         | shufl t1 t2 t3 =>  shufl (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3)
-         (** Encryptions *)
-         | ke t1 => ke (repNonceMsg n n' t1)
-         | re t1 => re (repNonceMsg n n' t1)
-         | enc t1 t2 t3 =>  enc (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3)
-         | dec t1 t2 =>  dec (repNonceMsg n n' t1) (repNonceMsg n n' t2)
-           (** Blind Signatures *)
-         | kb t1 => kb (repNonceMsg n n' t1)
-         | rb t1 => rb (repNonceMsg n n' t1)
-         | bsign t1 t2 t3 =>  bsign (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3)
-         | bl t1 t2 t3 =>  bl (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3)
-         | ub t1 t2 t3 t4 => ub (repNonceMsg n n' t1) (repNonceMsg n n' t2)  (repNonceMsg n n' t3)   (repNonceMsg n n' t4)
-         (** Signatures *)
-         | ks t1 => ks (repNonceMsg n n' t1)
-         | rs t1 => rs (repNonceMsg n n' t1)
-         | sign t1 t2 t3 => sign (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3)
-         (* | z t1 => z t1 *)
-         | compl t1 => compl (repNonceMsg n n' t1)
-         (** all other constrs *)
-         | _ => t
-       end.
+(*   (* Replace nonce directly as the above definition seems slow  *) *)
+(*   Fixpoint repNonceBol n n' b: Bool := *)
+(*   match b with *)
+(*     | eqb  b1 b2 =>  (eqb (repNonceBol n n' b1) (repNonceBol n n' b2)) *)
+(*     | eqm t1 t2 => (eqm (repNonceMsg n n' t1) (repNonceMsg n n' t2)) *)
+(*     | ifb_then_else_ t1 t2 t3 => (IF (repNonceBol n n' t1) then (repNonceBol n n' t2) else (repNonceBol n n' t3)) *)
+(*     | ver t1 t2 t3 => ver  (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3) *)
+(*     | bver t1 t2 t3 => bver (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3) *)
+(*     | acc t1 t2 t3 t4 => acc (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3) (repNonceMsg n n' t4) *)
+(*     | _ => b *)
+(*   end *)
+(* with repNonceMsg n n' t: message := *)
+(*        match t with *)
+(*          | nonce k => if (k =? n)%nat then (nonce n') else t *)
+(*          | ifm_then_else_ b1 t1 t2 =>    (If (repNonceBol n n' b1) then (repNonceMsg n n' t1) else (repNonceMsg n n' t2)) *)
+(*          | pair t1 t2 => pair (repNonceMsg n n' t1) (repNonceMsg n n' t2) *)
+(*          | pi1 t1 =>  pi1 (repNonceMsg n n' t1) *)
+(*          | pi2 t1 =>  pi2 (repNonceMsg n n' t1) *)
+(*          | L t1 =>  L (repNonceMsg n n' t1) *)
+(*          | to t1 => to  (repNonceMsg n n' t1) *)
+(*          | f l =>  (f (@map message message  (repNonceMsg n n') l)) *)
+(*          (** foo function symbol *) *)
+(*          (** FOO syntax *) *)
+(*          (** Vote values *) *)
+(*          | V0 t1 => V0 (repNonceMsg n n' t1) *)
+(*          | V1 t1 => V1 (repNonceMsg n n' t1) *)
+(*          (** Public Key *) *)
+(*          | pubkey t1 => pubkey (repNonceMsg n n' t1) *)
+(*          (** Commitments *) *)
+(*          | kc t1 => kc (repNonceMsg n n' t1) *)
+(*          | comm t1 t2 => comm (repNonceMsg n n' t1) (repNonceMsg n n' t2) *)
+(*          | open t1 t2 t3 => open (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3) *)
+(*          (** Shuffling *) *)
+(*          | shufl t1 t2 t3 =>  shufl (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3) *)
+(*          (** Encryptions *) *)
+(*          | ke t1 => ke (repNonceMsg n n' t1) *)
+(*          | re t1 => re (repNonceMsg n n' t1) *)
+(*          | enc t1 t2 t3 =>  enc (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3) *)
+(*          | dec t1 t2 =>  dec (repNonceMsg n n' t1) (repNonceMsg n n' t2) *)
+(*            (** Blind Signatures *) *)
+(*          | kb t1 => kb (repNonceMsg n n' t1) *)
+(*          | rb t1 => rb (repNonceMsg n n' t1) *)
+(*          | bsign t1 t2 t3 =>  bsign (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3) *)
+(*          | bl t1 t2 t3 =>  bl (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3) *)
+(*          | ub t1 t2 t3 t4 => ub (repNonceMsg n n' t1) (repNonceMsg n n' t2)  (repNonceMsg n n' t3)   (repNonceMsg n n' t4) *)
+(*          (** Signatures *) *)
+(*          | ks t1 => ks (repNonceMsg n n' t1) *)
+(*          | rs t1 => rs (repNonceMsg n n' t1) *)
+(*          | sign t1 t2 t3 => sign (repNonceMsg n n' t1) (repNonceMsg n n' t2) (repNonceMsg n n' t3) *)
+(*          (* | z t1 => z t1 *) *)
+(*          | compl t1 => compl (repNonceMsg n n' t1) *)
+(*          (** all other constrs *) *)
+(*          | _ => t *)
+(*        end. *)
 
-  Fixpoint repNonceOs n n' os: oursum :=
-    match os with
-    | msg t => msg (repNonceMsg n n' t)
-    | bol b => bol (repNonceBol n n' b)
-    end.
+(*   Fixpoint repNonceOs n n' os: oursum := *)
+(*     match os with *)
+(*     | msg t => msg (repNonceMsg n n' t) *)
+(*     | bol b => bol (repNonceBol n n' b) *)
+(*     end. *)
 
-  Fixpoint repNonceMylist n n' {m} (l: mylist m): mylist m :=
-    match l with
-    | [] => []
-    | h:t => (repNonceOs n n' h) : (repNonceMylist n n' t)
-    end.
-End aux.
+(*   Fixpoint repNonceMylist n n' {m} (l: mylist m): mylist m := *)
+(*     match l with *)
+(*     | [] => [] *)
+(*     | h:t => (repNonceOs n n' h) : (repNonceMylist n n' t) *)
+(*     end. *)
+(* End aux. *)
 
-Section lemma_25.
+(* Section lemma_25. *)
 
-  Definition V (b:bool) :=
-    match b with
-    | false => (V0 (nonce 0))
-    | true => (V1 (nonce 0))
-    end.
+(*   Definition V (b:bool) := *)
+(*     match b with *)
+(*     | false => (V0 (nonce 0)) *)
+(*     | true => (V1 (nonce 0)) *)
+(*     end. *)
 
-  Definition cn (b:bool) :nat :=
-    match b with
-    | false => 0
-    | true => 1
-    end.
+(*   Definition cn (b:bool) :nat := *)
+(*     match b with *)
+(*     | false => 0 *)
+(*     | true => 1 *)
+(*     end. *)
 
 
-  Open Scope msg_scope.
+(*   Open Scope msg_scope. *)
 
   (** **)
+Axiom isinCong: forall m1 m2 m3 m4, m1 # m2 -> m3 # m4 -> (isin m1 m3) ## (isin m2 m4).
+Add Parametric Morphism: (@isin) with
+    signature EQm ==> EQm ==> EQb as isin_mor.
+Proof. intros. apply isinCong; try intuition. Qed.
+Axiom isinApp: forall a x t, checkmtmsg a x = false -> isin x (f t) ## (isin x (f (a::t))).
 
-
-Import aux.
+(* The following frame is useful when we apply CCA2 axiom *)
+Definition z0 := phi0 ++ [msg lbl, msg (kc (nonce 3)), msg (kc (nonce 4)), msg (r 1), msg (r 2), msg pk (* public key AD*), msg (sr 14), msg (sr 15), msg (nonce 20), msg (nonce 21), msg (er 7), msg (er 8), msg (er 9), msg (er 10)].
+Arguments z0: simpl never.
 (* Require Import Coq.Lists.List. *)
-Lemma rep_first_ballot: forall t t0 t1 : message,
-      let v0 := V0 (nonce 0) in
-      let v1 := V1 (nonce 0) in
-      (| v0 |) #? (| v1 |) ## TRue ->
-      Fresh [1; 2; 3; 4] [msg t, msg v0, msg v1, msg t0, msg t1] = true ->
-      closMylist [msg t] = true ->
-      (Datatypes.length (distMvars [msg t0, msg t1]) =? 2)%nat = true ->
-      bVarMylist [msg t0, msg t1] = nil ->
-      let mvl := [5; 6] in
-      mVarMsg t0 = mvl /\ mVarMsg t1 = mvl ->
+Lemma rep_first_ballot:
+      let v0 := V0 (f (toListm phi0)) in
+      let v1 := V1 (f (toListm phi0)) in
+      (* (| v0 |) #? (| v1 |) ## TRue -> *)
+      (vcheck v0) & (vcheck v1) ## TRue ->
+      (* let v0 := V0 (nonce 0) in *)
+      (* let v1 := V1 (nonce 0) in *)
+      (* (| v0 |) #? (| v1 |) ## TRue -> *)
+      (* Fresh [1; 2; 3; 4] [msg t, msg v0, msg v1, msg t0, msg t1] = true -> *)
+      (* closMylist [msg t] = true -> *)
+      (* (Datatypes.length (distMvars [msg t0, msg t1]) =? 2)%nat = true -> *)
+      (* bVarMylist [msg t0, msg t1] = nil -> *)
+      (* let mvl := [5; 6] in *)
+      (* mVarMsg t0 = mvl /\ mVarMsg t1 = mvl -> *)
       (* Bothsides *)
       let r0 := (r 1) in
       let r1 := (r 2) in
@@ -146,8 +156,11 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
       (* Left-side *)
       let c00 := (comm v0 k0) in
       let c11 := (comm v1 k1) in
+      let t := pubkey (f (toListm phi0)) in
       let b00 := (bl c00 t r0) in
       let b11 := (bl c11 t r1) in
+      let t0 := (((vk 0), (Mvar 5), sign (Mvar 5) (ssk 0) (sr 14)), ((vk 1), (Mvar 6), sign (Mvar 6) (ssk 1) (sr 15))) in
+      let t1 := (t0, f (cons t0 nil)) in
       let t2 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t0)) in
       let t3 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t1)) in
       let acc00 := (acc c00 t r0 t2) in
@@ -168,7 +181,7 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
       let fphi05 := f (toListm phi05) in
       let do0 := (If (dist fphi05) & (pochecks fphi05) & (((isink k0 fphi05) & (isink k1 fphi05))) (* or (! ((isink k0 fphi05)or (isink k1 fphi05))))*) then (sotrm fphi05) else |_) in
       let t0s0 := (If acc00 & acc11 then ((e00, (e11, dv0)), (l00, (l11, do0))) else |_) in
-
+  
       (* Right-side *)
       let c10 := (comm v1 k0) in
       let c01 := (comm v0 k1) in
@@ -194,11 +207,101 @@ Lemma rep_first_ballot: forall t t0 t1 : message,
       let fphi15 := f (toListm phi15) in
       let do1 := (If (dist fphi15)& (pochecks fphi15)& (((isink k0 fphi15)&(isink k1 fphi15)))(* or (! ((isink k0 fphi15)or (isink k1 fphi15))))*) then (sotrm fphi15) else |_) in
       let t1s1 := (If acc10 & acc01 then ((e10, (e01, dv1)), (l10, (l01, do1))) else |_) in
-      (occur_name_mylist 100 [msg t, msg t0, msg t1] = false) ->
-      (Fresh (cons 0 nil) [msg t, msg t2, msg t3, msg t4, msg t5] = true) ->
+      (* (occur_name_mylist 100 [msg t, msg t0, msg t1] = false) -> *)
+      (* (Fresh (cons 0 nil) [msg t, msg t2, msg t3, msg t4, msg t5] = true) -> *)
       [msg b00, msg b11, msg t0s0] ~ [msg b10, msg b01, msg t1s1].
+Proof. intros.
+       (* unfold t0s0, t1s1. unfold dv0, dv1. unfold s0, s1. *)
+       (* rewrite ifMorphIfThen.  repeat rewrite ifMorphPair2.     rewrite ifMorphPair1.  rewrite ifMorphIfThen. *)
+       (* unfold l00. *)
+       (* unfold bnlcheck. *)
+       (* unfold ncheck. *)
+       (* aply_ifbr. *)
+    
+       aply_cca2Trans (let e00' := (enc ((c00, ((ub c00 t r0 t2), (nonce 150))), TWO) (pke 11) (er 7)) in
+                       let phi02':= [msg b00, msg b11, msg e00', msg e11] in
+                       let fphi02':= f (toListm phi02') in
+                       let s0':= (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02')))))) then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O)in
+                       let dv0' := (If (dist fphi02') & (pvchecks fphi02') then s0 else |_) in
+                       let phi03':= phi02' ++[msg dv0'] in
+                       let fphi03' := f (toListm phi03') in
+                       let l00' := (If (bnlcheck c00 (nonce 20) fphi03') then (enc ((label c00 fphi03'), (k0, THREE)) (pke 11) (er 9)) else O) in
+                       let l11' := (If (bnlcheck c11 (nonce 21) fphi03') then (enc ((label c11 fphi03'), (k1, THREE)) (pke 11) (er 10)) else O) in
+                       let phi05':= phi03'++[msg l00', msg l11'] in
+                       let fphi05' := f (toListm phi05') in
+                       let do0' := (If (dist fphi05') & (pochecks fphi05') & (((isink k0 fphi05') & (isink k1 fphi05'))) (* or (! ((isink k0 fphi05')or (isink k1 fphi05'))))*) then (sotrm fphi05') else |_) in
+                       let t0s0' := (If acc00 & acc11 then ((e00', (e11, dv0')), (l00', (l11', do0'))) else |_) in
+                       [msg b00, msg b11, msg t0s0'])
+                       (let e10' := (enc ((c10, ((ub c10 t r0 t4), (nonce 150))), TWO) (pke 11) (er 7)) in
+                        let phi12':= [msg b10, msg b01, msg e10', msg e01] in
+                        let fphi12':= f (toListm phi12') in
+                        let s1' := (If (! (isin pv10 ((pi1 (d 1 fphi12')), ((pi1 (d 2 fphi12')), (pi1 (d 3 fphi12')))))) then (shufl (pi1 (d 1 fphi12')) (pi1 (d 2 fphi12')) (pi1 (d 3 fphi12'))) else O)in
+                        let dv1' := (If (dist fphi12') & (pvchecks fphi12') then s1' else |_) in
+                        let phi13':= phi12' ++[msg dv1] in
+                        let fphi13' := f (toListm phi13') in
+                        let l10' := (If (bnlcheck c10 (nonce 20) fphi13') then (enc ((label c10 fphi13'), (k0, THREE)) (pke 11) (er 9)) else O) in
+                        let l01' := (If (bnlcheck c01 (nonce 21) fphi13') then (enc ((label c01 fphi13'), (k1, THREE)) (pke 11) (er 10)) else O) in
+                        let phi15':= phi13'++[msg l10', msg l01'] in
+                        let fphi15' := f (toListm phi15') in
+                        let do1' := (If (dist fphi15')& (pochecks fphi15')& (((isink k0 fphi15')&(isink k1 fphi15')))(* or (! ((isink k0 fphi15')or (isink k1 fphi15'))))*) then (sotrm fphi15') else |_) in
+                        let t1s1' := (If acc10 & acc01 then ((e10', (e01, dv1')), (l10', (l01', do1'))) else |_) in
+                        [msg b10, msg b01, msg t1s1]).
+       
+                               pose proof (let n:= 101 in
+                                           let n1:= 11 in
+                                           let n2:= 7 in
+                                           let n3:= 7 in
+                                           let u:= ((c00, ((ub c00 t r0 t2), (nonce 20))), TWO) in
+                                           let u':= ((c00, ((ub c00 t r0 t2), (nonce 150))), TWO) in                                           let zAdd:= [msg c00, msg c11, msg b00, msg b11,  bol (acc00&acc11), msg pv00, msg pv11, msg e11, msg (Mvar 101)] in
+                                           ENCCCA2 n n1 n2 n3 u u' (z0 ++ zAdd)).
+       Check (z0 ++ [msg c00, msg c11, msg b00, msg b11, msg (Mvar 101), msg e11, msg pv00, msg pv11, bol (acc00&acc11)]).
+       
+          funapptrmhyp (msg fphi02) (msg (f (toListm [msg b00, msg b11, msg {((c00, ((ub c00 t r0 t2), (nonce 150))), TWO)}_11^^7, msg e11]))) H0.
+       2:{
+         repeat (try apply len_reg; try rewrite eqmeql; try apply nameEql; try simpl; try intuition).        }
+       Ltac elimTrivial :=
+         try match goal with
+             | [|- true = true ] => reflexivity
+             end.
+       elimTrivial.
+    2:{
+         auto.
+       }.
+ 2:{
+         auto.
+       }.  2:{
+         auto.
+        }.
+        2:{
+         auto.
+        }.
+        2:{
+         simpl; auto.
+       }.
+        2:{
+         auto.
+       }.
+       trivial.
+         Compute numgoals.
+       (rewDecMylist n n1 u u' (let e00' := Mvar 100 in
+                       let phi02':= [msg b00, msg b11, msg e00', msg e11] in
+                       let fphi02':= f (toListm phi02') in
+                       let s0':= (If (! (isin (tau 3 pv00) ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02')))))) then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O)in
+                       let dv0' := (If (dist fphi02') & (pvchecks fphi02') then s0 else |_) in
+                       let phi03':= phi02' ++[msg dv0'] in
+                       let fphi03' := f (toListm phi03') in
+                       let l00' := (If (bnlcheck c00 (nonce 20) fphi03') then (enc ((label c00 fphi03'), (k0, THREE)) (pke 11) (er 9)) else O) in
+                       let l11' := (If (bnlcheck c11 (nonce 21) fphi03') then (enc ((label c11 fphi03'), (k1, THREE)) (pke 11) (er 10)) else O) in
+                       let phi05':= phi03'++[msg l00', msg l11'] in
+                       let fphi05' := f (toListm phi05') in
+                       let do0' := (If (dist fphi05') & (pochecks fphi05') & (((isink k0 fphi05') & (isink k1 fphi05'))) (* or (! ((isink k0 fphi05')or (isink k1 fphi05'))))*) then (sotrm fphi05') else |_) in
+                       let t0s0' := (If acc00 & acc11 then ((e00', (e11, dv0')), (l00', (l11', do0'))) else |_) in
+                        [msg b00, msg b11, msg t0s0']))).
+            simpl in H0; apply H0; repeat (try apply len_reg; try rewrite eqmeql; try apply nameEql; try simpl; try intuition).
 
- (* Proof.  intros. *)
+       
+       
+       (* Proof.  intros. *)
  (*        unfold t0s0, t1s1. *)
 
  (*        (* Replace nonce 20 with nonce 50 in the first ballot *)

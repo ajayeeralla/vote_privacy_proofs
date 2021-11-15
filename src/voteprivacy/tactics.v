@@ -633,7 +633,8 @@ Fixpoint listm_listos (l: Mlist): oslist :=
   | cons h t => (cons (msg h) (listm_listos t))
   end.
  End subtrm'.
- (* Eval compute in rb. *)
+(* Eval compute in rb. *)
+Import ListNotations.
 Fixpoint subtrmls_bol''(t: Bool) : list oursum :=
   match t with
     | eqb  b1 b2 =>  (app (subtrmls_bol'' b1) (subtrmls_bol'' b2) )
@@ -645,23 +646,25 @@ Fixpoint subtrmls_bol''(t: Bool) : list oursum :=
     | _ => nil
  end
 with subtrmls_msg'' (t:message) : list oursum :=
+       let singleton:= (cons (msg t) nil) in
        match t with
          | ifm_then_else_ b3 t1 t2 => (app (subtrmls_bol'' b3) (app (subtrmls_msg'' t1) (subtrmls_msg'' t2)))
          | (Mvar n') => (cons (msg (Mvar n')) nil)
-         | O => (cons (msg O) nil)
          | nonce n'=> (cons (msg (nonce n')) nil)
-         | pair t1 t2 =>  (app (subtrmls_msg''  t1) (subtrmls_msg'' t2) )
-         | pi1 t1 => match t1 with
-                     | ke _ => (cons (msg (pi1 t1)) nil)
-                     | kb _ => (cons (msg (pi1 t1)) nil)
-                     | ks _ => (cons (msg (pi1 t1)) nil)
-                     | _ => nil
-                     end
+       | pair t1 t2 =>  (app (subtrmls_msg''  t1) (subtrmls_msg'' t2) )
+       | pi1 t1 => match t1 with
+                   | kc _ => singleton
+                   | ke _ => singleton
+                   | kb _ => singleton
+                   | ks _ => singleton
+                   | _ => subtrmls_msg'' t1 
+                   end
          | pi2 t1 => match t1 with
-                     | ke _ => (cons (msg (pi2 t1)) nil)
-                     | kb _ => (cons (msg (pi2 t1)) nil)
-                     | ks _ => (cons (msg (pi2 t1)) nil)
-                     | _ => nil
+                     | kc _ => singleton
+                     | ke _ => singleton
+                     | kb _ => singleton
+                     | ks _ => singleton
+                     | _ => subtrmls_msg'' t1 
                      end
          | to t1 =>  (subtrmls_msg'' t1)
          | L t1 =>  (subtrmls_msg'' t1)
@@ -675,28 +678,24 @@ with subtrmls_msg'' (t:message) : list oursum :=
          | C1 => (cons (msg C1) nil)
          | C2 => (cons (msg C2) nil)
          | C3 => (cons (msg C3) nil)
-         | V0 t1 => (subtrmls_msg'' t1)
-         | V1 t1 => (subtrmls_msg'' t1)
-         | pubkey t1 => (subtrmls_msg'' t1)
-         | kc t1 => nil
-         | comm t1 t2 => (cons (msg (comm t1 t2)) nil)
+         | V0 t1 => singleton
+         | V1 t1 => singleton
+         | pubkey t1 => singleton
+         | comm t1 t2 => singleton
          | open t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))
          | shufl t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))
          | re t1 =>  (cons (msg (re t1)) nil)
-         | ke t1 =>  nil
          | enc t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))
          | dec t1 t2 =>  (app (subtrmls_msg'' t1) (subtrmls_msg'' t2))
-         | bot => (cons (msg bot) nil)
-         | kb t1 =>  nil
          | rb t1 =>  (cons (msg (rb t1)) nil)
          | bsign t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))
          | bl t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))
          | ub t1 t2 t3 t4 =>  (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (app (subtrmls_msg'' t3) (subtrmls_msg'' t4))))
-         | ks t1 =>  nil
          | rs t1 =>  (cons (msg (rs t1)) nil)
          | z t1 => (cons (msg (z t1)) nil)
          | compl t1 => (cons (msg (compl t1)) nil)
-         | sign t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))
+       | sign t1 t2 t3 => (app (subtrmls_msg'' t1) (app (subtrmls_msg'' t2) (subtrmls_msg'' t3)))
+       | _ => nil
        end.
 
 
@@ -705,7 +704,7 @@ with subtrmls_msg'' (t:message) : list oursum :=
 Definition subtrmls_os'' (t:oursum) : list oursum :=
   match t with
     | msg t1 => subtrmls_msg'' t1
-    | bol b1 =>  subtrmls_bol'' b1
+    | bol b1 => subtrmls_bol'' b1
   end.
 
 (** Subterms of terms of type [mylist n] for some [n].*)
@@ -725,7 +724,6 @@ Axiom funapptrm : forall {m} (m1 m2 : oursum) (l1 l2 : mylist m),  l1 ~ l2 -> (t
 
 Ltac funapptrmhyp s1 s2 H :=
   apply funapptrm with (m1 := s1) (m2 := s2) in H; simpl in H.
-
 
 (** keep the blind term as it is **)
 

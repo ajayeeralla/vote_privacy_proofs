@@ -1,11 +1,12 @@
 Require Export prop_17.
 
-Definition phi0 := [msg A, msg B, msg M, msg C1, msg C2, msg C3, msg ONE, msg TWO, msg THREE, msg (vk 0), msg (vk 1), msg (pke 2)].
+Definition phi0 := [msg O, msg ONE, msg TWO, msg THREE, msg A, msg B, msg M, msg C1, msg C2, msg C3, bol TRue, bol FAlse, msg (vk 0), msg (vk 1), msg (pke 11)].
 
 (** STEP:1 *)
 Definition vcheck (v:message) := (v #? C1) or (v#?C2) or (v#?C3).
 Definition x1:= f (toListm phi0).
 Definition pk:= (pubkey x1).
+Arguments phi0 : simpl never.
 (* Axiom vote_len_reg : forall t, (|V0 t| #? |V1 t|) ## TRue. *)
 (** * Phase 1:Authentication *)
 (** nA = 0, nB = 1, nM = 2 *)
