@@ -10,15 +10,15 @@ Set Nested Proofs Allowed.
 
 Axiom funcapp_fn2: forall n b b' x x' (z z':mylist n) f, (z ++ [bol b, msg x])~ (z' ++ [bol b', msg x']) -> (z ++ [bol b, msg x, msg (f z b x)]) ~ (z' ++ [bol b', msg x', msg (f z' b' x')]).
 Axiom restr: forall n (l1 l1':mylist n) n' (l2 l2': mylist n'), (l1 ++ l2) ~ (l1' ++ l2') ->  forall m' (p: mylist n' -> mylist m'), m' <= n' ->  (l1 ++ (p l2))~ (l1' ++ (p l2')).
-Variable A: Type.
+(* Variable A: Type.
 Definition length : list A -> nat :=
   fix length l :=
   match l with
    | nil => 0
    | _ :: l' => S (length l')
-  end.
+  end. *)
 (* Check Cons. *)
-Fixpoint inject (ls : list A) : ilist A (length ls) :=
+(* Fixpoint inject (ls : list A) : ilist A (length ls) :=
     match ls with
       | nil => (Nil A)
       | h :: t => Cons A _ h (inject t)
@@ -27,16 +27,16 @@ Fixpoint unject n (ls : ilist A n) : list A :=
     match ls with
       | Nil _ => nil
       | Cons _ _ h t => h :: unject _ t
-    end.
+    end. *)
 
 
- Theorem inject_inverse : forall ls, unject _ (inject ls) = ls.
+ (* Theorem inject_inverse : forall ls, unject _ (inject ls) = ls.
     induction ls. reflexivity. simpl. rewrite IHls; reflexivity.
   Qed.
 Lemma ind_mylist: forall n (z : mylist n), (reverse (reverse z)) = z.
 Proof. intros. induction z. simpl. reflexivity.
 simpl.
-unfold app_elt_last.  Abort.
+unfold app_elt_last.  Abort. *)
 
 Axiom restr_in_list: forall n m m' (z z':mylist n) (z1 z1':mylist m), m <= m' -> (z ++ z1) ~ (z ++ z1') ->  forall (p: mylist m -> mylist m'), (z ++ (p z1)) ~ (z ++ (p z1')).
 Axiom ifmf_listnbm: forall n (l:mylist n) b x y (f:mylist n -> Bool -> message -> message),

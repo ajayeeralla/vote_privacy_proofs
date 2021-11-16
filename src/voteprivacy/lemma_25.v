@@ -1,6 +1,6 @@
 (************************************************************************)
 (* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*) 
-(************************************************************************)
+(************************************************************************) 
 Require Export auxDefs.
 
 (* Module aux. *)
@@ -133,6 +133,79 @@ Axiom isinApp: forall a x t, checkmtmsg a x = false -> isin x (f t) ## (isin x (
 (* The following frame is useful when we apply CCA2 axiom *)
 Definition z0 := phi0 ++ [msg lbl, msg (kc (nonce 3)), msg (kc (nonce 4)), msg (r 1), msg (r 2), msg pk (* public key AD*), msg (sr 14), msg (sr 15), msg (nonce 20), msg (nonce 21), msg (er 7), msg (er 8), msg (er 9), msg (er 10)].
 Arguments z0: simpl never.
+
+ Import ListNotations.
+Fixpoint toOsl (l: Mlist): oslist:=
+  match l with
+  |[ ] => [ ]
+  | h::t => (msg h)::toOsl t
+  end.
+Fixpoint checkSublist {m} (l1: mylist m){n}(l2: mylist n): bool :=
+  if (m <=? n)%nat then
+           match l1 with
+           | [] => true
+           | h:t => if (checkostmylis h l2) then (checkSublist t l2) else false
+           end
+  else false.
+
+Fixpoint subListPosVec {m} (l1: mylist m) {n} (l2: mylist n): Nlist:=
+  match (checkSublist l1 l2), l1 with
+  | true, h:t => (eltPos h l2)::(subListPosVec t l2)
+         | _, _ => [ ]
+  end.
+
+Axiom funcAppAttComp: forall {n} (l1 l2: mylist n) {m}(lm1 lm2: mylist m), l1 ~ l2 ->
+                                                                           ((checkSublist lm1 l1) && (checkSublist lm2 l2) = true)%bool ->
+                                                                           (subListPosVec lm1 l1) = (subListPosVec lm2 l2) ->
+                                                                           (l1 ++ [msg (f (toListm lm1))]) ~ (l2 ++ [msg (f (toListm lm2))]).
+Ltac tacFuncAppAttComp ml1 ml2 H:=
+  apply funcAppAttComp with (lm1:= ml1) (lm2:= ml2) in H. 
+
+Ltac funapp_fm_in  g H :=  apply FUNCApp_mconst with (m:= g) in H; try auto; simpl in H.
+Ltac funapp_f1_in g n1 H := apply FUNCApp_f1 with (f:= g) (p:= n1) in H ; simpl in H.
+Ltac funapp_f2b_in g n1 n2 H:= apply FUNCApp_f2b with (f:= g) (p1:= n1) (p2:= n2) in H ; simpl in H.
+Ltac funapp_f2m_in g n1 n2 H:= apply FUNCApp_f2m with (f:= g) (p1:= n1) (p2:= n2) in H ; simpl in H.
+Ltac funapp_f3b_in g n1 n2 n3 H:= apply FUNCApp_f3b with (f:= g) (p1:= n1) (p2:= n2) (p3:= n3) in H; simpl in H.
+Ltac funapp_f3bm_in g n1 n2 n3 H:= apply FUNCApp_f3bm with (f:= g) (p1:= n1) (p2:= n2) (p3:= n3) in H; simpl in H.
+Ltac funapp_f3m_in g n1 n2 n3 H:= apply FUNCApp_f3m with (f:= g) (p1:= n1) (p2:= n2) (p3:=n3) in H; simpl in H.
+Ltac funapp_f4m_in g n1 n2 n3 n4 H:= apply FUNCApp_f4m with (f:= g) (p1:= n1) (p2:= n2) (p3:= n3) (p4:= n4)  in H; simpl in H.
+Ltac funapp_sublist_in n1 n2 H:= apply FUNCApp_sublist with (m:= n1) (n:= n2) in H; unfold sublist in H; simpl in H.
+
+
+Fixpoint getSublist (l: Nlist) {n} (ml: mylist n): mylist (length l):=
+  match l with
+  | [ ] => []
+  | h::t => (getelt_at_pos h ml): getSublist t ml
+  end.
+Axiom funcAppAttComp': forall pl {n} (l1 l2: mylist n), l1 ~ l2 -> ([msg (f (toListm (getSublist pl l1)))]++l1) ~ ([msg (f (toListm (getSublist pl l2)))] ++ l2).
+(* Build frame phi03 *)
+Ltac tacFuncAppAttComp' l H :=
+  apply funcAppAttComp' with (pl:= l) in H; simpl in H.
+
+Ltac chkType H :=
+  match goal with
+  | [H:?X ~ ?Y |- _ ] => let t:= type of X in idtac t "~" t
+  end.
+
+
+Axiom funcAppF2b: forall (p:nat) {n} (ml1 ml2 : mylist n) {f}, (ml1 ~ ml2) -> ([bol (f (ostomsg (getelt_at_pos p ml1)))] ++ ml1) ~
+                                                                                                                                 ([bol (f (ostomsg (getelt_at_pos p ml2)))] ++ ml2).
+Ltac tacFuncAppF2b g n H :=
+  apply funcAppF2b with (f:= g) (p:= n) in H; simpl in H.
+Axiom funAppNatMsg: forall (m: nat) f {n} (ml1 ml2: mylist n), ml1 ~ ml2 -> ([msg (f m)] ++ ml1) ~ ([msg (f m)] ++ ml2).
+Ltac tacFunAppNatMsg g n H:=
+  apply funAppNatMsg with (f:= g) (m:=n) in H; simpl in H.
+Axiom FUNCApp_f3mb: forall (p1 p2 p3 :nat) {n} (ml1 ml2 : mylist n) {f}, (ml1 ~ ml2 ) -> ([ bol (f (ostomsg (getelt_at_pos p1 ml1)) (ostomsg (getelt_at_pos p2 ml1)) (ostomsg (getelt_at_pos p3 ml1)))] ++ ml1) ~
+                                                                                                                                                                                                                ([ bol (f (ostomsg (getelt_at_pos p1 ml2)) (ostomsg (getelt_at_pos p2 ml2)) (ostomsg (getelt_at_pos p3 ml2)))] ++ ml2).
+Ltac funapp_f3mb_in g n1 n2 n3 H:= apply FUNCApp_f3mb with (f:= g) (p1:= n1) (p2:= n2) (p3:= n3) in H; simpl in H.
+
+Axiom ENCCCA2': forall (n1 n2 n3: nat) (u u': message) {m} (l: mylist m),
+           (|u|#?|u'|) ## TRue ->
+           (* (List.length (distMvars l) <=? 1) = true -> *)
+           (closMylist ([msg u, msg u'] ++ l) = true) ->
+           (* cca2compmylis n n1 u u' l = true -> *)
+           (l++[msg {u}_n1^^n2]) ~ (l++ [msg {u'}_n1^^n3]).
+
 (* Require Import Coq.Lists.List. *)
 Lemma rep_first_ballot:
       let v0 := V0 (f (toListm phi0)) in
@@ -246,14 +319,272 @@ Proof. intros.
                         let do1' := (If (dist fphi15')& (pochecks fphi15')& (((isink k0 fphi15')&(isink k1 fphi15')))(* or (! ((isink k0 fphi15')or (isink k1 fphi15'))))*) then (sotrm fphi15') else |_) in
                         let t1s1' := (If acc10 & acc01 then ((e10', (e01, dv1')), (l10', (l01', do1'))) else |_) in
                         [msg b10, msg b01, msg t1s1]).
+
+       (* replace nonce in the encryption term of the left frame using CCA2, L ~ L'  *)
+       pose proof (let n1:= 11 in
+                   let n2:= 7 in
+                   let n3:= 7 in
+                   let u:= ((c00, ((ub c00 t r0 t2), (nonce 20))), TWO) in
+                   let u':= ((c00, ((ub c00 t r0 t2), (nonce 150))), TWO) in
+                   let zAdd:= [msg c00, msg c11, msg b00, msg b11,  bol (acc00&acc11), msg pv00, msg pv11, msg e11] in
+                   ENCCCA2' n1 n2 n3 u u' zAdd).
+       simpl in H0.
+       simpl in H0.
+       tacFuncAppAttComp phi02 [msg b00, msg b11, msg {((c00, ((ub c00 t r0 t2), (nonce 150))), TWO)}_11^^7, msg e11] H0; try auto.
+       simpl in H0.
+       (** To apply FUNCApp *)
+       funapp_f1_in (d 1) 10 H0.
+       funapp_f1_in (d 2) 11 H0.
+       funapp_f1_in (d 3) 12 H0.
+       do 3 funapp_f1_in pi1 3 H0.
+       funapp_f2m_in pair 2 1 H0.
+       funapp_f2m_in pair 4 1 H0.
+       funapp_f2b_in isin 15 1 H0.
+       funapp_notB_in 1 H0.
+       funapp_f3m_in shufl 7 6 5 H0.
+       funapp_fm_in O H0.
+       funapp_f3bm_in ifm_then_else_ 3 2 1 H0.
+     
+       tacFuncAppF2b pvchecks 23 H0.
+       tacFuncAppF2b dist 24 H0.
+       funapp_andB_in 1 2 H0.
+       funapp_fm_in |_ H0.
+       funapp_f3bm_in ifm_then_else_ 2 5 1 H0.
+       tacFuncAppAttComp' [21; 22; 27; 26; 1] H0.
+     
+       tacFunAppNatMsg nonce 20 H0.
        
-                               pose proof (let n:= 101 in
-                                           let n1:= 11 in
-                                           let n2:= 7 in
-                                           let n3:= 7 in
-                                           let u:= ((c00, ((ub c00 t r0 t2), (nonce 20))), TWO) in
-                                           let u':= ((c00, ((ub c00 t r0 t2), (nonce 150))), TWO) in                                           let zAdd:= [msg c00, msg c11, msg b00, msg b11,  bol (acc00&acc11), msg pv00, msg pv11, msg e11, msg (Mvar 101)] in
-                                           ENCCCA2 n n1 n2 n3 u u' (z0 ++ zAdd)).
+       funapp_f3mb_in bnlcheck 21 1 2 H0.
+       tacFunAppNatMsg nonce 21 H0.
+       funapp_f3mb_in bnlcheck 24 1 4 H0.
+       (* Add k0 *)
+       tacFunAppNatMsg nonce 3 H0.
+       funapp_f1_in kc 1 H0.
+       restr_proj_in 2 H0.
+       funapp_fm_in THREE H0.
+       funapp_f2m_in pair 2 1 H0.
+       tacFunAppNatMsg nonce 4 H0.
+       funapp_f1_in kc 1 H0.
+       restr_proj_in 2 H0.
+       funapp_f2m_in pair 1 3 H0.
+       restr_proj_in 4 H0.
+       funapp_f2m_in label 29 9 H0.
+       funapp_f2m_in pair 1 2 H0.
+       do 2 restr_proj_in 2 H0.
+       funapp_f2m_in label 28 9 H0.
+       funapp_f2m_in pair 1 4 H0.
+       restr_proj_in 2 H0.
+       restr_proj_in 4 H0.
+       tacFunAppNatMsg pke 11 H0.
+       tacFunAppNatMsg er 9 H0.
+       funapp_f3m_in enc 3 2 1 H0.
+       restr_proj_in 2 H0.
+       restr_proj_in 3 H0. 
+       tacFunAppNatMsg er 10 H0.
+       funapp_f3m_in enc 4 3 1 H0.
+       restr_proj_in 5 H0.
+       restr_proj_in 4 H0.
+       restr_proj_in 2 H0.
+       restr_proj_in 6 H0.
+       restr_proj_in 8 H0.
+       funapp_fm_in O H0.
+       funapp_f3bm_in ifm_then_else_ 6 2 1 H0. 
+       do 2 restr_proj_in 2 H0.
+       restr_proj_in 5 H0. 
+       restr_proj_in 6 H0.
+       funapp_fm_in O H0.
+       funapp_f3bm_in ifm_then_else_ 6 3 1 H0.
+       restr_proj_in 2 H0.
+       restr_proj_in 3 H0.
+       restr_proj_in 5 H0. 
+       do 18 restr_proj_in 6 H0.
+       chkType H0. 
+       tacFuncAppAttComp' [7;8; 13; 12; 5; 1; 2] H0.
+       tacFuncAppF2b dist 1 H0.
+       tacFuncAppF2b pochecks 2 H0. 
+       funapp_f2b_in isin 7 3 H0.
+       funapp_f2b_in isin 7 4 H0.
+       funapp_andB_in 4 3 H0.
+       funapp_andB_in 1 3 H0.
+       restr_proj_in 2 H0.
+       funapp_andB_in 1 2 H0.
+       restr_proj_in 2 H0.
+       do 4 restr_proj_in 2 H0.
+       funapp_f1_in sotrm 2 H0.
+       restr_proj_in 3 H0.
+       funapp_fm_in |_ H0. 
+       funapp_f3bm_in ifm_then_else_ 3 2 1 H0.
+       do 3 restr_proj_in 2 H0.
+       chkType H0.
+       restr_proj_in 12 H0.
+       restr_proj_in 11 H0.
+       restr_proj_in 7 H0.
+       restr_proj_in 5 H0.
+       restr_proj_in 4 H0.
+       funapp_f2m_in pair 3 1 H0.
+       restr_proj_in 2 H0.
+       restr_proj_in 3 H0.
+       funapp_f2m_in pair 2 1 H0.
+       do 2 restr_proj_in 2 H0.
+       chkType H0.  
+       funapp_f2m_in pair 6 2 H0.
+         funapp_f2m_in pair 8 1 H0.
+       restr_proj_in 2 H0.
+       funapp_f2m_in pair 1 2 H0.
+       do 3 restr_proj_in 2 H0.
+       funapp_fm_in |_ H0.
+       funapp_f3bm_in ifm_then_else_ 5 2 1 H0.
+       restrsublis H0; try auto.
+       repeat (try apply len_reg; try rewrite eqmeql; try apply nameEql; try simpl; try intuition).
+       (* ********************* *)
+       (* replace nonce in the encryption term of the right frame using CCA2, R ~ R'  *)
+       (* ************************ *)
+       split. 
+       pose proof (let n1:= 11 in
+                   let n2:= 7 in
+                   let n3:= 7 in
+                   let u:= (c10, (ub c10 t r0 t4, nonce 20), TWO) in
+                   let u':=(c10, (ub c10 t r0 t4, nonce 150), TWO) in
+                   let zAdd:= [msg c10, msg c01, msg b10, msg b01,  bol (acc10) & acc01, msg pv10, msg pv01, msg e01] in
+                   ENCCCA2' n1 n2 n3 u u' zAdd).
+       simpl in H0.
+       simpl in H0.
+       tacFuncAppAttComp phi12 [msg b10, msg b01, msg {(c10, (ub c10 t r0 t4, nonce 150), TWO)}_11^^7, msg e01] H0; try auto.
+       simpl in H0.
+       (** To apply FUNCApp *)
+       funapp_f1_in (d 1) 10 H0.
+       funapp_f1_in (d 2) 11 H0.
+       funapp_f1_in (d 3) 12 H0.
+       do 3 funapp_f1_in pi1 3 H0.
+       funapp_f2m_in pair 2 1 H0.
+       funapp_f2m_in pair 4 1 H0.
+       funapp_f2b_in isin 15 1 H0.
+       funapp_notB_in 1 H0.
+       funapp_f3m_in shufl 7 6 5 H0.
+       funapp_fm_in O H0.
+       funapp_f3bm_in ifm_then_else_ 3 2 1 H0.
+     
+       tacFuncAppF2b pvchecks 23 H0.
+       tacFuncAppF2b dist 24 H0.
+       funapp_andB_in 1 2 H0.
+       funapp_fm_in |_ H0.
+       funapp_f3bm_in ifm_then_else_ 2 5 1 H0.
+       tacFuncAppAttComp' [21; 22; 27; 26; 1] H0.
+     
+       tacFunAppNatMsg nonce 20 H0.
+       
+       funapp_f3mb_in bnlcheck 21 1 2 H0.
+       tacFunAppNatMsg nonce 21 H0.
+       funapp_f3mb_in bnlcheck 24 1 4 H0.
+       (* Add k0 *)
+       tacFunAppNatMsg nonce 3 H0.
+       funapp_f1_in kc 1 H0.
+       restr_proj_in 2 H0.
+       funapp_fm_in THREE H0.
+       funapp_f2m_in pair 2 1 H0.
+       tacFunAppNatMsg nonce 4 H0.
+       funapp_f1_in kc 1 H0.
+       restr_proj_in 2 H0.
+       funapp_f2m_in pair 1 3 H0.
+       restr_proj_in 4 H0.
+       funapp_f2m_in label 29 9 H0.
+       funapp_f2m_in pair 1 2 H0.
+       do 2 restr_proj_in 2 H0.
+       funapp_f2m_in label 28 9 H0.
+       funapp_f2m_in pair 1 4 H0.
+       restr_proj_in 2 H0.
+       restr_proj_in 4 H0.
+       tacFunAppNatMsg pke 11 H0.
+       tacFunAppNatMsg er 9 H0.
+       funapp_f3m_in enc 3 2 1 H0.
+       restr_proj_in 2 H0.
+       restr_proj_in 3 H0. 
+       tacFunAppNatMsg er 10 H0.
+       funapp_f3m_in enc 4 3 1 H0.
+       restr_proj_in 5 H0.
+       restr_proj_in 4 H0.
+       restr_proj_in 2 H0.
+       restr_proj_in 6 H0.
+       restr_proj_in 8 H0.
+       funapp_fm_in O H0.
+       funapp_f3bm_in ifm_then_else_ 6 2 1 H0. 
+       do 2 restr_proj_in 2 H0.
+       restr_proj_in 5 H0. 
+       restr_proj_in 6 H0.
+       funapp_fm_in O H0.
+       funapp_f3bm_in ifm_then_else_ 6 3 1 H0.
+       restr_proj_in 2 H0.
+       restr_proj_in 3 H0.
+       restr_proj_in 5 H0. 
+       do 18 restr_proj_in 6 H0.
+       chkType H0. 
+       tacFuncAppAttComp' [7;8; 13; 12; 5; 1; 2] H0.
+       tacFuncAppF2b dist 1 H0.
+       tacFuncAppF2b pochecks 2 H0. 
+       funapp_f2b_in isin 7 3 H0.
+       funapp_f2b_in isin 7 4 H0.
+       funapp_andB_in 4 3 H0.
+       funapp_andB_in 1 3 H0.
+       restr_proj_in 2 H0.
+       funapp_andB_in 1 2 H0.
+       restr_proj_in 2 H0.
+       do 4 restr_proj_in 2 H0.
+       funapp_f1_in sotrm 2 H0.
+       restr_proj_in 3 H0.
+       funapp_fm_in |_ H0. 
+       funapp_f3bm_in ifm_then_else_ 3 2 1 H0.
+       do 3 restr_proj_in 2 H0.
+       chkType H0.
+       restr_proj_in 12 H0.
+       restr_proj_in 11 H0.
+       restr_proj_in 7 H0.
+       restr_proj_in 5 H0.
+       restr_proj_in 4 H0.
+       funapp_f2m_in pair 3 1 H0.
+       restr_proj_in 2 H0.
+       restr_proj_in 3 H0.
+       funapp_f2m_in pair 2 1 H0.
+       do 2 restr_proj_in 2 H0.
+       chkType H0.  
+       funapp_f2m_in pair 6 2 H0.
+         funapp_f2m_in pair 8 1 H0.
+       restr_proj_in 2 H0.
+       funapp_f2m_in pair 1 2 H0.
+       do 3 restr_proj_in 2 H0.
+       funapp_fm_in |_ H0.
+       funapp_f3bm_in ifm_then_else_ 5 2 1 H0.
+       restrsublis H0; try auto.
+       repeat (try apply len_reg; try rewrite eqmeql; try apply nameEql; try simpl; try intuition).
+       (* ********************************** *)
+       (*   *********************************************************** *)
+       (*   Done replacing nonce 20 using CCA2  *)
+       (* Only need to prove the leftover goal *)
+       unfold bnlcheck.
+       unfold ncheck.
+       simpl. 
+       (* This is a consequence of FRESHNEQ and other core axioms *)
+       Axiom freshneqIsin: forall n m, (closMsg m = true) -> (Fresh (cons n nil) [msg m]) = true -> (isin (nonce n) m) ## FAlse.
+       repeat rewrite freshneqIsin with (n:=20); try auto.
+       2:{
+         unfold Fresh.  unfold s0. unfold pv00.
+         (***********)
+         (* change occurname mylist *)
+Compute occur_name_mylist  20 [msg b00, msg b11, msg (enc ((c00, ((ub c00 t r0 t2), (nonce 150))), TWO) (pke 11) (er 7)), msg e11, msg (If ! (isin pv00
+                                          (pi1 (d 1 fphi02),
+                                          (pi1 (d 2 fphi02),
+                                          pi1 (d 3 fphi02))))
+                                     then shufl (pi1 (d 1 fphi02))
+                                            (pi1 (d 2 fphi02))
+                                            (pi1 (d 3 fphi02)) 
+                                     else O) ].
+         simpl.
+         simpl.
+         restr_proj_in 5 H0.
+       tacFunAppNatMsg er 7 H0.
+       Axiom funcAppA
+       unfold d.
+       Axiom funcApp
+       
        Check (z0 ++ [msg c00, msg c11, msg b00, msg b11, msg (Mvar 101), msg e11, msg pv00, msg pv11, bol (acc00&acc11)]).
        
           funapptrmhyp (msg fphi02) (msg (f (toListm [msg b00, msg b11, msg {((c00, ((ub c00 t r0 t2), (nonce 150))), TWO)}_11^^7, msg e11]))) H0.

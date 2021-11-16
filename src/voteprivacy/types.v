@@ -112,7 +112,6 @@ with Bool : Type :=
 (** Signatures *)
 | ver : message-> message-> message-> Bool.
 
-Arguments f: simpl nomatch.
 (** induction using using Schemes *)
 Scheme message_Bool_ind := Induction for message Sort Prop
   with Bool_message_ind := Induction for Bool Sort Prop.
