@@ -501,7 +501,7 @@ Fixpoint submsg_bol (n : nat )(s:message) (b:Bool) : Bool :=
     | ifb_then_else_ t1 t2 t3 => ifb_then_else_  ([[n:=s]]t1) ([[n:=s]] t2) ([[n:=s]]t3)
     | ver t1 t2 t3 => ver ({{n:=s}}t1) ({{n:=s}}t2) ({{n:=s}}t3)
     | bver t1 t2 t3 => bver ({{n:=s}}t1) ({{n:=s}}t2) ({{n:=s}}t3)
-    | acc t1 t2 t3 t4 =>  acc ({{n:=s}}t1) ({{n:=s}}t2) ({{n:=s}}t3) ({{n:=s}}t4)
+    | acc t1 t2 t3 t4 => acc ({{n:=s}}t1) ({{n:=s}}t2) ({{n:=s}}t3) ({{n:=s}}t4)
     | _ => b
   end
     where "'[[' x ':=' s ']]' t" := (submsg_bol x s t)
@@ -2639,18 +2639,18 @@ with subname_msg (n : nat )(s:nat) (t:message) : message :=
 (** Substitution: x <- s in t, x is a name, t is of [oursum] *)
 Definition subname_os (n:nat)(s:nat) (t:oursum):oursum :=
 match t with
-| msg t1 =>  msg ((n <- s) t1)
-| bol b1 =>  bol ( [n <- s] b1)
+| msg t1 => msg ((n <- s) t1)
+| bol b1 => bol ([n <- s] b1)
 end.
 
 (** Substitution in [ilist message n'] *)
 Fixpoint subname_mylist {n':nat} (n:nat)(s:nat)(l: mylist n') : mylist n' :=
 match l with
 | [] => []
-| h:t  =>  (match h with
+| h:t => (match h with
            | msg t' => msg ((n <- s)t')
            | bol b  => bol ([n<- s]b)
-           end): (subname_mylist n s t)
+           end):(subname_mylist n s t)
 end.
 (*Eval compute in (subname_msg 1 O  (f [ (Mvar 1) ; (nonce 2) ; (nonce 1)])). *)
 (*Eval compute in  ( ( 1 <- 2 ) (nonce 1) ). *)

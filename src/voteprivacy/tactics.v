@@ -183,17 +183,19 @@ end.
 Ltac fresh_ind n1 n2 H := fr_ind n1 n2 H; repeat ( try split;  simpl;  try reflexivity ; try assumption); aply_fr_ind.
 
 (** To apply FUNCApp *)
-
-Ltac funapp_fm_in  g H :=  apply FUNCApp_mconst with (m:= g) in H ; simpl in H.
-Ltac funapp_f1_in g n1 H := apply FUNCApp_f1 with (f1:= g) (p:= n1) in H ; simpl in H.
-Ltac funapp_f2b_in g n1 n2 H:= apply FUNCApp_f2b with (f2b:= g) (p1:= n1) (p2:= n2) in H ; simpl in H.
-(** TODO: XXX to fix f2m to f*)
-Ltac funapp_f2m_in g n1 n2 H:= apply FUNCApp_f2m with (f2m:= g) (p1:= n1) (p2:= n2) in H ; simpl in H.
-Ltac funapp_f3b_in g n1 n2 n3 H:= apply FUNCApp_f3b with (f3b:= g) (p1:= n1) (p2:= n2) (p3:= n3) in H; simpl in H.
-Ltac funapp_f3bm_in g n1 n2 n3 H:= apply FUNCApp_f3bm with (f3bm:= g) (p1:= n1) (p2:= n2) (p3:= n3) in H; simpl in H.
-Ltac funapp_f3m_in g n1 n2 n3 H:= apply FUNCApp_f3m with (f3m:= g) (p1:= n1) (p2:= n2) (p3:=n3) in H; simpl in H.
-Ltac funapp_f4m_in g n1 n2 n3 n4 H:= apply FUNCApp_f4m with (f4m:= g) (p1:= n1) (p2:= n2) (p3:= n3) (p4:= n4)  in H; simpl in H.
+Ltac funapp_fm_in  g H :=  apply FUNCApp_mconst with (m:= g) in H; try auto; simpl in H.
+Ltac funapp_f1_in g n1 H := apply FUNCApp_f1 with (f:= g) (p:= n1) in H ; simpl in H.
+Ltac funapp_f2b_in g n1 n2 H:= apply FUNCApp_f2b with (f:= g) (p1:= n1) (p2:= n2) in H ; simpl in H.
+Ltac funapp_f2m_in g n1 n2 H:= apply FUNCApp_f2m with (f:= g) (p1:= n1) (p2:= n2) in H ; simpl in H.
+Ltac funapp_f3b_in g n1 n2 n3 H:= apply FUNCApp_f3b with (f:= g) (p1:= n1) (p2:= n2) (p3:= n3) in H; simpl in H.
+Ltac funapp_f3bm_in g n1 n2 n3 H:= apply FUNCApp_f3bm with (f:= g) (p1:= n1) (p2:= n2) (p3:= n3) in H; simpl in H.
+Ltac funapp_f3m_in g n1 n2 n3 H:= apply FUNCApp_f3m with (f:= g) (p1:= n1) (p2:= n2) (p3:=n3) in H; simpl in H.
+Ltac funapp_f4m_in g n1 n2 n3 n4 H:= apply FUNCApp_f4m with (f:= g) (p1:= n1) (p2:= n2) (p3:= n3) (p4:= n4)  in H; simpl in H.
 Ltac funapp_sublist_in n1 n2 H:= apply FUNCApp_sublist with (m:= n1) (n:= n2) in H; unfold sublist in H; simpl in H.
+Axiom FUNCApp_f3mb: forall (p1 p2 p3 :nat) {n} (ml1 ml2 : mylist n) {f}, (ml1 ~ ml2 ) ->
+                                                                         ([ bol (f (ostomsg (getelt_at_pos p1 ml1)) (ostomsg (getelt_at_pos p2 ml1)) (ostomsg (getelt_at_pos p3 ml1)))] ++ ml1) ~
+                                                                                                                                                                                                ([ bol (f (ostomsg (getelt_at_pos p1 ml2)) (ostomsg (getelt_at_pos p2 ml2)) (ostomsg (getelt_at_pos p3 ml2)))] ++ ml2).
+Ltac funapp_f3mb_in g n1 n2 n3 H:= apply FUNCApp_f3mb with (f:= g) (p1:= n1) (p2:= n2) (p3:= n3) in H; simpl in H.
 
 (** To apply RESTR *)
 

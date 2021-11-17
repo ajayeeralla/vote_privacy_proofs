@@ -11,6 +11,8 @@ Import ListNotations.
 Section auxProps.
   Axiom ifMorphPair2: forall b t1 t2 t3, (t1, If b then t2 else t3) # If b then (t1, t2) else (t1, t3).
   Axiom ifMorphPair1: forall b t1 t2 t3, (If b then t1 else t2, t3) # If b then (t1, t3) else (t2, t3).
+  Axiom ifMorphf3: forall b t1 t2 t3 t4 {f: message-> message -> message -> Bool}, (f t1 t2 (If b then t3 else t4)) ## (IF b then (f t1 t2 t3) else (f t1 t2 t4)).
+
   Axiom andB_elim: forall b1 b2 t1 t2, (If b1 & b2 then t1 else t2) # (If b1 then (If b2 then t1 else t2) else t2).
   Axiom ifMorphIfThen: forall b1 b2 t1 t2 t3, (If b1 then (If b2 then t1 else t2) else t3) # (If b2 then (If b1 then t1 else t3) else (If b1 then t2 else t3)).
   Axiom orB_FAlse_r: forall b, b or FAlse = b.
@@ -28,9 +30,10 @@ Section auxProps.
   Axiom clos_sub_vtrm: forall n1 s1 n2 s2 t, let mvl:= (distMvars [msg t]) in (cons n1  (cons n2 nil))= mvl \/ (cons n2 (cons n1 nil)) = mvl -> closMsg ({{n1:=s1}} ({{n2:=s2}}t)) = true.
 
   (* Compute ifMorphDef f nil [O; If FAlse then nonce 1 else O; nonce 2; If TRue then (If TRue then nonce 100 else O) else nonce 4]. *)
+  Axiom ifMorphAttComp: forall l, (f l) # (ifMorphDef f nil l).
+  End auxProps.
 
-  Axiom ifMorphAttComp: forall b f l t, (If b then (f l) else t) # (If b then (ifMorphDef f nil l) else t).
-End auxProps.
+  (* Axiom ifMorphAttComp: forall b f l t, (If b then (f l) else t) # (If b then (ifMorphDef f nil l) else t). *)
  Open Scope msg_scope.
 (* Section auxTacs. *)
   Ltac rew_ifMorphIf :=
@@ -55,6 +58,15 @@ End auxProps.
     | [|- [?X1, ?X2, ?X3, ?X4, msg (If ?B1 then ?T1 else ?F1)]
             ~ [?Y1, ?Y2, ?Y3, ?Y4, msg (If ?B2 then ?T2 else ?F2)] ]
       => apply_ifbr [X1, X2, X3, X4] [Y1, Y2, Y3, Y4] B1 B2 T1 T2 F1 F2
+    | [|- [?X1, ?X2, ?X3, ?X4, ?X5, msg (If ?B1 then ?T1 else ?F1)]
+            ~ [?Y1, ?Y2, ?Y3, ?Y4, ?Y5, msg (If ?B2 then ?T2 else ?F2)] ]
+      => apply_ifbr [X1, X2, X3, X4, X5] [Y1, Y2, Y3, Y4, Y5] B1 B2 T1 T2 F1 F2
+    | [|- [?X1, ?X2, ?X3, ?X4, ?X5, ?X6, msg (If ?B1 then ?T1 else ?F1)]
+            ~ [?Y1, ?Y2, ?Y3, ?Y4, ?Y5, ?Y6, msg (If ?B2 then ?T2 else ?F2)] ]
+      => apply_ifbr [X1, X2, X3, X4, X5, X6] [Y1, Y2, Y3, Y4, Y5, Y6] B1 B2 T1 T2 F1 F2
+    | [|- [?X1, ?X2, ?X3, ?X4, ?X5, ?X6, ?X7, msg (If ?B1 then ?T1 else ?F1)]
+            ~ [?Y1, ?Y2, ?Y3, ?Y4, ?Y5, ?Y6, ?Y7, msg (If ?B2 then ?T2 else ?F2)] ]
+      => apply_ifbr [X1, X2, X3, X4, X5, X6, X7] [Y1, Y2, Y3, Y4, Y5, Y6, Y7] B1 B2 T1 T2 F1 F2
                     (** extend this for other cases *)
     end.
 

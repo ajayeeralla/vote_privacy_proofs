@@ -213,6 +213,10 @@ Fixpoint destrCommBol (b1 b2: Bool): prodOsl :=
 | (t01, t02), (t11, t12) => let posl1 := destrCommMsg t01 t11 in
                             let posl2 := destrCommMsg t02 t12 in
                             mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
+| pi1 t01, pi1 t11 => let posl1 := destrCommMsg t01 t11 in
+                      mypair (fst posl1) (snd posl1)
+| pi2 t01, pi2 t11 => let posl1 := destrCommMsg t01 t11 in
+                      mypair (fst posl1) (snd posl1)
 | (f l1), (f l2) => let res := (@destrComm_f_all destrCommMsg l1 l2) in
                     let left := fst res in
                     let right := snd res in
