@@ -23,7 +23,7 @@ Proof.  intros.
                               closMylist [msg t, msg (compl t)] = true /\
                               Fresh (n ::nil) ([msg O, msg t, msg (compl t), msg t, msg (compl t)]) = true /\
                               Fresh (n ::nil) ([msg O, msg t, msg (compl t), msg t, msg (compl t)]) = true).
-        simpl. rewrite H1. simpl. simpl. 
+        simpl. rewrite H1. simpl. simpl.
         unfold Fresh. simpl. unfold Fresh in H0. simpl in H0.
         assert (occur_name_msg n t = false).
         destruct (occur_name_msg n t).

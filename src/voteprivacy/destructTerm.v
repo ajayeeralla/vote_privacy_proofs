@@ -142,100 +142,215 @@ Fixpoint destrComm_f_all (l1 l2: list message): prodOsl :=
   end.
 End destrComm.
 
-Open Scope msg_scope.
-Fixpoint destrCommBol (b1 b2: Bool): prodOsl :=
-  if Bool_beq b1 b2 then mypair [ ] [ ] else
-  match b1, b2 with
-  | IF b01 then b02 else b03, IF b11 then b12 else b13 => let posl1 := destrCommBol b01 b11 in
-                                                          let posl2 := destrCommBol b02 b12 in
-                                                          let posl3 := destrCommBol b03 b13 in
-                                                          mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-  | eqb b01 b02, eqb b11 b12 => let posl1 := destrCommBol b01 b11 in
-                                let posl2 := destrCommBol b02 b12 in
-                                mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
-  | eqm t01 t02, eqm t11 t12 =>  let posl1 := destrCommMsg t01 t11 in
-                                 let posl2 := destrCommMsg t02 t12 in
-                                 mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
-  | ver t01 t02 t03, ver t11 t12 t13 => let posl1 := destrCommMsg t01 t11 in
-                                        let posl2 := destrCommMsg t02 t12 in
-                                        let posl3 := destrCommMsg t03 t13 in
-                                        mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-  | bver t01 t02 t03, bver t11 t12 t13 => let posl1 := destrCommMsg t01 t11 in
-                                          let posl2 := destrCommMsg t02 t12 in
-                                          let posl3 := destrCommMsg t03 t13 in
-                                          mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-  | acc t01 t02 t03 t04, acc t11 t12 t13 t14 => let posl1 := destrCommMsg t01 t11 in
-                                                let posl2 := destrCommMsg t02 t12 in
-                                                let posl3 := destrCommMsg t03 t13 in
-                                                let posl4 := destrCommMsg t04 t14 in
-                                                mypair ((fst posl1)++(fst posl2)++(fst posl3)++(fst posl4)) ((snd posl1)++(snd posl2)++(snd posl3)++(snd posl4))
-  | _, _ => mypair (cons (bol b1) nil) (cons (bol b2) nil)
-  end
-  with destrCommMsg (t1 t2: message): prodOsl :=
-    if  message_beq t1 t2 then mypair [ ] [ ] else
-         match t1, t2 with
-         | open t01 t02 t03, open t11 t12 t13 => let posl1 := destrCommMsg t01 t11 in
-                                                 let posl2 := destrCommMsg t02 t12 in
-                                                 let posl3 := destrCommMsg t03 t13 in
-                                                 mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-         | shufl t01 t02 t03, shufl t11 t12 t13 => let posl1 := destrCommMsg t01 t11 in
-                                                   let posl2 := destrCommMsg t02 t12 in
-                                                   let posl3 := destrCommMsg t03 t13 in
-                                                   mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-         | enc t01 t02 t03, enc t11 t12 t13 => let posl1 := destrCommMsg t01 t11 in
-                                               let posl2 := destrCommMsg t02 t12 in
-                                               let posl3 := destrCommMsg t03 t13 in
-                                               mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-         | dec t01 t02, dec t11 t12 =>  let posl1 := destrCommMsg t01 t11 in
-                                        let posl2 := destrCommMsg t02 t12 in
-                                        mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
-         | bsign t01 t02 t03, bsign t11 t12 t13 => let posl1 := destrCommMsg t01 t11 in
-                                                   let posl2 := destrCommMsg t02 t12 in
-                                                   let posl3 := destrCommMsg t03 t13 in
-                                                   mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-         | bl t01 t02 t03, bl t11 t12 t13 => let posl1 := destrCommMsg t01 t11 in
-                                             let posl2 := destrCommMsg t02 t12 in
-                                             let posl3 := destrCommMsg t03 t13 in
-                                             mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-         | sign t01 t02 t03, sign t11 t12 t13 => let posl1 := destrCommMsg t01 t11 in
-                                                 let posl2 := destrCommMsg t02 t12 in
-                                                 let posl3 := destrCommMsg t03 t13 in
-                                                 mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-         | ub t01 t02 t03 t04, ub t11 t12 t13 t14 => let posl1 := destrCommMsg t01 t11 in
-                                                     let posl2 := destrCommMsg t02 t12 in
-                                                     let posl3 := destrCommMsg t03 t13 in
-                                                     let posl4 := destrCommMsg t04 t14 in
-                                                     mypair ((fst posl1)++(fst posl2)++(fst posl3)++(fst posl4)) ((snd posl1)++(snd posl2)++(snd posl3)++(snd posl4))
-         | If b00 then t01 else t02, If b10 then t11 else t12 => let posl1 := destrCommBol b00 b10 in
-                                                                 let posl2 := destrCommMsg t01 t11 in
-                                                                 let posl3 := destrCommMsg t02 t12 in
-                                                                 mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
-| (t01, t02), (t11, t12) => let posl1 := destrCommMsg t01 t11 in
-                            let posl2 := destrCommMsg t02 t12 in
-                            mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
-| pi1 t01, pi1 t11 => let posl1 := destrCommMsg t01 t11 in
-                      mypair (fst posl1) (snd posl1)
-| pi2 t01, pi2 t11 => let posl1 := destrCommMsg t01 t11 in
-                      mypair (fst posl1) (snd posl1)
-| (f l1), (f l2) => let res := (@destrComm_f_all destrCommMsg l1 l2) in
-                    let left := fst res in
-                    let right := snd res in
-                    mypair left right
-         | _, _ => mypair (cons (msg t1) nil) (cons (msg t2) nil)
-end.
+(* Compute height of the Abstract Syntax Tree (AST) *)
+(* if h (t) = 0 if t is a ground constructor of arity 0, z(w) for any term w, Mvar, Bvar, or nonce constructor *)
+(*          = max{h(t1), and so on, h(tn)} + 1 if t = f(t1, and so on tn) *)
+(* Import ListNotations. *)
 
-Definition destrCommOs (os1 os2: oursum): prodOsl :=
-  if oursum_beq os1 os2 then (mypair [ ] [ ]) else
-  match os1, os2 with
-  | msg t00, msg t10 => destrCommMsg t00 t10
-  | bol b00, bol b10 => destrCommBol b00 b10
-  | _, _ => mypair nil nil
+Fixpoint maxList (l: Nlist) : nat :=
+  match l with
+  | [ ] => 0
+  | h::t => let g := maxList t in
+              (max h g)
+  end.
+Open Scope msg_scope.
+Fixpoint heightMsg (t: message) : nat :=
+  match t with
+  | Mvar _ => 0
+  | nonce _ => 0
+  | ifm_then_else_ b t1 t2 => let h w := heightMsg w in
+                         maxList[ (heightBol b); (h t1); (h t2)] + 1
+  | (t1, t2) => (max (heightMsg t1) (heightMsg t2)) + 1
+  | pi1 t1 => (heightMsg t1) + 1
+  | pi2 t1 => (heightMsg t1) + 1
+  | to t1 => (heightMsg t1) + 1
+  | L t1 => (heightMsg t1) + 1
+  | f l => maxList (map heightMsg l) + 1
+  | ONE => 0
+  | TWO => 0
+  | THREE => 0
+  | A => 0
+  | B => 0
+  | M => 0
+  | C1 => 0
+  | C2 => 0
+  | C3 => 0
+  | V0 _ => 0
+  | V1 _ => 0
+  | pubkey _ => 0
+  | kc t1 => (heightMsg t1) + 1
+  | comm t1 t2 => (max (heightMsg t1) (heightMsg t2)) + 1
+  | open t1 t2 t3 => let h w := heightMsg w in
+                     maxList[ (h t1); (h t2); (h t3)] + 1
+  | shufl t1 t2 t3 => let h w := heightMsg w in
+                     maxList[ (h t1); (h t2); (h t3)] + 1
+
+  | ke t1 => (heightMsg t1) + 1
+  | re t1 => (heightMsg t1) + 1
+  | enc t1 t2 t3 => let h w := heightMsg w in
+                     maxList[ (h t1); (h t2); (h t3)] + 1
+  | dec t1 t2 => (max (heightMsg t1) (heightMsg t2)) + 1
+  | bot => 0
+  | kb t1 => (heightMsg t1) + 1
+  | rb t1 => (heightMsg t1) + 1
+  | bsign t1 t2 t3 => let h w := heightMsg w in
+                      maxList[ (h t1); (h t2); (h t3)] + 1
+  | bl t1 t2 t3 => let h w := heightMsg w in
+                   maxList[ (h t1); (h t2); (h t3)] + 1
+  | ub t1 t2 t3 t4 => let h w := heightMsg w in
+                   maxList[ (h t1); (h t2); (h t3); (h t4)] + 1
+  | ks t1 => (heightMsg t1) + 1
+  | rs t1 => (heightMsg t1) + 1
+  | sign t1 t2 t3 => let h w := heightMsg w in
+                      maxList[ (h t1); (h t2); (h t3)] + 1
+  | z _ => 0
+  | compl t1 => (heightMsg t1) + 1
+  | _ => 0
+  end
+with heightBol (b: Bool) : nat :=
+       match b with
+       | Bvar _ => 0
+       | TRue => 0
+       | FAlse => 0
+       | eqb b1 b2 => (max (heightBol b1) (heightBol b2)) + 1
+       | eqm t1 t2 => (max (heightMsg t1) (heightMsg t2)) + 1
+       | ifb_then_else_ b1 b2 b3 => let h w := heightBol w in
+                                    maxList[ (h b1); (h b2); (h b3)] + 1
+       | acc t1 t2 t3 t4 => let h w := heightMsg w in
+                           maxList[ (h t1); (h t2); (h t3); (h t4)] + 1
+       | bver t1 t2 t3 => let h w := heightMsg w in
+                          maxList[ (h t1); (h t2); (h t3)] + 1
+       | ver t1 t2 t3 => let h w := heightMsg w in
+                         maxList[ (h t1); (h t2); (h t3)] + 1
+       end.
+
+(* Compute heightMsg (f [O; comm (nonce 0) O]). *)
+
+Definition heightOs (os: oursum) : nat :=
+  match os with
+  | msg t => heightMsg t
+  | bol b => heightBol b
   end.
 
-Fixpoint destrCommOsl (l1 l2: oslist): prodOsl :=
+Fixpoint maxHeightMylist {m} (l: mylist m) : nat :=
+                              match l with
+                               | [] => 0
+                               | h:t => let h' := maxHeightMylist t in
+                                        max (heightOs h) h'
+                              end.
+
+
+(** Destruct n level down **)
+Fixpoint bfsDestrCommBol (n: nat) (b1 b2: Bool): prodOsl :=
+  if Bool_beq b1 b2 then mypair [ ] [ ]
+  else if (n =? 0)%nat then mypair (cons (bol b1) nil) (cons (bol b2) nil)
+       else
+         match b1, b2 with
+         | ifb_then_else_ b01 b02 b03, ifb_then_else_ b11 b12 b13 => let posl1 := bfsDestrCommBol (pred n) b01 b11 in
+                                                                     let posl2 := bfsDestrCommBol (pred n)  b02 b12 in
+                                                                     let posl3 := bfsDestrCommBol (pred n) b03 b13 in
+                                                                     mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
+         | eqb b01 b02, eqb b11 b12 => let posl1 := bfsDestrCommBol (pred n) b01 b11 in
+                                       let posl2 := bfsDestrCommBol (pred n) b02 b12 in
+                                       mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
+         | eqm t01 t02, eqm t11 t12 =>  let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                        let posl2 := bfsDestrCommMsg (pred n) t02 t12 in
+                                        mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
+         | ver t01 t02 t03, ver t11 t12 t13 => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                               let posl2 := bfsDestrCommMsg (pred n) t02 t12 in
+                                               let posl3 := bfsDestrCommMsg (pred n) t03 t13 in
+                                               mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
+         | bver t01 t02 t03, bver t11 t12 t13 => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                                 let posl2 := bfsDestrCommMsg (pred n) t02 t12 in
+                                                 let posl3 := bfsDestrCommMsg (pred n) t03 t13 in
+                                                 mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
+         | acc t01 t02 t03 t04, acc t11 t12 t13 t14 => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                                       (* let posl2 := bfsDestrCommMsg (pred n) t02 t12 in *)
+                                                       (* let posl3 := bfsDestrCommMsg (pred n) t03 t13 in *)
+                                                       let posl4 := bfsDestrCommMsg (pred n) t04 t14 in
+                                                       (* mypair ((fst posl1)++(fst posl2)++(fst posl3)++(fst posl4)) ((snd posl1)++(snd posl2)++(snd posl3)++(snd posl4)) *)
+                                                              mypair ((fst posl1)++(fst posl4)) ((snd posl1)++(snd posl4))
+         | _, _ => mypair (cons (bol b1) nil) (cons (bol b2) nil)
+         end
+with bfsDestrCommMsg (n: nat) (t1 t2: message): prodOsl :=
+       let res:= mypair (cons (msg t1) nil) (cons (msg t2) nil) in
+       if message_beq t1 t2 then mypair [ ] [ ]
+       else if (n =? 0)%nat then res
+            else
+              match t1, t2 with
+              | open t01 t02 t03, open t11 t12 t13 => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                                      let posl2 := bfsDestrCommMsg (pred n) t02 t12 in
+                                                      let posl3 := bfsDestrCommMsg (pred n) t03 t13 in
+                                                      mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
+              | shufl t01 t02 t03, shufl t11 t12 t13 => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                                        let posl2 := bfsDestrCommMsg (pred n) t02 t12 in
+                                                        let posl3 := bfsDestrCommMsg (pred n) t03 t13 in
+                                                        mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
+              | enc t01 t02 t03, enc t11 t12 t13 => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                               (* let posl2 := bfsDestrCommMsg (pred n) t02 t12 in *)
+                                               (* let posl3 := bfsDestrCommMsg (pred n) t03 t13 in *)
+                                                    (* mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3)) *)
+                                                           mypair (fst posl1) (snd posl1)
+              | dec t01 t02, dec t11 t12 =>  let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                             (* let posl2 := bfsDestrCommMsg (pred n) t02 t12 in *)
+                                             mypair (fst posl1) (snd posl1)
+              | bsign t01 t02 t03, bsign t11 t12 t13 => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                                        let posl2 := bfsDestrCommMsg (pred n) t02 t12 in
+                                                        let posl3 := bfsDestrCommMsg (pred n) t03 t13 in
+                                                        mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
+              | bl t01 t02 t03, bl t11 t12 t13 => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                                  (* let posl2 := bfsDestrCommMsg (pred n) t02 t12 in *)
+                                                  (* let posl3 := bfsDestrCommMsg (pred n) t03 t13 in *)
+              (* mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3)) *)
+                                                  mypair (fst posl1) (snd posl1)
+
+              | sign t01 t02 t03, sign t11 t12 t13 => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                                      let posl2 := bfsDestrCommMsg (pred n) t02 t12 in
+                                                      let posl3 := bfsDestrCommMsg (pred n) t03 t13 in
+                                                      mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
+              | ub t01 t02 t03 t04, ub t11 t12 t13 t14 => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                                          (* let posl2 := bfsDestrCommMsg (pred n) t02 t12 in *)
+                                                          (* let posl3 := bfsDestrCommMsg (pred n) t03 t13 in *)
+                                                          let posl4 := bfsDestrCommMsg (pred n) t04 t14 in
+                                                          mypair ((fst posl1)++(fst posl4)) ((snd posl1)++(snd posl4))
+              | ifm_then_else_ b00 t01 t02, ifm_then_else_ b10 t11 t12 => let posl1 := bfsDestrCommBol (pred n) b00 b10 in
+                                                                          let posl2 := bfsDestrCommMsg (pred n) t01 t11 in
+                                                                          let posl3 := bfsDestrCommMsg (pred n) t02 t12 in
+                                                                          mypair ((fst posl1)++(fst posl2)++(fst posl3)) ((snd posl1)++(snd posl2)++(snd posl3))
+              | (t01, t02), (t11, t12) => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                          let posl2 := bfsDestrCommMsg (pred n) t02 t12 in
+                                          mypair ((fst posl1)++(fst posl2)) ((snd posl1)++(snd posl2))
+              | pi1 t01, pi1 t11 => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                    mypair (fst posl1) (snd posl1)
+              | pi2 t01, pi2 t11 => let posl1 := bfsDestrCommMsg (pred n) t01 t11 in
+                                    mypair (fst posl1) (snd posl1)
+              | (f l1), (f l2) => let res1 := (@destrComm_f_all (bfsDestrCommMsg (pred n)) l1 l2) in
+                                  let left := fst res1 in
+                                  let right := snd res1 in
+                                  mypair left right
+              | comm t01 t02, comm t11 t12 => let res1 := mypair (cons (msg t01) nil) (cons (msg t11) nil) in
+                                              if message_beq t02 t12 then
+                                                match t01, t11 with
+                                                | V0 t001, V1 t111 => if message_beq t001 t111 then mypair [ ] [ ] else res1
+                                                | V1 t001, V0 t111 => if message_beq t001 t111 then mypair [ ] [ ] else res1
+                                                | _, _ => res
+                                                end
+                                              else res
+              | _, _ => res
+              end.
+
+Definition bfsdestrCommOs (n: nat) (os1 os2: oursum): prodOsl :=
+  if oursum_beq os1 os2 then (mypair [ ] [ ]) else
+  match os1, os2 with
+  | msg t00, msg t10 => bfsDestrCommMsg n t00 t10
+  | bol b00, bol b10 => bfsDestrCommBol n b00 b10
+  | _, _ => mypair [ ] [ ]
+  end.
+
+Fixpoint bfsdestrCommOsl (n: nat) (l1 l2: oslist): prodOsl :=
   match l1, l2 with
-  | h1::t1, h2::t2 => let rec:= destrCommOsl t1 t2 in
-                      let curr:= destrCommOs h1 h2 in
+  | h1::t1, h2::t2 => let rec:= bfsdestrCommOsl n t1 t2 in
+                      let curr:= bfsdestrCommOs n h1 h2 in
                       let l00:= fst curr in
                       let l01:= fst rec in
                       let l10:= snd curr in
@@ -245,18 +360,20 @@ Fixpoint destrCommOsl (l1 l2: oslist): prodOsl :=
                       mypair left right *)
                       (* remThenAppList l00 l10 l01 l11 *)
                       mypair ((fst curr)++(fst rec)) ((snd curr)++(snd rec))
-  | _, _ => mypair nil nil
+  | _, _ => mypair [ ] [ ]
   end.
-Axiom aplyFuncApp: forall {n} (l1 l2: mylist n), let l1' := conv_mylist_listos l1 in
-                                                  let l2' := conv_mylist_listos l2 in
-                                                  let x := destrCommOsl l1' l2' in
-                                                  let y := oslToMylist (pi1ProdOsl x) (pi2ProdOsl x) in
-                                                  ((mylength y) =? 0 = false)%nat -> (pi1ProdMylist y) ~ (pi2ProdMylist y) -> l1 ~ l2.
 
-Ltac aplyDestrComm:=
+Axiom funcAppbfsDestrComm: forall n {m} (l1 l2: mylist m), let l1' := conv_mylist_listos l1 in
+                                                         let l2' := conv_mylist_listos l2 in
+                                                         let x := bfsdestrCommOsl n l1' l2' in
+                                                         let y := oslToMylist (pi1ProdOsl x) (pi2ProdOsl x) in
+                                                         ((mylength y) =? 0 = false)%nat -> (pi1ProdMylist y) ~ (pi2ProdMylist y) -> l1 ~ l2.
+
+Ltac aplyBfsDestrComm levelDown :=
   match goal with
-  |[|- ?X ~ ?Y] => apply aplyFuncApp with (l1:= X) (l2:=Y); simpl; try auto
+  |[|- ?X ~ ?Y] => apply funcAppbfsDestrComm with (n:= levelDown) (l1:= X) (l2:=Y); simpl; try auto
   end.
+
 
 (* Destruct terms for applying CCA1 and CCA2 of encryptions *)
 

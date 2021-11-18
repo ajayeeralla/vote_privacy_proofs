@@ -1,7 +1,8 @@
- (************************************************************************)
+(************************************************************************)
 (* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*) 
-(************************************************************************)   
+(************************************************************************)    
 Require Export auxDefs.
+Import ListNotations.
 (* Module aux. *)
 (*   Export destructTerm. *)
 (*   Fixpoint submsg_bol pk r (t': message)(s: message) (b: Bool): Bool := *)
@@ -120,7 +121,7 @@ Require Export auxDefs.
 (*     end. *)
 
 
-(*   Open Scope msg_scope. *)
+                      (*   Open Scope msg_scope. *)
 
   (** **)
 (* Axiom isinCong: forall m1 m2 m3 m4, m1 # m2 -> m3 # m4 -> (isin m1 m3) ## (isin m2 m4). *)
@@ -129,18 +130,19 @@ Require Export auxDefs.
 (* Proof. intros. apply isinCong; try intuition. Qed. *)
 
 (* The following frame is useful when we apply CCA2 axiom *)
-Definition z0 := phi0 ++ [msg lbl, msg (kc (nonce 3)), msg (kc (nonce 4)), msg (r 1), msg (r 2), msg pk (* public key AD*), msg (sr 14), msg (sr 15), msg (nonce 20), msg (nonce 21), msg (er 7), msg (er 8), msg (er 9), msg (er 10)].
+Definition z0 := phi0 ++ [msg lbl, msg (kc (nonce 3)), msg (kc (nonce 4)), msg (r 1), msg (r 2), msg pk (* public key AD*),
+                 msg (sr 14), msg (sr 15), msg (nonce 20), msg (nonce 21), msg (er 7), msg (er 8), msg (er 9), msg (er 10)].
 Arguments z0: simpl never.
 
-Import ListNotations.
 (* Check if a an elment of type mylist m is a sublist of mylist n without actually converting to oslist *)
 Fixpoint checkSublist {m} (l1: mylist m){n}(l2: mylist n): bool :=
   if (m <=? n)%nat then
-           match l1 with
-           | [] => true
-           | h:t => if (checkostmylis h l2) then (checkSublist t l2) else false
-           end
+    match l1 with
+    | [] => true
+    | h:t => if (checkostmylis h l2) then (checkSublist t l2) else false
+    end
   else false.
+
 (* Occurrence indices vector *)
 Fixpoint subListPosVec {m} (l1: mylist m) {n} (l2: mylist n): Nlist:=
   match (checkSublist l1 l2), l1 with
@@ -153,20 +155,18 @@ Axiom funcAppAttComp: forall {n} (l1 l2: mylist n) {m}(lm1 lm2: mylist m), l1 ~ 
                                                                            (subListPosVec lm1 l1) = (subListPosVec lm2 l2) ->
                                                                            (l1 ++ [msg (f (toListm lm1))]) ~ (l2 ++ [msg (f (toListm lm2))]).
 
-Ltac tacFuncAppAttComp ml1 ml2 H:=
-  apply funcAppAttComp with (lm1:= ml1) (lm2:= ml2) in H. 
+Ltac tacFuncAppAttComp ml1 ml2 H:= apply funcAppAttComp with (lm1:= ml1) (lm2:= ml2) in H. 
 
 (** Given index vector retrieve sulist that constitutes elements of the positions *)
-
 Fixpoint getSublist (l: Nlist) {n} (ml: mylist n): mylist (length l):=
   match l with
   | [ ] => []
   | h::t => (getelt_at_pos h ml): getSublist t ml
   end.
 Axiom funcAppAttComp': forall pl {n} (l1 l2: mylist n), l1 ~ l2 -> ([msg (f (toListm (getSublist pl l1)))]++l1) ~ ([msg (f (toListm (getSublist pl l2)))] ++ l2).
+
 (* Build frame phi03 *)
-Ltac tacFuncAppAttComp' l H :=
-  apply funcAppAttComp' with (pl:= l) in H; simpl in H.
+Ltac tacFuncAppAttComp' l H := apply funcAppAttComp' with (pl:= l) in H; simpl in H.
 
 (* Check hypothesis type which will be useful in computing an elt position in mylist manually *)
 Ltac chkType H :=
@@ -174,14 +174,14 @@ Ltac chkType H :=
   | [H:?X ~ ?Y |- _ ] => let t:= type of X in idtac t "~" t
   end.
 
-Axiom funcAppFmb: forall (p:nat) {n} (ml1 ml2 : mylist n) {f}, (ml1 ~ ml2) -> ([bol (f (ostomsg (getelt_at_pos p ml1)))] ++ ml1) ~
-                                                                                                                                 ([bol (f (ostomsg (getelt_at_pos p ml2)))] ++ ml2).
-Ltac tacFuncAppFmb g n H :=
-  apply funcAppFmb with (f:= g) (p:= n) in H; simpl in H.
+Axiom funcAppFmb: forall (p:nat) {n} (ml1 ml2 : mylist n) {f},
+    (ml1 ~ ml2) -> ([bol (f (ostomsg (getelt_at_pos p ml1)))] ++ ml1) ~ ([bol (f (ostomsg (getelt_at_pos p ml2)))] ++ ml2).
+Ltac tacFuncAppFmb g n H := apply funcAppFmb with (f:= g) (p:= n) in H; simpl in H.
+
 (* Useful to add same nonce, Vars on both sides *)
 Axiom funAppNatMsg: forall (m: nat) f {n} (ml1 ml2: mylist n), ml1 ~ ml2 -> ([msg (f m)] ++ ml1) ~ ([msg (f m)] ++ ml2).
-Ltac tacFunAppNatMsg g n H:=
-  apply funAppNatMsg with (f:= g) (m:=n) in H; simpl in H.
+Ltac tacFunAppNatMsg g n H:= apply funAppNatMsg with (f:= g) (m:=n) in H; simpl in H.
+
 (** Simplified CCA2 axiom **)
 Axiom ENCCCA2': forall (n1 n2 n3: nat) (u u': message) {m} (l: mylist m),
     (|u|#?|u'|) ## TRue ->
@@ -190,15 +190,18 @@ Axiom ENCCCA2': forall (n1 n2 n3: nat) (u u': message) {m} (l: mylist m),
     (* cca2compmylis n n1 u u' l = true -> *)
     (l++[msg {u}_n1^^n2]) ~ (l++ [msg {u'}_n1^^n3]).
 
-Axiom bnlcheckFailForNonce: forall n t1 t2, closMsg t2 = true -> Fresh (cons n nil) [msg t2] = true -> (bnlcheck t1 (nonce n) t2) ## FAlse.
+Axiom bnlcheckFailForNonce: forall n t1 t2, closMsg t2 = true ->
+                                            Fresh (cons n nil) [msg t2] = true -> (bnlcheck t1 (nonce n) t2) ## FAlse.
 
+(* Add morphism for bnlcheck *)
 Add Parametric Morphism :(@bnlcheck) with
     signature EQm ==> EQm ==> EQm ==> EQb as bnlcheck_mor.
 Proof. intros; aply_cong; auto. Qed.
 
 Ltac rewBnlchkFailNonce c n1 :=
   repeat match goal with
-         |[|- context[bnlcheck c (nonce n1) _] ]=> rewrite bnlcheckFailForNonce with (n:= n1) (t1:= c); try unfold Fresh; simpl; intuition
+         |[|- context[bnlcheck c (nonce n1) _] ]=> rewrite bnlcheckFailForNonce with (n:= n1) (t1:= c);
+                                                   try unfold Fresh; simpl; intuition
          end.
 
 Fixpoint and (l: list bool): bool :=
@@ -209,13 +212,28 @@ Fixpoint and (l: list bool): bool :=
 
 Axiom isinkFalse: forall n l, let k := kc (nonce n) in
                               let l' := map (message_beq k) l in
-                              and l' = false ->
-                              (isink k (f l)) ## FAlse.
+                              and l' = false -> (isink k (f l)) ## FAlse.
 Ltac tacIsinkFalse n1 :=
   repeat match goal with
          | [|- context[isink (kc (nonce n1)) ?X] ] => rewrite isinkFalse with (n:= n1); try auto
          end.
 
+Ltac tacIfMorphComp:=
+  repeat match goal with
+         | [|- context[f ?X] ] => rewrite ifMorphAttComp with (l:=X); simpl; try intuition
+         end.
+
+Ltac rewAndBFalse :=
+  repeat match goal with
+         | [|- context [ FAlse & _ ] ] => rewrite andB_FAlse_l
+         | [|- context [ _ & FAlse ] ] => rewrite andB_FAlse_r
+         end; redg.
+
+Ltac tacIfMorphPair :=
+  match goal with
+  |[|- context[ (If ?B then ?T1 else ?T2, ?T3)] ] => rewrite (@ifMorphPair1 B T1 T2 T3)
+  |[|- context[ (?T1, If ?B then ?T2 else ?T3)] ] => rewrite (@ifMorphPair2 B T1 T2 T3)
+  end.
 (* Require Import Coq.Lists.List. *)
 Lemma rep_first_ballot:
       let v0 := V0 (f (toListm phi0)) in
@@ -574,59 +592,42 @@ Proof. intros.
         (* This can be proved using unforgeCommitKey *) 
        (* Prove nonce 20 isn't there in the attacker's computation *) 
        assert(let e00' := (enc ((c00, ((ub c00 t r0 t2), (nonce 150))), TWO) (pke 11) (er 7)) in
-                                                                     let phi02':= [msg b00, msg b11, msg e00', msg e11] in
-       let fphi02':= f (toListm phi02') in
-       let s0':= (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02')))))) then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O)in
-       let dv0' := (If (dist fphi02') & (pvchecks fphi02') then s0' else |_) in
-       let phi03':= phi02' ++[msg dv0'] in
-                                                                                                                          let fphi03' := f (toListm phi03') in
-       fphi03' # (If (dist fphi02') & (pvchecks fphi02') then (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02'))))))
-       then (f (toListm (phi02'++[msg (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02')))]))) else (f (toListm (phi02'++[msg O])))) else (f (toListm (phi02'++[msg |_]))))).
- simpl.
-
-Ltac tacIfMorphComp:=
-  repeat match goal with
-         | [|- context[f ?X] ] => rewrite ifMorphAttComp with (l:=X); simpl; try intuition
-         end.
-  Ltac rewAndBFalse :=
-  repeat match goal with
-         | [|- context [ FAlse & _ ] ] => rewrite andB_FAlse_l
-         | [|- context [ _ & FAlse ] ] => rewrite andB_FAlse_r
-         end; redg.
- Ltac tacIfMorphPair :=
-         match goal with
-         |[|- context[ (If ?B then ?T1 else ?T2, ?T3)] ] => rewrite (@ifMorphPair1 B T1 T2 T3)
-         |[|- context[ (?T1, If ?B then ?T2 else ?T3)] ] => rewrite (@ifMorphPair2 B T1 T2 T3)
-         end.
+              let phi02':= [msg b00, msg b11, msg e00', msg e11] in
+              let fphi02':= f (toListm phi02') in
+              let s0':= (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02'))))))
+                         then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O)in
+              let dv0' := (If (dist fphi02') & (pvchecks fphi02') then s0' else |_) in
+              let phi03':= phi02' ++[msg dv0'] in
+              let fphi03' := f (toListm phi03') in
+              fphi03' # (If (dist fphi02') & (pvchecks fphi02')
+                         then (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02'))))))
+                               then (f (toListm (phi02'++[msg (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02')))])))
+                               else (f (toListm (phi02'++[msg O]))))
+                         else (f (toListm (phi02'++[msg |_]))))).
+       simpl.
        tacIfMorphComp.
-       
        simpl in H0. simpl.  
        assert(let e00' := (enc ((c00, ((ub c00 t r0 t2), (nonce 150))), TWO) (pke 11) (er 7)) in
               let phi02':= [msg b00, msg b11, msg e00', msg e11] in
               let fphi02':= f (toListm phi02') in
-              let s0':= (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02')))))) then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O)in
+              let s0':= (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02'))))))
+                         then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O)in
               let dv0' := (If (dist fphi02') & (pvchecks fphi02') then s0' else |_) in
               let phi03':= phi02' ++[msg dv0'] in
               let fphi03' := f (toListm phi03') in
-              (bnlcheck c00 (nonce 20) fphi03') ## (bnlcheck c00 (nonce 20) (If (dist fphi02') & (pvchecks fphi02')
-                                                                             then If ! (isin pv00
-                                                                                             (pi1 (d 1 fphi02'),
-                                                                                               (pi1 (d 2 fphi02'), pi1 (d 3 fphi02'))))
-                                                                             then f
-                                                                                    (toListm
-                                                                                       (phi02' ++
-                                                                                               [msg
-                                                                                                  (shufl (pi1 (d 1 fphi02'))
-                                                                                                         (pi1 (d 2 fphi02')) 
-                                                                                                         (pi1 (d 3 fphi02')))])) 
-                                                                                  else f (toListm (phi02' ++ [msg O])) 
-                                                                             else f (toListm (phi02' ++ [msg |_]))))).
+              (bnlcheck c00 (nonce 20) fphi03') ## (bnlcheck c00 (nonce 20)
+                                                             (If (dist fphi02') & (pvchecks fphi02')
+                                                              then If ! (isin pv00 (pi1 (d 1 fphi02'), (pi1 (d 2 fphi02'), pi1 (d 3 fphi02'))))
+                                                              then f (toListm (phi02' ++ [msg (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) 
+                                                                                                     (pi1 (d 3 fphi02')))]))
+                                                                   else f (toListm (phi02' ++ [msg O])) 
+                                                              else f (toListm (phi02' ++ [msg |_]))))).
        simpl.
-       rewrite H0; reflexivity.  clear H0.
+       rewrite H0; reflexivity. clear H0.
        simpl in H1.
        repeat rewrite ifMorphf3 in H1.
        repeat rewrite H1. simpl. clear H1.
-      rewBnlchkFailNonce c00 20. repeat redg.
+       rewBnlchkFailNonce c00 20. repeat redg.
        unfold k0.
        tacIsinkFalse 3. 
        rewAndBFalse.
@@ -674,7 +675,7 @@ Ltac tacIfMorphComp:=
        repeat rewrite ifMorphf3 in H1.
        repeat rewrite H1; clear H1.
        rewBnlchkFailNonce c10 20. repeat redg. 
-      
+       
        unfold k0.
        tacIsinkFalse 3.
        rewAndBFalse.
@@ -683,15 +684,16 @@ Ltac tacIfMorphComp:=
        (** apply ifbranch repeatedly **)
        repeat aply_ifbr.
        repeat (try tacIfMorphPair; try aply_ifbr). simpl.
-       all: let n:= numgoals in idtac n "goals".
-       7:{
-         aplyDestrComm; apply nodup; simpl; try unfold c10, k0; try aplyCompHid. }.
-       (* Ltac unfold_proj_pair := *)
-        aplyDestrComm; apply nodup; simpl; try unfold c10, k0; try aplyCompHid.
-        
-       aplyDestrComm; apply nodup; simpl; try unfold c10, k0; try aplyCompHid.
-
-       aplyDestrComm; apply nodup; simpl; try unfold c10, k0; try aplyCompHid.
-       aplyDestrComm; apply nodup; simpl; try unfold c10, k0; try aplyCompHid.
-       aplyDestrComm; apply nodup; simpl; try unfold c10, k0; try aplyCompHid.
-       aplyDestrComm; apply nodup; simpl; try unfold c10, k0; try aplyCompHid.
+       Ltac aplyBfsDestrComm levelDown := match goal with
+                                          |[|- ?X ~ ?Y] => apply funcAppbfsDestrComm with (n:= levelDown) (l1:= X) (l2:=Y); simpl; try auto
+                                          end.
+       aplyBfsDestrComm 25. simpl.
+       aplyBfsDestrComm 25. simpl. 
+       aplyBfsDestrComm 25. simpl. 
+       aplyBfsDestrComm 25. simpl. 
+       aplyBfsDestrComm 25. simpl. 
+       aplyBfsDestrComm 25. simpl.
+       aplyBfsDestrComm 25. simpl.
+       (*7:{ aplyDestrComm; apply nodup; simpl; try unfold c10, k0; try aplyCompHid. }. *)
+      
+Qed.
