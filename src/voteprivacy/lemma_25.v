@@ -262,16 +262,16 @@ Lemma rep_first_ballot:
       let b11 := (bl c11 t r1) in
       let t0 := (((vk 0), (Mvar 5), sign (Mvar 5) (ssk 0) (sr 14)), ((vk 1), (Mvar 6), sign (Mvar 6) (ssk 1) (sr 15))) in
       let t1 := (t0, f (cons t0 nil)) in
-      let t2 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t0)) in
-      let t3 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t1)) in
+      let t2 := ({{ 5 := b00 }} ({{ 6:= b11 }} t0)) in
+      let t3 := ({{ 5 := b00 }} ({{ 6:= b11 }} t1)) in
       let acc00 := (acc c00 t r0 t2) in
       let acc11 := (acc c11 t r1 t3) in
-      let e00 := (enc ((c00, ((ub c00 t r0 t2), (nonce 20))), TWO) (pke 11) (er 7)) in
-      let e11 := (enc ((c11, ((ub c11 t r1 t3), (nonce 21))), TWO) (pke 11) (er 8)) in
-      let phi02:= [msg b00, msg b11, msg e00, msg e11] in
-      let fphi02:= f (toListm phi02) in
       let pv00 := (c00, ((ub c00 t r0 t2), (nonce 20))) in
       let pv11 := (c11, ((ub c11 t r1 t3), (nonce 21))) in
+      let e00 := (enc (pv00, TWO) (pke 11) (er 7)) in
+      let e11 := (enc (pv11, TWO) (pke 11) (er 8)) in
+      let phi02:= [msg b00, msg b11, msg e00, msg e11] in
+      let fphi02:= f (toListm phi02) in
       let s0 := (If (! (isin pv00 ((pi1 (d 1 fphi02)), ((pi1 (d 2 fphi02)), (pi1 (d 3 fphi02)))))) then (shufl (pi1 (d 1 fphi02)) (pi1 (d 2 fphi02)) (pi1 (d 3 fphi02))) else O)in
       let dv0 := (If (dist fphi02) & (pvchecks fphi02) then s0 else |_) in
       let phi03:= phi02 ++[msg dv0] in
@@ -288,14 +288,14 @@ Lemma rep_first_ballot:
       let c01 := (comm v0 k1) in
       let b10 := (bl c10 t r0) in
       let b01 := (bl c01 t r1) in
-      let t4 := ({{ 5 := (bl c10 t r0) }} ({{ 6:=(bl c01 t r1) }} t0)) in
-      let t5 := ({{ 5 := (bl c10 t r0) }} ({{ 6:=(bl c01 t r1) }} t1)) in
+      let t4 := ({{ 5 := b10 }} ({{ 6:= b01 }} t0)) in
+      let t5 := ({{ 5 := b10 }} ({{ 6:= b01 }} t1)) in
       let acc10 := (acc c10 t r0 t4) in
       let acc01 := (acc c01 t r1 t5) in
-      let e10 := (enc ((c10, ((ub c10 t r0 t4), (nonce 20))), TWO) (pke 11) (er 7)) in
-      let e01 := (enc ((c01, ((ub c01 t r1 t5), (nonce 21))), TWO) (pke 11) (er 8)) in
       let pv10 := (c10, ((ub c10 t r0 t4), (nonce 20))) in
       let pv01 := (c01, ((ub c01 t r1 t5), (nonce 21))) in
+      let e10 := (enc (pv10, TWO) (pke 11) (er 7)) in
+      let e01 := (enc (pv01, TWO) (pke 11) (er 8)) in
       let phi12:= [msg b10, msg b01, msg e10, msg e01] in
       let fphi12:= f (toListm phi12) in
       let s1 := (If (! (isin pv10 ((pi1 (d 1 fphi12)), ((pi1 (d 2 fphi12)), (pi1 (d 3 fphi12)))))) then (shufl (pi1 (d 1 fphi12)) (pi1 (d 2 fphi12)) (pi1 (d 3 fphi12))) else O)in
@@ -587,10 +587,14 @@ Proof. intros.
        (*   *********************************************************** *)
        (*   Done replacing nonce 20 using CCA2  *)
        (* Only need to prove the leftover goal *)
-       simpl. 
-       
-        (* This can be proved using unforgeCommitKey *) 
-       (* Prove nonce 20 isn't there in the attacker's computation *) 
+       Set Nested Proofs Allowed.
+       Add Parametric Morphism :(@label) with
+           signature EQm ==> EQm ==> EQm as label_mor.
+       Proof. intros; aply_cong; auto. Qed.
+       (* This can be proved using unforgeCommitKey *) 
+       (* Prove nonce 20 isn't there in the attacker's computation *)
+       simpl.
+    
        assert(let e00' := (enc ((c00, ((ub c00 t r0 t2), (nonce 150))), TWO) (pke 11) (er 7)) in
               let phi02':= [msg b00, msg b11, msg e00', msg e11] in
               let fphi02':= f (toListm phi02') in
@@ -605,32 +609,16 @@ Proof. intros.
                                else (f (toListm (phi02'++[msg O]))))
                          else (f (toListm (phi02'++[msg |_]))))).
        simpl.
-       tacIfMorphComp.
-       simpl in H0. simpl.  
-       assert(let e00' := (enc ((c00, ((ub c00 t r0 t2), (nonce 150))), TWO) (pke 11) (er 7)) in
-              let phi02':= [msg b00, msg b11, msg e00', msg e11] in
-              let fphi02':= f (toListm phi02') in
-              let s0':= (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02'))))))
-                         then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O)in
-              let dv0' := (If (dist fphi02') & (pvchecks fphi02') then s0' else |_) in
-              let phi03':= phi02' ++[msg dv0'] in
-              let fphi03' := f (toListm phi03') in
-              (bnlcheck c00 (nonce 20) fphi03') ## (bnlcheck c00 (nonce 20)
-                                                             (If (dist fphi02') & (pvchecks fphi02')
-                                                              then If ! (isin pv00 (pi1 (d 1 fphi02'), (pi1 (d 2 fphi02'), pi1 (d 3 fphi02'))))
-                                                              then f (toListm (phi02' ++ [msg (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) 
-                                                                                                     (pi1 (d 3 fphi02')))]))
-                                                                   else f (toListm (phi02' ++ [msg O])) 
-                                                              else f (toListm (phi02' ++ [msg |_]))))).
-       simpl.
-       rewrite H0; reflexivity. clear H0.
-       simpl in H1.
-       repeat rewrite ifMorphf3 in H1.
-       repeat rewrite H1. simpl. clear H1.
-       rewBnlchkFailNonce c00 20. repeat redg.
+       tacIfMorphComp.    
+       simpl in H0. repeat rewrite H0.
+       Axiom ifMorphf2m: forall b t1 t2 t3 {f: message -> message -> message}, (f t1 (If b then t2 else t3)) # (If b then (f t1 t2) else (f t1 t3)).
+       repeat rewrite ifMorphf3.  
+       repeat rewrite ifMorphf2m.                     
+       rewBnlchkFailNonce c00 20.
+       repeat redg.
        unfold k0.
-       tacIsinkFalse 3. 
-       rewAndBFalse.
+       tacIsinkFalse 3.  
+       rewAndBFalse. simpl.
        (*************Do the same steps on right side ********)
        (* ******************************************************** *) 
        assert(let e10' := (enc ((c10, ((ub c10 t r0 t4), (nonce 150))), TWO) (pke 11) (er 7)) in
@@ -648,42 +636,200 @@ Proof. intros.
        simpl.
        tacIfMorphComp.
        simpl in H0. 
-       assert(let e10' := (enc ((c10, ((ub c10 t r0 t4), (nonce 150))), TWO) (pke 11) (er 7)) in
-              let phi12':= [msg b10, msg b01, msg e10', msg e01] in
-              let fphi12':= f (toListm phi12') in
-              let s1' := (If (! (isin pv10 ((pi1 (d 1 fphi12')), ((pi1 (d 2 fphi12')), (pi1 (d 3 fphi12'))))))
-                          then (shufl (pi1 (d 1 fphi12')) (pi1 (d 2 fphi12')) (pi1 (d 3 fphi12'))) else O) in
-              let dv1' := (If (dist fphi12') & (pvchecks fphi12') then s1' else |_) in
-              let phi13':= phi12' ++[msg dv1'] in
-              let fphi13' := f (toListm phi13') in
-              (bnlcheck c10 (nonce 20) fphi13') ## (bnlcheck c10 (nonce 20) (If (dist fphi12') & (pvchecks fphi12')
-                                                                             then If ! (isin pv10
-                                                                                             (pi1 (d 1 fphi12'),
-                                                                                               (pi1 (d 2 fphi12'), pi1 (d 3 fphi12'))))
-                                                                             then f
-                                                                                    (toListm
-                                                                                       (phi12' ++
-                                                                                               [msg
-                                                                                                  (shufl (pi1 (d 1 fphi12'))
-                                                                                                         (pi1 (d 2 fphi12')) 
-                                                                                                         (pi1 (d 3 fphi12')))])) 
-                                                                                  else f (toListm (phi12' ++ [msg O])) 
-                                                                             else f (toListm (phi12' ++ [msg |_]))))).
-       simpl.
-       rewrite H0. reflexivity. clear H0.
-       simpl in H1.
-       repeat rewrite ifMorphf3 in H1.
-       repeat rewrite H1; clear H1.
-       rewBnlchkFailNonce c10 20. repeat redg. 
-       
+       repeat rewrite ifMorphf3.
+       repeat rewrite ifMorphf2m.
+       rewBnlchkFailNonce c00 20. 
+       repeat redg.
        unfold k0.
-       tacIsinkFalse 3.
-       rewAndBFalse.
-       simpl.                                                                                                         
-        
-       (** apply ifbranch repeatedly **)
+       tacIsinkFalse 3. 
+       rewAndBFalse. simpl. 
+       (*** For compHid application destruct the if_then_else using ifmorph and ifbranch **)
        repeat aply_ifbr.
-       repeat (try tacIfMorphPair; try aply_ifbr). simpl.
+        repeat tacIfMorphPair. repeat aply_ifbr. repeat tacIfMorphComp. simpl.
+         Axiom ifMorphf3b_fst: forall b t1 t2 t3 t4 {f: message-> message -> message -> message}, (f (If b then t1 else t2) t3 t4) # (If b then (f t1 t3 t4) else (f t2 t3 t4)). 
+       repeat rewrite ifMorphf3b_fst. repeat tacIfMorphPair.
+       repeat aply_ifbr. 
+       (* Add morphism for label *)
+       all: let n:= numgoals in idtac n. simpl.
+       aplyBfsDestrComm 20. simpl. aplyBfsDestrComm 2. simpl.
+       Axiom funcAppAttFrame: forall {n} (l1 l2: mylist n), l1 ~ l2 -> 
+       (* Axiom ifMorphDef_cong: forall f1 f2 (l1 l2 l1' l2': Mlist), f1 = f2 -> l1 = l1' -> l2 = l2' -> ifMorphDef f1 l1 l2 # ifMorphDef f2 l1' l2'. *)
+       (* Add Parametric Morphism: (@ifMorphDef) with *)
+       (*     signature eq ==> eq ==> eq ==> EQm  as ifMorphDef_mor. *)
+       (* Proof. intros. apply ifMorphDef_cong; try auto. Qed. *)
+      
+       Set Nested Proofs Allowed.
+            Goal let v0 := V0 (f (toListm phi0)) in
+            let v1 := V1 (f (toListm phi0)) in
+            let t := pubkey (f (toListm phi0)) in
+            let r0 := (r 1) in
+            let r1 := (r 2) in
+            let k0 := (kc (nonce 3)) in
+            let k1 := (kc (nonce 4)) in
+            (let c00 := (comm v0 k0) in
+             let c11 := (comm v1 k1) in
+             let b00 := (bl c00 t r0) in
+             let b11 := (bl c11 t r1) in
+             let t0 := (((vk 0), b00, sign b00 (ssk 0) (sr 14)), ((vk 1), b11, sign b11 (ssk 1) (sr 15))) in
+             let t1 := (t0, f (cons t0 nil)) in
+             let acc00 := (acc c00 t r0 t0) in
+             let acc11 := (acc c11 t r1 t1) in
+             let pv00 := (c00, ((ub c00 t r0 t0), (nonce 20))) in
+             let pv11 := (c11, ((ub c11 t r1 t1), (nonce 21))) in
+             let e00' := (enc ((c00, ((ub c00 t r0 t0), (nonce 150))), TWO) (pke 11) (er 7)) in
+             let e11 := (enc (pv11, TWO) (pke 11) (er 8)) in
+             let phi02':= [msg b00, msg b11, msg e00', msg e11] in
+             let fphi02':= f (toListm phi02') in
+             [msg b00, msg b11, msg e00', msg e11, msg fphi02']) ~
+                                                     (let c10 := (comm v1 k0) in
+                                                      let c01 := (comm v0 k1) in
+                                                      let b10 := (bl c10 t r0) in
+                                                      let b01 := (bl c01 t r1) in
+                                                      let t0 := (((vk 0), b10, sign b10 (ssk 0) (sr 14)), ((vk 1), b01, sign b01 (ssk 1) (sr 15))) in
+                                                      let t1 := (t0, f (cons t0 nil)) in
+                                                      let acc10 := (acc c10 t r0 t0) in
+                                                      let acc01 := (acc c01 t r1 t1) in
+                                                      let pv10 := (c10, ((ub c10 t r0 t0), (nonce 20))) in
+                                                      let pv01 := (c01, ((ub c01 t r1 t1), (nonce 21))) in
+                                                      let e10' := (enc ((c10, ((ub c10 t r0 t0), (nonce 150))), TWO) (pke 11) (er 7)) in
+                                                      let e01 := (enc (pv01, TWO) (pke 11) (er 8)) in
+                                                      let phi12':= [msg b10, msg b01, msg e10', msg e01] in
+                                                      let fphi12':= f (toListm phi12') in
+                                                      [msg b10, msg b01, msg e10', msg e01, msg fphi12']).
+       Axiom funcAppCompHid: forall {n} c00 c11 c10 c01 {f: message -> message -> mylist n},
+                                             [msg c00, msg c11] ~ [msg c10, msg c01] ->
+                                             (f c00 c11) ~ (f c10 c01). 
+       Axiom funAppCompHid1: forall {m} (l1 l2: mylist m), l1 ~ l2 -> (l1 ++ [msg (f (toListm l1))]) ~ (l2 ++ [msg (f (toListm l2))]). 
+       simpl.
+       apply funAppCompHid1 with (l1:= let t := pubkey (f (toListm phi0)) in
+
+                                                                                                                                      let v0 := V0 (f (toListm phi0)) in
+                                           let v1 := V1 (f (toListm phi0)) in
+                                           let r0 := (r 1) in
+                                           let r1 := (r 2) in
+                                           let k0 := (kc (nonce 3)) in
+                                           let k1 := (kc (nonce 4)) in
+                                           let c00 := (comm v0 k0) in
+                                           let c11 := (comm v1 k1) in
+                                           let b00 := (bl c00 t r0) in
+                                           let b11 := (bl c11 t r1) in
+                                           let t0 := (((vk 0), b00, sign b00 (ssk 0) (sr 14)), ((vk 1), b11, sign b11 (ssk 1) (sr 15))) in
+                                           let t1 := (t0, f (cons t0 nil)) in
+                                           (* let t2 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t0)) in *)
+                                           (* let t3 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t1)) in *)
+                                           let acc00 := (acc c00 t r0 t0) in
+                                           let acc11 := (acc c11 t r1 t1) in
+                                           let pv00 := (c00, ((ub c00 t r0 t0), (nonce 20))) in
+                                           let pv11 := (c11, ((ub c11 t r1 t1), (nonce 21))) in
+                                           let e00' := (enc ((c00, ((ub c00 t r0 t0), (nonce 150))), TWO) (pke 11) (er 7)) in
+                                           let e11 := (enc ((c11, ((ub c11 t r1 t1), (nonce 21))), TWO) (pke 11) (er 8)) in
+                                           [msg b00, msg b11, msg e00', msg e11])
+                                 (l2:= let t := pubkey (f (toListm phi0)) in
+
+                                                                                                                                      let v0 := V0 (f (toListm phi0)) in
+                                           let v1 := V1 (f (toListm phi0)) in
+                                           let r0 := (r 1) in
+                                           let r1 := (r 2) in
+                                           let k0 := (kc (nonce 3)) in
+                                           let k1 := (kc (nonce 4)) in
+                                           let c00 := (comm v1 k0) in
+                                           let c11 := (comm v0 k1) in
+                                           let b00 := (bl c00 t r0) in
+                                           let b11 := (bl c11 t r1) in
+                                           let t0 := (((vk 0), b00, sign b00 (ssk 0) (sr 14)), ((vk 1), b11, sign b11 (ssk 1) (sr 15))) in
+                                           let t1 := (t0, f (cons t0 nil)) in
+                                           (* let t2 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t0)) in *)
+                                           (* let t3 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t1)) in *)
+                                           let acc00 := (acc c00 t r0 t0) in
+                                           let acc11 := (acc c11 t r1 t1) in
+                                           let pv00 := (c00, ((ub c00 t r0 t0), (nonce 20))) in
+                                           let pv11 := (c11, ((ub c11 t r1 t1), (nonce 21))) in
+                                           let e00' := (enc ((c00, ((ub c00 t r0 t0), (nonce 150))), TWO) (pke 11) (er 7)) in
+                                           let e11 := (enc ((c11, ((ub c11 t r1 t1), (nonce 21))), TWO) (pke 11) (er 8)) in
+                                           [msg b00, msg b11, msg e00', msg e11]).
+
+
+                                      
+       
+       
+         apply funcAppCompHid with 
+                                   (f:= (fun c00 c11 =>
+                                           (* let v0 := V0 (f (toListm phi0)) in *)
+                                           (* let v1 := V1 (f (toListm phi0)) in *)
+                                           let t := pubkey (f (toListm phi0)) in
+                                           let r0 := (r 1) in
+                                           let r1 := (r 2) in
+                                           (* let k0 := (kc (nonce 3)) in *)
+                                           (* let k1 := (kc (nonce 4)) in *)
+                                           (* (* let c00 := (comm v0 k0) in *) *)
+                                           (* let c11 := (comm v1 k1) in *)
+                                           let b00 := (bl c00 t r0) in
+                                           let b11 := (bl c11 t r1) in
+                                           let t0 := (((vk 0), b00, sign b00 (ssk 0) (sr 14)), ((vk 1), b11, sign b11 (ssk 1) (sr 15))) in
+                                           let t1 := (t0, f (cons t0 nil)) in
+                                           (* let t2 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t0)) in *)
+                                           (* let t3 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t1)) in *)
+                                           let acc00 := (acc c00 t r0 t0) in
+                                           let acc11 := (acc c11 t r1 t1) in
+                                           let pv00 := (c00, ((ub c00 t r0 t0), (nonce 20))) in
+                                           let pv11 := (c11, ((ub c11 t r1 t1), (nonce 21))) in
+                                           let e00' := (enc ((c00, ((ub c00 t r0 t0), (nonce 150))), TWO) (pke 11) (er 7)) in
+                                           let e11 := (enc ((c11, ((ub c11 t r1 t1), (nonce 21))), TWO) (pke 11) (er 8)) in
+                                           let phi02':= [msg b00, msg b11, msg e00', msg e11] in
+                                           (* let fphi02':= f (toListm phi02') in *)
+                                           (* let s0':= (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02')))))) then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O)in *)
+                                           (* let dv0' := (If (dist fphi02') & (pvchecks fphi02') then s0' else |_) in *)
+                                           (* let phi03':= phi02' ++[msg dv0'] in *)
+                                           (* let fphi03' := f (toListm phi03') in *)
+                                           (* let l00' := (If (bnlcheck c00 (nonce 20) fphi03') then (enc ((label c00 fphi03'), (k0, THREE)) (pke 11) (er 9)) else O) in *)
+                                           (* let l11' := (If (bnlcheck c11 (nonce 21) fphi03') then (enc ((label c11 fphi03'), (k1, THREE)) (pke 11) (er 10)) else O) in *)
+                                           (* let phi05':= phi03'++[msg l00', msg l11'] in *)
+                                           (* let fphi05' := f (toListm phi05') in *)
+                                           (* let do0' := (If (dist fphi05') & (pochecks fphi05') & (((isink k0 fphi05') & (isink k1 fphi05'))) (* or (! ((isink k0 fphi05')or (isink k1 fphi05'))))*) then (sotrm fphi05') else |_) in *)
+                                           (* let t0s0' := (If acc00 & acc11 then ((e00', (e11, dv0')), (O, (l11', |_))) else |_) in *)
+                                           phi02')).
+
+           in
+                                           [msg b00, msg b11, msg e00', msg e11]
+                                   
+              let t := pubkey (f (toListm phi0)) in
+              let r0 := (r 1) in
+              let r1 := (r 2) in
+              let k0 := (kc (nonce 3)) in
+              let k1 := (kc (nonce 4)) in
+              let b00 := (bl c00 t r0) in
+              let b11 := (bl c11 t r1) in
+              let t0 := (((vk 0), (Mvar 5), sign (Mvar 5) (ssk 0) (sr 14)), ((vk 1), (Mvar 6), sign (Mvar 6) (ssk 1) (sr 15))) in
+              let t1 := (t0, f (cons t0 nil)) in
+              let t2 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t0)) in
+              let t3 := ({{ 5 := (bl c00 t r0) }} ({{ 6:=(bl c11 t r1) }} t1)) in
+              let acc00 := (acc c00 t r0 t2) in
+              let acc11 := (acc c11 t r1 t3) in
+              (* let pv00 := (c00, ((ub c00 t r0 t2), (nonce 20))) in *)
+              (* let pv11 := (c11, ((ub c11 t r1 t3), (nonce 21))) in *)
+              (* let e00 := (enc ((c00, ((ub c00 t r0 t2), (nonce 20))), TWO) (pke 11) (er 7)) in *)
+              (* let e11 := (enc ((c11, ((ub c11 t r1 t3), (nonce 21))), TWO) (pke 11) (er 8)) in *)
+              (* let e00' := (enc ((c00, ((ub c00 t r0 t2), (nonce 150))), TWO) (pke 11) (er 7)) in *)
+              (* let phi02':= [msg b00, msg b11, msg e00', msg e11] in *)
+              (* let fphi02':= f (toListm phi02') in *)
+              (* let s0':= (If (! (isin pv00 ((pi1 (d 1 fphi02')), ((pi1 (d 2 fphi02')), (pi1 (d 3 fphi02')))))) then (shufl (pi1 (d 1 fphi02')) (pi1 (d 2 fphi02')) (pi1 (d 3 fphi02'))) else O)in *)
+              (* let dv0' := (If (dist fphi02') & (pvchecks fphi02') then s0' else |_) in *)
+              (* let phi03':= phi02' ++[msg dv0'] in *)
+              (* let fphi03' := f (toListm phi03') in *)
+              (* let l00' := (If (bnlcheck c00 (nonce 20) fphi03') then (enc ((label c00 fphi03'), (k0, THREE)) (pke 11) (er 9)) else O) in *)
+              (* let l11' := (If (bnlcheck c11 (nonce 21) fphi03') then (enc ((label c11 fphi03'), (k1, THREE)) (pke 11) (er 10)) else O) in *)
+              (* let phi05':= phi03'++[msg l00', msg l11'] in *)
+              (* let fphi05' := f (toListm phi05') in *)
+              (* let do0' := (If (dist fphi05') & (pochecks fphi05') & (((isink k0 fphi05') & (isink k1 fphi05'))) (* or (! ((isink k0 fphi05')or (isink k1 fphi05'))))*) then (sotrm fphi05') else |_) in *)
+              (* let t0s0' := (If acc00 & acc11 then ((e00', (e11, dv0')), (O, (l11', |_))) else |_) in *)
+              (* [msg b00, msg b11, msg t0s0']) in *)
+              [msg b00, msg b11, bol (acc00 &acc11)])).
+           (g c00 c11) ~ (g c10 c01).
+      
+         apply funcAppCompHid.
+         (** apply ifbranch repeatedly **)
+      repeat aply_ifbr.
+                                                      repeat (try tacIfMorphPair; try aply_ifbr). simpl.
        Ltac aplyBfsDestrComm levelDown := match goal with
                                           |[|- ?X ~ ?Y] => apply funcAppbfsDestrComm with (n:= levelDown) (l1:= X) (l2:=Y); simpl; try auto
                                           end.
