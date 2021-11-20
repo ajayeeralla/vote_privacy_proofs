@@ -12,7 +12,7 @@ Section auxProps.
   Axiom ifMorphPair2: forall b t1 t2 t3, (t1, If b then t2 else t3) # If b then (t1, t2) else (t1, t3).
   Axiom ifMorphPair1: forall b t1 t2 t3, (If b then t1 else t2, t3) # If b then (t1, t3) else (t2, t3).
   Axiom ifMorphf3: forall b t1 t2 t3 t4 {f: message-> message -> message -> Bool}, (f t1 t2 (If b then t3 else t4)) ## (IF b then (f t1 t2 t3) else (f t1 t2 t4)).
-
+  Axiom ifMorphf3b_fst: forall b t1 t2 t3 t4 {f: message-> message -> message -> message}, (f (If b then t1 else t2) t3 t4) # (If b then (f t1 t3 t4) else (f t2 t3 t4)).
   Axiom andB_elim: forall b1 b2 t1 t2, (If b1 & b2 then t1 else t2) # (If b1 then (If b2 then t1 else t2) else t2).
   Axiom ifMorphIfThen: forall b1 b2 t1 t2 t3, (If b1 then (If b2 then t1 else t2) else t3) # (If b2 then (If b1 then t1 else t3) else (If b1 then t2 else t3)).
   Axiom orB_FAlse_r: forall b, b or FAlse = b.
