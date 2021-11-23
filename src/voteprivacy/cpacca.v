@@ -476,9 +476,11 @@ Fixpoint subMvarEncMylist n s {m} (l: mylist m): mylist m :=
 Axiom ENCCCA2: forall (n n1 n2 n3: nat) (u u': message) {m} (l: mylist m),
     (|u|#?|u'|) ## TRue ->
     (List.length (distMvars l) <=? 1) = true ->
+    distMvars l = (cons n nil) ->
     (closMylist [msg u, msg u'] = true) ->
-    cca2compmylis n n1 u u' l = true ->
-    ([ n <- {u}_n1^^n2 ] l) ~ ([ n <- {u'}_n1^^n3] l).
+    let l' := rewDecMylist n n1 u u' l in
+    (cca2compmylis n n1 u u' l' = true ->
+    ([ n <- {u}_n1^^n2 ] l') ~ ([ n <- {u'}_n1^^n3] l')).
 
 Axiom len_reg: forall x1 y1 x2 y2, (|x1|#?|y1|) ## TRue -> (|x2|#?|y2|) ## TRue ->  (|(x1, x2)| #? |(y1, y2)|) ## TRue.
 Axiom subMvarEnc: forall n n1 n2 n3 u u' {m} (l1 l2: mylist m), l1 ~ l2 -> (subMvarEncMylist n {u}_n1^^n2 l1) ~ (subMvarEncMylist n {u'}_n1^^n3 l2).

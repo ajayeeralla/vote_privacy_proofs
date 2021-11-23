@@ -23,7 +23,11 @@ Section auxLemmas.
 
   Axiom eqmSym: forall x y, (x #? y) ## (y #? x).
 End auxLemmas.
-
+Import ListNotations.
+Axiom compHid: forall (n1 n2: nat) (t t1 t2: message) {n} (z: mylist n),
+    closMylist [msg t, msg t1, msg t2] = true /\ closMylist z = true /\
+    Fresh [n1; n2] ([msg t, msg t1, msg t2]++z) = true ->
+    (z ++ [msg (If |t1|#?|t2| then ((comm t1 (k n1)), (comm t2 (k n2))) else t)]) ~ (z ++ [msg (If |t1|#?|t2| then ((comm t2 (k n1)), (comm t1 (k n2))) else t)]).
 Proposition commKeysDist: forall n1 n2, (n1 =? n2 = false)%nat -> let k1:= kc (nonce n1) in
                                                     let k2:= kc (nonce n2) in
                                                     k1 #? k2 ## FAlse.
@@ -55,10 +59,10 @@ Proof. intros.
        fold k1 in H0.
        rewrite <- compBind with (t1:= (compl (nonce (n1 + n2 + 1 + (n1 + n2 + 1 + 0))))) (t2:= nonce (n1 + n2 + 1 + (n1 + n2 + 1 + 0))) in H0.
        pose proof(Msgneql (nonce (n1 + n2 + 1 + (n1 + n2 + 1 + 0)))).
-       pose proof (FRESHNEQ (n1 + n2 + 1 + (n1 + n2 + 1 + 0)) O).
-       Search "const".
-       apply consteql with (x:= (nonce (n1 + n2 + 1 + (n1 + n2 + 1 + 0))) #? O) (f:= FAlse) in H3; try auto.
-       rewrite H3 in H2; try red_in H2.
+       pose proof (FRESHNEQ (n1 + n2 + 1 + (n1 + n2 + 1 + 0)) O). 
+       apply Example10_B with (x:= (nonce (n1 + n2 + 1 + (n1 + n2 + 1 + 0))) #? O) (F:= FAlse) (z:= FAlse) in H3; try auto.
+       unfold const in H3.
+       rewrite H3 in H2. try red_in H2.
        rewrite eqmSym in H2.
        rewrite H2 in H0.
        red_in H0.

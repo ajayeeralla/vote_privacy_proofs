@@ -137,8 +137,16 @@ Definition label x y := If (x #? (tau 2 (pi2 (tau 1 y)))) then (pi1 (tau 1 y))
                            else  (If (x#? (tau 2 (pi2 (tau 2 y)))) then (pi1 (tau 2 y))
                                                        else (If (x #? (tau 2 (pi2 (tau 3 y)))) then (pi1 (tau 3 y))
                                                              else O)).
+Add Parametric Morphism :(@label) with
+signature EQm ==> EQm ==> EQm as label_mor.
+Proof. intros; aply_cong; auto. Qed.
 
 Definition bnlcheck( x y z:message):Bool:= (bcheck x z) & (|(label x z)| #? lbl) & (ncheck y z).
+
+(* Add morphism for bnlcheck *)
+Add Parametric Morphism :(@bnlcheck) with
+    signature EQm ==> EQm ==> EQm ==> EQb as bnlcheck_mor.
+Proof. intros; aply_cong; auto. Qed.
 
 Definition mvchecks x (n n':nat) := (dist (x n n')) & (pvchecks (x n n')).
 
