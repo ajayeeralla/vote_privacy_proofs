@@ -1,7 +1,7 @@
 ```diff
 All Rights Reserved
 
-Copyright (c) 2015-2021 Ajay K. Eeralla
+Copyright (c) 2017-2021 Ajay K. Eeralla
 
 -Do not copy any proofs without my permission
 ```
@@ -13,7 +13,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.`-->
 
-# What is where
+<!--# What is where
 | Proofs | Coq file| Used in | Status |
 |--------|----------|-------|---------|
 | Inductive types, message, Bool, oursum and some auxiliary functions of them| defininitions| |completed|
@@ -60,7 +60,7 @@ THE SOFTWARE.`-->
 |tactics.v|
 |foo_axioms.v|
 |prop1.v|
-
+-->
 # Machine-checked Proofs of Vote Privacy using Computationally Complete Symbolic Attacker (CCSA)
 
 We have formalized the proofs of vote privacy of the [FOO](https://link.springer.com/chapter/10.1007/3-540-57220-1_66) voting protocol presented in the paper using the [CCSA technique](https://dl.acm.org/doi/10.1145/2660267.2660276) in the [Coq proof assistant](https://coq.inria.fr/).
