@@ -1,7 +1,7 @@
 (************************************************************************)
 (* Copyright (c) 2017-2018, Ajay Kumar Eeralla <ae266@mail.missouri.edu>*)
 (************************************************************************)
-Require Export auxDefs.
+Require Export contexts.
 Import ListNotations.
 
 (** Simplified CCA2 axiom **)
