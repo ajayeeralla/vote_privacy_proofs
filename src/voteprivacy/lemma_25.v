@@ -44,22 +44,32 @@ Ltac rewAndBFalse :=
          end; redg.
 
 
-Axiom ifMorphMsg: forall f b t1 t2, f (If b then t1 else t2) # (If b then (f t1) else (f t2)).
+Axiom ifMorphMsg: forall f b t1 t2, f (If b then t1 else t2) # (If b then (f t1) else (f t2)). 
 Axiom ifMorphBol: forall f b t1 t2, f (If b then t1 else t2)  ## (IF b then (f t1) else (f t2)).
-Axiom funcAppRestr: forall p1 p2 {n m} (l1 l2: mylist m) {f: message -> message -> mylist n},
+Import Cxt.
+Axiom funcAppRestr: forall p1 p2 {m} (l1 l2: mylist m) {f: message -> message -> oslist},
+    (IsContextOslist f) ->
     l1 ~ l2 ->
-    (f (ostomsg (getelt_at_pos p1 l1)) (ostomsg (getelt_at_pos p2 l1))) ~
-                                                                        (f (ostomsg (getelt_at_pos p1 l2)) (ostomsg (getelt_at_pos p2 l2))).
-Axiom funcAppRestrCompHid: forall n1 n2 v0 v1 {n} {f: message -> message -> mylist n},
-    let ml:= [msg v0, msg v1] ++ (f O O) in
-    closMylist ml = true ->
+    let osl1:= (f (ostomsg (getelt_at_pos p1 l1)) (ostomsg (getelt_at_pos p2 l1))) in
+    let osl2:= (f (ostomsg (getelt_at_pos p1 l2)) (ostomsg (getelt_at_pos p2 l2))) in
+    let y := oslToMylist osl1 osl2 in
+    ((mylength y) =? 0 = false)%nat -> (pi1ProdMylist y) ~ (pi2ProdMylist y).
+
+Axiom funcAppRestrCompHid: forall n1 n2 v0 v1 {f: message -> message -> oslist},
+    let ml:= [msg v0, msg v1] in
     occur_name_mylist n1 ml = false ->
     occur_name_mylist n2 ml = false ->
+    IsContextOslist f ->
     let c00:= (comm v0 (kc (nonce n1))) in
     let c11:= (comm v1 (kc (nonce n2))) in
     let c10:= (comm v1 (kc (nonce n1))) in
     let c01:= (comm v0 (kc (nonce n2))) in
-    [msg c00, msg c11 ] ~ [msg c10, msg c01] -> (f c00 c11) ~ (f c10 c01).
+    [msg c00, msg c11 ] ~ [msg c10, msg c01] ->
+    let osl1:= (f c00 c11) in
+    let osl2:= (f c10 c01) in 
+    let y := oslToMylist osl1 osl2 in
+    ((mylength y) =? 0 = false)%nat -> (pi1ProdMylist y) ~ (pi2ProdMylist y).
+
 
 
 Lemma rep_first_ballot:
@@ -135,8 +145,7 @@ Lemma rep_first_ballot:
 (*********Proof starts from here********)
 
 Proof. intros.
-      
-       
+            
       
        aply_cca2Trans (let e00' := (enc ((c00, ((ub c00 t r0 t2), (nonce 150))), TWO) (pke 11) (er 7)) in
                        let phi02':= [msg b00, msg b11, msg e00', msg e11] in
@@ -192,7 +201,7 @@ Proof. intros.
 
        
 
-       simpl in cca2.
+        simpl in cca2.
                            If (acc00) & acc11
         then (e00', (e11, dv0'), (l00', (l11', do0'))) 
         else |_ in
